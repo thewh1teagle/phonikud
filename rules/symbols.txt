@@ -1,0 +1,4 @@
+₪ ʃɛkəl  # Shekel
+$ doˈlar  # Dollar
+≤ katan mi  # Less than or equal  
+≥ gadol mi  # Greater than or equal  
