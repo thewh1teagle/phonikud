@@ -1,17 +1,19 @@
+# https://github.com/espeak-ng/espeak-ng/blob/master/dictsource/he_rules
+
 # Alef
-א    ʔ
-אָ    ɑ
-אׇ    ɑː
-אַ    a
-אֵ    e
-אֶ    ɛ
-אִ    i
-אְ    ʔ
-אֹ    o
-אֻ    u
-אֲ    a
-אֳ    o
-אֱ    ɛ
+א    ʔ 
+אָ    ɑ    # Kamatz
+אׇ    ɑː   # Kamatz Gadol
+אַ    a    # Patach
+אֵ    e    # Tsere
+אֶ    ɛ    # Segol
+אִ    i    # Hiriq
+אְ    ʔ    # Sheva (silent or vocal)
+אֹ    o    # Holam
+אֻ    u    # Kubutz
+אֲ    a    # Patach Gadol
+אֳ    o    # Qamatz Katan
+אֱ    ɛ    # Sheva
 
 # Vet
 ב    v                        
@@ -29,8 +31,9 @@
 בֱ    vɛ   
 
 #    Bet
-בּ    b                            
-בָּ    bɑ                        
+בּ    b      
+בְּ    b                      
+בַּ    bɑ                        
 בׇּ    bɑː                    
 בַּ    ba                        
 בֵּ    be                        
@@ -127,7 +130,7 @@
 וֶ    vɛ
 וִ    vi
 וְ    vʔ
-וֹ    vo
+וֹ    vo # Holam Maleh
 וֻ    vu
 וֲ    va
 וֳ    vo
@@ -195,7 +198,8 @@
 
 # Haf
 כ    x
-כָ    xɑ
+# TODO: check
+כָ    xo
 כׇ    xɑː
 כַ    xa
 כֵ    xe

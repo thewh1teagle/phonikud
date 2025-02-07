@@ -1,9 +1,21 @@
 [project]
-name = "nikud"
+name = "mishkal"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" }
+]
 requires-python = ">=3.13"
 dependencies = [
     "num2words>=0.5.14",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

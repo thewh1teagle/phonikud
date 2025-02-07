@@ -3,6 +3,9 @@
 # https://nakdanpro.dicta.org.il/
 # beged kefet with dagesh (בגד-קפת)
 
+DAGESH = chr(0x05BC)
+BEGED_KEFET = 'בגדכפת'
+
 IPA_SYMBOLS = [
     'p', 'b', 't', 'd', 'k', 'g', 'm', 'n', 'ŋ', 'l', 'r', 'ʃ', 'ʒ', 'f', 'v', 'θ', 'ð', 's', 'z', 'ʧ', 'ʤ', 'tʃ', 'dʒ', 
     'i', 'e', 'ɛ', 'æ', 'a', 'ɑ', 'ɔ', 'o', 'ʊ', 'u', 'ɪ', 'ʌ', 'ə', 'ɒ', 'ɜ', 'ɹ', 'j', 'w', 'h', 'ʔ'
