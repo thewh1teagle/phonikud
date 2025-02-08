@@ -4,6 +4,12 @@ grapheme to phoneme in Hebrew
 
 Convert Hebrew text into IPA, this useful for TTS systems and learning.
 
+## Install
+
+```console
+pip install mishkal-g2p
+```
+
 ## Examples
 
 ```python

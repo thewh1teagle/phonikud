@@ -1,7 +1,7 @@
 [project]
-name = "mishkal"
+name = "mishkal-g2p"
 version = "0.1.0"
-description = "grapheme to phoneme (G2P) in Hebrew"
+description = "grapheme to phoneme (G2P) in Hebrew for TTS"
 readme = "README.md"
 authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" }
