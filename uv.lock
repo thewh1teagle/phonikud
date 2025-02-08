@@ -515,6 +515,7 @@ name = "mishkal"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "colorlog" },
     { name = "espeakng-loader" },
     { name = "num2words" },
     { name = "phonemizer-fork" },
@@ -527,6 +528,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "colorlog", specifier = ">=6.9.0" },
     { name = "espeakng-loader", specifier = ">=0.2.4" },
     { name = "num2words", specifier = ">=0.5.14" },
     { name = "phonemizer-fork", specifier = ">=3.3.2" },
