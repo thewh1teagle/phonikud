@@ -1,5 +1,5 @@
 [project]
-name = "mishkal-g2p"
+name = "mishkal-ivrit"
 version = "0.1.0"
 description = "grapheme to phoneme (G2P) in Hebrew for TTS"
 readme = "README.md"
@@ -22,3 +22,6 @@ build-backend = "hatchling.build"
 dev = [
     "gradio>=5.15.0",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mishkal"]

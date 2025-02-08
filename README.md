@@ -7,7 +7,7 @@ Convert Hebrew text into IPA, this useful for TTS systems and learning.
 ## Install
 
 ```console
-pip install mishkal-g2p
+pip install mishkal-ivrit
 ```
 
 ## Examples
