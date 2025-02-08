@@ -6,6 +6,13 @@ Convert Hebrew text into IPA, this useful for TTS systems and learning.
 
 ## Examples
 
+```python
+from mishkal import text_to_ipa
+
+phonemes = text_to_ipa('שָׁלוֹם עוֹלָם') # ʃalom ?olam
+print(phonemes) # 
+```
+
 See [examples](examples)
 
 ## How it works
