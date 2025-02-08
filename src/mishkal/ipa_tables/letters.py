@@ -1,0 +1,45 @@
+from ..characters.letters import Letters
+
+IPA_LETTERS = {
+    # Letters with or without dagesh (dagesh in BET, KAF, PEY)
+    Letters.ALEF: "'",
+    Letters.VET: 'v',
+    Letters.BET_DAGESH: 'b',
+    Letters.GIMEL: 'g',
+    Letters.GIMEL_DAGESH: 'g',
+    Letters.DALET: 'd',
+    Letters.DALET_DAGESH: 'd',
+    Letters.HE: 'h',
+    Letters.VAV: 'v',
+    Letters.ZAYIN: 'z',
+    Letters.HET: 'x',
+    Letters.TET: 't',
+    Letters.YOD: 'j',
+    Letters.HAF: 'x',
+    Letters.KAF_DAGESH: 'k',
+    Letters.LAMED: 'l',
+    Letters.MEM: 'm',
+    Letters.NUN: 'n',
+    Letters.SAMEKH: 's',
+    Letters.AYIN: '?',
+    Letters.FEY: 'f',
+    Letters.PEY_DAGESH: 'p',
+    Letters.TSADI: 'ts',
+    Letters.QOF: 'k',
+    Letters.RESH: 'r',
+    Letters.SHIN: 'ʃ',
+    Letters.SHIN_RIGHT_POINT: 'ʃ',
+    Letters.SIN_LEFT_POINT: 's',
+    Letters.TAF: 't',
+    Letters.TAF_DAGESH: 't',
+    
+    #  Sofiyot with or without Dagesh
+    Letters.HAF_SOFIT: 'x',
+    Letters.KAF_SOFIT_DAGESH: 'k',
+    Letters.MEM_SOFIT: 'm',
+    Letters.NUN_SOFIT: 'n',
+    Letters.PE_SOFIT: 'f',
+    Letters.PE_SOFIT_DAGESH: 'p',
+    Letters.TSADI_SOFIT: 'ts',
+}
+

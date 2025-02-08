@@ -1,21 +1,23 @@
 [project]
 name = "mishkal"
 version = "0.1.0"
-description = "Add your description here"
+description = "grapheme to phoneme (G2P) in Hebrew"
 readme = "README.md"
 authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" }
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "espeakng-loader>=0.2.4",
     "num2words>=0.5.14",
-]
-
-[dependency-groups]
-dev = [
-    "pytest>=8.3.4",
+    "phonemizer-fork>=3.3.2",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "gradio>=5.15.0",
+]

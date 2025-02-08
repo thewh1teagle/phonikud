@@ -1,43 +1,37 @@
-from pathlib import Path
-import re
-from mishkal import normalize
-import tomllib
+from string import printable as ENGLISH_PRINTABLE
+from .ipa_tables.diacritics import IPA_DIACRITICS
+from .ipa_tables.letters import IPA_LETTERS
+from .characters.letters import Letters
 
-RULES_PATH = Path(__file__).parent / 'rules'
+BEFORE_G2P_WHITELIST = (
+    list(ENGLISH_PRINTABLE) + list(IPA_LETTERS.keys()) + list(IPA_DIACRITICS.keys())
+)
 
-RULES_MAP = {}
-REGEX_RULES = []
-REPLACE_MAP = {}
+AFTER_G2P_WHITELIST = (
+    list(map(chr, range(0x0250, 0x02B0))) +  # Basic IPA range (U+0250 to U+02AF)
+    list(map(chr, range(0x1D00, 0x1D80)))    # IPA Extensions range (U+1D00 to U+1D7F)
+)
 
-def read_toml(path: str):
-    with open(path, "rb") as f:
-        data = tomllib.load(f)
-    for regex_rule in data.get('regex', []):
-        # Expand $1 $2 etc
-        for i in range(10):
-            regex_rule['dst'] = regex_rule['dst'].replace(f'${i}', rf'\{i}')
-        REGEX_RULES.append(regex_rule)
+# Letters that can have Dagesh with different sound
+BEGED_KEFET_LETTERS = [
+    Letters.VET,
+    Letters.GIMEL,
+    Letters.DALET,
+    Letters.HAF,
+    Letters.HAF_SOFIT,
+    Letters.FEY,
+    Letters.PE_SOFIT,
+    Letters.TAF,
+]
 
-def read_txt(path: str):
-    with open(path, 'r', encoding='utf-8') as f:
-        for raw_line in f:
-            line = raw_line.strip()
-            if not line or line.startswith('#'):
-                continue
-            # clean comment from line
-            line = re.sub(r"#.*", "", line).strip()
-            line = normalize.normailze(line)
-            parts = line.split()
-            src = parts[0]
-            dst = ' '.join(parts[1:])
-            RULES_MAP[src] = dst
+# Letters that affect previous letter sound
+VOWEL_LETTERS = [Letters.VAV, Letters.YOD]  # Vav and Yod
 
-def read_rules():
-    files = RULES_PATH.glob('**/**')
-    for file in files:
-        if file.suffix == '.txt':
-            read_txt(file)
-        elif file.suffix == '.toml':
-            read_toml(file)
-    
-read_rules()
+# Letters that doesn't affected by Shva in first letter
+BLACKLIST_START_AFFECTED_BY_SHVA = [
+    Letters.SHIN,
+    Letters.SHIN_RIGHT_POINT,
+    Letters.VET,
+    Letters.BET_DAGESH,
+    Letters.KAF_DAGESH
+]
