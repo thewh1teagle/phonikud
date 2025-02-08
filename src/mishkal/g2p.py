@@ -9,6 +9,7 @@ from .characters.letters import Letters
 from itertools import takewhile
 import unicodedata
 from .expanders import expand_word
+from .log import log
 
 def get_ipa_from_letter(
     current_letter: str, 
@@ -143,7 +144,7 @@ def normalize(text: str) -> str:
         if c in BEFORE_G2P_WHITELIST:
             chars.append(c)
         else:
-            print(f'Ignoring {c}')
+            log.warning(f'Ignoring {c}')
             
     text = ''.join(chars) 
     text = clean_wrong_diacritics(text)
@@ -159,13 +160,15 @@ def text_to_ipa(text: str) -> str:
                 ipa_transcription = get_ipa_from_word(expanded_word)
                 ipa_words.append(ipa_transcription)
     phonemes = ' '.join(ipa_words)
+    return phonemes
     
-    valid_phonemes = []
-    for c in phonemes:
-        if c in AFTER_G2P_WHITELIST:
-            valid_phonemes.append(c)
-        else:
-            print(f'Ignoring {c} after g2p')
+    # TODO    
+    # valid_phonemes = []
+    # for c in phonemes:
+    #     if c in AFTER_G2P_WHITELIST:
+    #         valid_phonemes.append(c)
+    #     else:
+    #         log.warning(f'Ignoring {c} after g2p')
             
             
-    return ''.join(valid_phonemes)
+    # return ''.join(valid_phonemes)

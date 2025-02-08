@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "colorlog>=6.9.0",
     "espeakng-loader>=0.2.4",
     "num2words>=0.5.14",
     "phonemizer-fork>=3.3.2",
