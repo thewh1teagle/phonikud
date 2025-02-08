@@ -4,7 +4,7 @@ uv pip install -e .
 uv run examples/app.py
 """
 
-from mishkal.g2p import text_to_ipa
+from mishkal import text_to_ipa
 import gradio as gr
 
 default_text = """
