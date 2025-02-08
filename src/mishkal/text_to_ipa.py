@@ -1,6 +1,6 @@
 from .characters.diacritics import Diacritics
-from .ipa_tables.diacritics import IPA_DIACRITICS
-from .ipa_tables.letters import IPA_LETTERS
+from .tables.diacritics import IPA_DIACRITICS
+from .tables.letters import IPA_LETTERS
 from .rules import (
     BEFORE_G2P_WHITELIST, BEGED_KEFET_LETTERS, BLACKLIST_START_AFFECTED_BY_SHVA,
     AFTER_G2P_WHITELIST

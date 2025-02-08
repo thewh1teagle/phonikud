@@ -1,6 +1,6 @@
 from string import printable as ENGLISH_PRINTABLE
-from .ipa_tables.diacritics import IPA_DIACRITICS
-from .ipa_tables.letters import IPA_LETTERS
+from .tables.diacritics import IPA_DIACRITICS
+from .tables.letters import IPA_LETTERS
 from .characters.letters import Letters
 
 BEFORE_G2P_WHITELIST = (
