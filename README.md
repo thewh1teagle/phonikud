@@ -2,6 +2,12 @@
 
 grapheme to phoneme in Hebrew
 
+Convert Hebrew text into IPA, this useful for TTS systems and learning.
+
+## Examples
+
+See [examples](examples)
+
 ## How it works
 
 1. Dates are expanded into diacritized words (eg. 20/01/2025 into spoken words)
