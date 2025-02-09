@@ -21,7 +21,7 @@ def on_submit(text: str) -> str:
     return text_to_ipa(text, get_words=False)
 
 with gr.Blocks(theme=theme) as demo:
-    text_input = gr.Textbox(value=default_text, label="Text", rtl=True)
+    text_input = gr.Textbox(value=default_text, label="Text", rtl=True, elem_classes=['input'])
     checkbox = gr.Checkbox(value=False, label="Enable Debug Mode")
     phonemes_output = gr.Textbox(label="Phonemes")
     submit_button = gr.Button("Create")
@@ -32,6 +32,7 @@ with gr.Blocks(theme=theme) as demo:
         inputs=[text_input, checkbox],
         outputs=[phonemes_output],
     )
+
 
 
 if __name__ == '__main__':

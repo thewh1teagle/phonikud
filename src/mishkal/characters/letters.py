@@ -40,3 +40,4 @@ class Letters:
     PE_SOFIT_DAGESH = 'ףּ'
     TSADI_SOFIT = 'ץ'
     
+
