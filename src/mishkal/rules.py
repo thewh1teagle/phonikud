@@ -2,6 +2,7 @@ from string import printable as ENGLISH_PRINTABLE
 from .tables.diacritics import IPA_DIACRITICS
 from .tables.letters import IPA_LETTERS
 from .characters.letters import Letters
+from .characters.diacritics import Diacritics
 
 BEFORE_G2P_WHITELIST = (
     list(ENGLISH_PRINTABLE) + list(IPA_LETTERS.keys()) + list(IPA_DIACRITICS.keys())
@@ -34,4 +35,8 @@ BLACKLIST_START_AFFECTED_BY_SHVA = [
     Letters.VET,
     Letters.BET_DAGESH,
     Letters.KAF_DAGESH
+]
+
+PART_OF_LETTER_DIACRITICS = [
+    Diacritics.DAGESH, Diacritics.SHIN_DOT, Diacritics.SIN_DOT
 ]

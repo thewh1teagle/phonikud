@@ -511,7 +511,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mishkal-g2p"
+name = "mishkal-ivrit"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

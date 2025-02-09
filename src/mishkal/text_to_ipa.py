@@ -3,7 +3,7 @@ from .tables.diacritics import IPA_DIACRITICS
 from .tables.letters import IPA_LETTERS
 from .rules import (
     BEFORE_G2P_WHITELIST, BEGED_KEFET_LETTERS, BLACKLIST_START_AFFECTED_BY_SHVA,
-    AFTER_G2P_WHITELIST
+    AFTER_G2P_WHITELIST, PART_OF_LETTER_DIACRITICS
 )
 from .characters.letters import Letters
 from itertools import takewhile
@@ -16,11 +16,13 @@ def get_ipa_from_letter(
     diacritics: list[str], 
     previous_letter: str = None, 
     previous_diacritics: str = None,
-    next_letter: str = None
+    next_letter: str = None,
+    next_diacritics: list[str] = None
 ):
     """
     Get IPA for letter based on current character and it's surround context
     """
+    log.debug('cur: %s (%s) next: %s (%s)', current_letter, list(hex(ord(i)) for i in diacritics), next_letter, list(hex(ord(i)) for i in (next_diacritics or [])))
     transcription = ''
     # if current_letter == 'ו':
     #     breakpoint()
@@ -33,7 +35,13 @@ def get_ipa_from_letter(
             current_letter += d
             diacritics.remove(d)
     # Vav vowels (with Holam Haser or Dagesh)
-    if current_letter == Letters.VAV and previous_letter and (not previous_diacritics or previous_diacritics == [Diacritics.DAGESH]) and len(diacritics) == 1:
+    if (
+        # Vav with single diacritic with previous letter
+        current_letter == Letters.VAV and len(diacritics) == 1 and previous_letter
+        # Only if previous letter has no diacritics
+        and (not previous_diacritics or any(d in PART_OF_LETTER_DIACRITICS for d in previous_diacritics))
+    ):
+        
         if Diacritics.DAGESH in diacritics:
             return 'u' # Like Uga
         elif any(d in [Diacritics.VAV_HOLAM_HASER, Diacritics.HOLAM] for d in diacritics):
@@ -50,17 +58,22 @@ def get_ipa_from_letter(
     if current_letter in [Letters.HAF, Letters.KAF_DAGESH] and not previous_letter:
         if any(d in diacritics for d in [Diacritics.KAMATZ, Diacritics.KAMATZ_KATAN, Diacritics.HOLAM]):
             return 'xo' if current_letter == Letters.HAF else 'ko'
-        
-    # Handle next letter in Gimel like Jirafa
+    
+    # Het in end of word with Patah should sound as Ax
+    if not next_letter and current_letter == Letters.HET and Diacritics.PATAH in diacritics:
+        return 'ax'    
+    
+    # Handle next letter in Gimel like Jirafa and keep diacritics for later
     if next_letter == "'" and current_letter in [Letters.GIMEL, Letters.GIMEL_DAGESH]:
-        transcription += 'j'
-    else:    
+        transcription += 'd͡ʒ' # J'irafa
+    # Handle next letter in Gimel like Jirafa
+    elif next_letter == "'" and current_letter in [Letters.TSADI, Letters.TSADI_SOFIT]:
+        transcription += 'tʃ'
+    else:
         transcription += IPA_LETTERS[current_letter]        
     
     # Convert diacritics to sounds excluding Dagesh
     
-    # if current_letter == 'מ':
-    #     breakpoint()
     
     diacritics.sort()
     for d in diacritics:
@@ -70,15 +83,26 @@ def get_ipa_from_letter(
         # First letter with shva should sound like d(e)
         elif (
             d == Diacritics.SHVA 
-            and not previous_letter 
-            and current_letter not in BLACKLIST_START_AFFECTED_BY_SHVA
+            and not previous_letter and not previous_diacritics
+            and next_diacritics # Eg. Klomar has no in Lamed
+            and not any(d in next_diacritics for d in [Diacritics.KAMATZ ,Diacritics.KAMATZ_KATAN, Diacritics.HATAF_KAMATZ])
+            # and current_letter not in BLACKLIST_START_AFFECTED_BY_SHVA
             # TODO: is is correct?
-            and Diacritics.DAGESH not in diacritics
+            # and Diacritics.DAGESH not in diacritics
         ):
             transcription += 'e'
+        
         transcription += IPA_DIACRITICS[d]
+    # log.debug(transcription)
     return transcription
 
+def get_next_letter_with_diacritics(text: str):
+    letter, diacritics = None, None
+    if text and 'א' <= text[0] <= 'ת':
+        letter = text[0]
+        diacritics = list(takewhile(lambda c: c in IPA_DIACRITICS, text[1:]))
+    return letter, diacritics
+        
 
 def get_ipa_from_word(text: str):
     """
@@ -94,12 +118,26 @@ def get_ipa_from_word(text: str):
     
     while i < len(text):
         char = text[i]
+        
         if 'א' <= char <= 'ת':
             # Move offset to diacritics
+            
             i += 1
             diacritics = list(takewhile(lambda c: c in IPA_DIACRITICS, text[i:]))
-            next_letter = text[i + 1] if (i + 1) < len(text) else None
-            transcription += get_ipa_from_letter(char, diacritics.copy(), previous_letter, previous_diacritics, next_letter)
+            
+            next_letter, next_diacritics = get_next_letter_with_diacritics(text[i+len(diacritics):])
+            
+            letter_ipa = get_ipa_from_letter(
+                char, 
+                diacritics.copy(), 
+                previous_letter, 
+                previous_diacritics, 
+                next_letter, 
+                next_diacritics
+            )
+            log.debug('letter %s', letter_ipa)
+            transcription += letter_ipa
+            
             
             # Store previous
             previous_letter = char
@@ -156,8 +194,11 @@ def text_to_ipa(text: str) -> str:
     for line in text.splitlines():
         for word in line.split():
             for expanded_word in expand_word(word).split():
+                log.debug('before normalize %s', expanded_word)
                 expanded_word = normalize(expanded_word)
+                log.debug('after normalize %s', expanded_word)
                 ipa_transcription = get_ipa_from_word(expanded_word)
+                log.debug('IPA %s', ipa_transcription)
                 ipa_words.append(ipa_transcription)
     phonemes = ' '.join(ipa_words)
     return phonemes
