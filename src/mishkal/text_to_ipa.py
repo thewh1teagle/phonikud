@@ -11,7 +11,7 @@ import unicodedata
 from .expanders import expand_word
 from .log import log
 from . import rules_shva
-from .utils import contains_any
+from .utils import contains_any, is_sofit
 
 def get_ipa_from_letter(
     current_letter: str, 
@@ -24,7 +24,7 @@ def get_ipa_from_letter(
     """
     Get IPA for letter based on current character and it's surround context
     """
-    log.debug('cur: %s (%s) next: %s (%s)', current_letter, list(hex(ord(i)) for i in diacritics), next_letter, list(hex(ord(i)) for i in (next_diacritics or [])))
+    # log.debug('cur: %s (%s) next: %s (%s)', current_letter, list(hex(ord(i)) for i in diacritics), next_letter, list(hex(ord(i)) for i in (next_diacritics or [])))
     transcription = ''
     # if current_letter == 'ו':
     #     breakpoint()
@@ -43,6 +43,11 @@ def get_ipa_from_letter(
         # Only if previous letter has no diacritics
         and (not previous_diacritics or any(d in PART_OF_LETTER_DIACRITICS for d in previous_diacritics))
     ):
+        # Double Vav
+        if previous_letter == Letters.VAV and Diacritics.DAGESH in previous_diacritics:
+            return ''
+        if next_letter == Letters.VAV and Diacritics.DAGESH in next_diacritics and Diacritics.DAGESH in diacritics:
+            return 'vu'
         
         if Diacritics.DAGESH in diacritics:
             return 'u' # Like Uga
@@ -66,7 +71,11 @@ def get_ipa_from_letter(
                 previous_diacritics or [],
                 [Diacritics.KAMATZ, Diacritics.KAMATZ_KATAN, Diacritics.HOLAM]
         )
-        condition = (not previous_letter or not next_diacritics) and has_kamatz and not previous_has_kamatz
+        condition = (
+            (not previous_letter or not next_diacritics) 
+            and has_kamatz and not previous_has_kamatz 
+            and not is_sofit(next_letter)
+        )
         if condition:
             return 'xo' if current_letter == Letters.HAF else 'ko'
 
@@ -94,7 +103,7 @@ def get_ipa_from_letter(
         # First letter with shva should sound like d(e)
         elif (
             d == Diacritics.SHVA
-            and rules_shva.should_add_e(previous_letter, previous_diacritics, next_letter, next_diacritics)
+            and rules_shva.should_add_e(current_letter, previous_letter, previous_diacritics, next_letter, next_diacritics)
         ):
             transcription += 'e'
         # ALEF with Kamatz in start with next letter Shva is like in Hozniyot without Vav
