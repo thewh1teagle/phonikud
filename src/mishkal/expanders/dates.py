@@ -28,7 +28,7 @@ DAYS = {
     6: 'יוֹם שַׁבָּת'
 }
 
-def date_to_word(word: str) -> str:
+def date_to_word(word: str, include_day_name = False) -> str:
     """
     Converts a given date string in formats (YYYY-MM-DD, YYYY.MM.DD, YYYY/MM/DD) to Hebrew date format with diacritics.
     Returns the original word if it's not a valid date.
@@ -51,8 +51,10 @@ def date_to_word(word: str) -> str:
             day = num_to_word(str(date_obj.day))
             year = num_to_word(str(date_obj.year))
         
-            
-            return f"{day_name}, {day} בֵּ{month_name} {year}"
+            text = f"{day} בֵּ{month_name} {year}"
+            if include_day_name:
+                text = f'{day_name}, {text}'
+            return text
         except ValueError:
             continue
     return word
