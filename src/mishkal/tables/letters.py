@@ -2,7 +2,7 @@ from ..characters.letters import Letters
 
 IPA_LETTERS = {
     # Letters with or without dagesh (dagesh in BET, KAF, PEY)
-    Letters.ALEF: "'",
+    Letters.ALEF: "ʔ",
     Letters.VET: 'v',
     Letters.BET_DAGESH: 'b',
     Letters.GIMEL: 'g',
@@ -21,7 +21,7 @@ IPA_LETTERS = {
     Letters.MEM: 'm',
     Letters.NUN: 'n',
     Letters.SAMEKH: 's',
-    Letters.AYIN: '?',
+    Letters.AYIN: 'ʕ',
     Letters.FEY: 'f',
     Letters.PEY_DAGESH: 'p',
     Letters.TSADI: 'ts',

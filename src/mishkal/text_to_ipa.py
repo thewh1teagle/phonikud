@@ -22,7 +22,7 @@ def get_ipa_from_letter(
     """
     Get IPA for letter based on current character and it's surround context
     """
-    log.debug('cur: %s (%s) next: %s (%s)', current_letter, list(hex(ord(i)) for i in diacritics), next_letter, list(hex(ord(i)) for i in (next_diacritics or [])))
+    # log.debug('cur: %s (%s) next: %s (%s)', current_letter, list(hex(ord(i)) for i in diacritics), next_letter, list(hex(ord(i)) for i in (next_diacritics or [])))
     transcription = ''
     # if current_letter == 'ו':
     #     breakpoint()
@@ -135,7 +135,7 @@ def get_ipa_from_word(text: str):
                 next_letter, 
                 next_diacritics
             )
-            log.debug('letter %s', letter_ipa)
+            # log.debug('letter %s', letter_ipa)
             transcription += letter_ipa
             
             
@@ -189,19 +189,25 @@ def normalize(text: str) -> str:
 
     return text
 
-def text_to_ipa(text: str) -> str:
-    ipa_words = []
+class IpaWord:
+    def __init__(self, source, ipa):
+        self.source = source
+        self.ipa = ipa
+
+def text_to_ipa(text: str, get_words = False) -> str | list[IpaWord]:
+    ipa_words: list[IpaWord] = []
     for line in text.splitlines():
         for word in line.split():
             for expanded_word in expand_word(word).split():
-                log.debug('before normalize %s', expanded_word)
+                # log.debug('before normalize %s', expanded_word)
                 expanded_word = normalize(expanded_word)
-                log.debug('after normalize %s', expanded_word)
+                # log.debug('after normalize %s', expanded_word)
                 ipa_transcription = get_ipa_from_word(expanded_word)
-                log.debug('IPA %s', ipa_transcription)
-                ipa_words.append(ipa_transcription)
-    phonemes = ' '.join(ipa_words)
-    return phonemes
+                # log.debug('IPA %s', ipa_transcription)
+                ipa_words.append(IpaWord(word, ipa_transcription))
+    if get_words:
+        return ipa_words
+    return ' '.join([i.ipa for i in ipa_words])
     
     # TODO    
     # valid_phonemes = []

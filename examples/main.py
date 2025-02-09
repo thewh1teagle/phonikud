@@ -10,6 +10,6 @@ text = """
 $
 """
 # text = "'שָׁלוֹם עוֹלָם"
-text = "כְּבָר"
+text = "לַעֲ"
 ipa_transcription = text_to_ipa(text)
 print(ipa_transcription)
