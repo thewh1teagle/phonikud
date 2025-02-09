@@ -1,1 +1,1 @@
-from .text_to_ipa import text_to_ipa
+from .ipa_from_text import text_to_ipa
