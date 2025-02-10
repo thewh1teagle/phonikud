@@ -1,6 +1,6 @@
 """
 All variants in Hebrew that important for turning word into sound
-We assume that the letters has niqqud, those we don't need to know what are the other words.
+We assume that the letters has niqqud, therefore we don't need to know what are the other words.
 """
 
 import unicodedata
