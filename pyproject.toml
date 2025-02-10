@@ -20,6 +20,7 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "gradio>=5.15.0",
+    "tqdm>=4.67.1",
 ]
 
 [tool.hatch.build.targets.wheel]
