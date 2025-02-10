@@ -1,8 +1,8 @@
 from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
 import ast
-from pathlib import Path
 from functools import lru_cache
+from mishkal import phonene_table
 
 PHONEME_TABLE = {
     # Letters
@@ -63,9 +63,8 @@ PHONEME_TABLE = {
 @lru_cache
 def get_possible_phonemes():
     phonemes = set(PHONEME_TABLE.values())
-    phonemize_path = Path(__file__).parent / 'phonemize.py'
 
-    with open(phonemize_path, 'r') as file:
+    with open(phonene_table.__file__, 'r') as file:
         file_content = file.read()
 
 
