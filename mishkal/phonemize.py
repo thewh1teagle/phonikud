@@ -4,7 +4,8 @@ Phonemes generated based on rules.
 
 1. Vav vowels in index + 1
 2. Yod vowels
-3. Dagesh (Bet, Kaf, Kaf sofit, Fey, Fey Sofit), Sin, Shin dots
+3. Alef shketa (After Kamatz)
+4. Dagesh (Bet, Kaf, Kaf sofit, Fey, Fey Sofit), Sin, Shin dots
 5. Het in end like Ko(ax)
 6. Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
 7. Silent He in end with Kamaz / Patah before
@@ -27,8 +28,9 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
     
     
     while index < len(letters):
-        current_phoneme = Phoneme(phonemes='', word=current_word_str, letter=letters, reasons=[])
         current_letter= letters[index]
+        current_phoneme = Phoneme(phonemes='', word=current_word_str, letter=current_letter, reasons=[])
+        
         next_letter = letters[index + 1] if index + 1 < len(letters) else None
         previous_letter = letters[index - 1] if index - 1 >= 0 else None
         
@@ -79,6 +81,15 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
                     current_phoneme.add_phonemes('', 'silent yod before last with next vav')
                     current_phoneme.mark_ready()
 
+        # Alef with previous Kamatz sound without niqqud
+        if current_letter.as_str() == Letters.ALEF and not current_letter.plain_niqqud():
+            if previous_letter and previous_letter.contains_patah_like_sound():
+                current_phoneme.add_phonemes('', 'Silent alef without niqqud after Kamatz like sound')
+                current_phoneme.mark_ready()
+        # Aleft with Kamatz like niqqud
+        if current_letter.as_str() == Letters.ALEF and current_letter.contains_patah_like_sound():
+            current_phoneme.add_phonemes('', 'Alef already contains patah like sound. no need base letter')
+            current_phoneme.mark_letter_ready()
             
         # Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
         if current_letter.contains_any_symbol([LetterSymbol.geresh, LetterSymbol.geresh_en]):

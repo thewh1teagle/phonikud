@@ -126,6 +126,7 @@ class Word:
         names = []
         for phoneme in self.phonemes:
             for symbol in phoneme.letter.symbols:
+                
                 names.append(unicodedata.name(symbol, '?'))
         return ', '.join(names)
     

@@ -34,12 +34,12 @@ PHONEME_TABLE = {
     Letters.FINAL_MEM: 'm',
     
     # Symbols
-    LetterSymbol.hataf_segol: 'ə',  # HATAF SEGOL
-    LetterSymbol.hataf_patah: 'ə',  # HATAF PATAH
-    LetterSymbol.hataf_qamats: 'ə',  # HATAF QAMATS
+    LetterSymbol.hataf_segol: 'a',  # HATAF SEGOL
+    LetterSymbol.hataf_patah: 'a',  # HATAF PATAH
+    LetterSymbol.hataf_qamats: 'a',  # HATAF QAMATS
     LetterSymbol.hiriq: 'i',  # HIRIQ
     LetterSymbol.tsere: 'e',  # TSERE
-    LetterSymbol.segol: 'ɛ',  # SEGOL
+    LetterSymbol.segol: 'e',  # SEGOL
     LetterSymbol.patah: 'a',  # PATAH
     LetterSymbol.qamats: 'ɑ',  # QAMATS
     LetterSymbol.holam: 'o',  # HOLAM

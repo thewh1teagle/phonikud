@@ -2,8 +2,8 @@
 Alef - Taf and END letters
 """
 class Letters:
-    ALEF = '\u05d0'
-    BET = '\u05d1'
+    ALEF = '\u05D0'
+    BET = '\u05D1'
     GIMEL = '\u05d2'
     DALET = '\u05d3'
     HEY = '\u05d4'
