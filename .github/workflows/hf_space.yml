@@ -20,6 +20,17 @@ jobs:
             cp ../examples/editor.py app.py
             echo "gradio>=5.15.0" >> requirements.txt
             echo "mishkal-hebrew" >> requirements.txt
+            
+            echo "title: Phonemize in Hebrew" >> README.md
+            echo "emoji: 🐢" >> README.md
+            echo "colorFrom: red" >> README.md
+            echo "colorTo: green" >> README.md
+            echo "sdk: gradio" >> README.md
+            echo "sdk_version: 4.44.0" >> README.md
+            echo "app_file: app.py" >> README.md
+            echo "pinned: false" >> README.md
+            echo "license: mit" >> README.md
+            
 
             # Initialize git and force push
             git config --global user.email "thewh1teagle"
