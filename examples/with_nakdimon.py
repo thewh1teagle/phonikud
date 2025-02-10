@@ -1,12 +1,12 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "mishkal-ivrit",
+#     "mishkal-hebrew",
 #     "nakdimon-onnx",
 # ]
 #
 # [tool.uv.sources]
-# mishkal-ivrit = { path = "../" }
+# mishkal-hebrew = { path = "../" }
 # ///
 """
 wget https://github.com/thewh1teagle/nakdimon-onnx/releases/download/v0.1.0/nakdimon.onnx
