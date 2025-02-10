@@ -7,4 +7,4 @@ uv run examples/possible_phonemes.py
 from mishkal.phonene_table import get_possible_phonemes
 
 phonemes = get_possible_phonemes()
-print(', '.join(phonemes))
+print(phonemes)
