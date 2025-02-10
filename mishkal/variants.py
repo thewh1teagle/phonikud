@@ -25,6 +25,12 @@ class Letter:
     def get_symbols(self):
         return self.symbols
     
+    def is_silent(self):
+        """
+        Only shva or no symbols
+        """
+        return not self.symbols or self.symbols == [LetterSymbol.sheva]
+    
     def plain_niqqud(self):
         """
         niqqud without dagesh / points / geresh

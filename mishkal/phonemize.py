@@ -44,6 +44,7 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             index > 0 
             and current_letter.as_str() == Letters.VAV  # Vav
             and (not previous_letter.plain_niqqud()) # No previous niqqud
+            and not current_phoneme.is_ready()
         ): 
             
             # Vav with no niqqud
@@ -73,8 +74,11 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
                 current_phoneme.mark_ready()
             
         
-        # Yod in middle          
-        if (index > 0 and current_letter.as_str() == Letters.YOD):
+        # Yod in middle as vowel        
+        if (
+            index > 0 and current_letter.as_str() == Letters.YOD
+            and current_letter.is_silent()
+        ):
             if not previous_letter.plain_niqqud(): # No previous niqqud
                 current_phoneme.add_phonemes('i', 'yod in middle with no previous niqqud')
                 current_phoneme.mark_ready()
