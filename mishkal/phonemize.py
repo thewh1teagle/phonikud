@@ -156,7 +156,7 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             
         # Shva na and Shva nah
         # https://he.wikipedia.org/wiki/שווא#שווא_נע
-        if current_letter.niqqud_is_shva():
+        if current_letter.niqqud_is_shva() and not current_phoneme.is_ready():
             if not next_letter and not previous_letter:
                 current_phoneme.add_phonemes('e', 'single letter with shva')
                 current_phoneme.mark_ready()

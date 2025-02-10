@@ -88,7 +88,7 @@ class Phoneme:
         
     def add_phonemes(self, phonemes: str, reason: str):
         if self.phoneme_ready:
-            raise RuntimeError(f'Trying to add phonemes for ready letter: {self.letter}', )
+            raise RuntimeError(f'Trying to add phonemes for ready letter: {self.letter}. reasons: {self.reasons}', )
         self.phonemes += phonemes
         self.reasons.append(f'add {phonemes} reason: {reason}')
         
