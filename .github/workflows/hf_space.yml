@@ -17,11 +17,13 @@ jobs:
             # Prepare space
             mkdir phonemize-in-hebrew
             cd phonemize-in-hebrew
-            cp ../examples/editor.py .
+            cp ../examples/editor.py app.py
             echo "gradio>=5.15.0" >> requirements.txt
             echo "mishkal-hebrew" >> requirements.txt
 
             # Initialize git and force push
+            git config --global user.email "thewh1teagle"
+            git config --global user.name "thewh1teagle"
             git init
             git add .
             git commit -m "latest"
