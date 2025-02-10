@@ -7,7 +7,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Expand dates into text with niqqud
 - Expand numbers into text with niqqud
 - Convert text with niqqud to modern spoken phonemes
-- (WIP) Dictionaries (words, symbols, emojies, etc...)
+- (WIP) Dictionaries with words, symbols, emojies, etc...
 - (WIP) Mixed English in Hebrew
 - (WIP) Very accurate lightweight niqqud model
 
