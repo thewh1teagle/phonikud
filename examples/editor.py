@@ -13,10 +13,13 @@ default_text = """
 theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 def on_submit_debug(text: str) -> str:
+    include_reasons = False
     words: list[Word] = phonemize(text, debug = True)
     text = ""
     for phonemized_word in words:
         text += f'{phonemized_word.as_word_str()} -> {phonemized_word.as_phonemes_str()} ({phonemized_word.symbols_names()})\n'
+    if include_reasons:
+        text += phonemized_word.get_reasons()
     return text
 
 def on_submit(text: str) -> str:

@@ -34,15 +34,21 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
         next_letter = letters[index + 1] if index + 1 < len(letters) else None
         previous_letter = letters[index - 1] if index - 1 >= 0 else None
         
+        # No way to have oo in Hebrew
+        if index > 0 and phonemes[-1].phonemes.endswith('o') and current_letter.as_str() == Letters.VAV:
+            current_phoneme.add_phonemes('', 'No way to have oo in Hebrew')    
+            current_phoneme.mark_ready()
+        
         # Vav in middle
         if (
             index > 0 
             and current_letter.as_str() == Letters.VAV  # Vav
-            and not previous_letter.plain_niqqud() # No previous niqqud
+            and (not previous_letter.plain_niqqud()) # No previous niqqud
         ): 
             
             # Vav with no niqqud
             if not current_letter.get_symbols():
+                # Vav soft last
                 if index == len(letters) - 1:
                     current_phoneme.add_phonemes('v', 'last soft vav without niqqud')    
                     current_phoneme.mark_ready()

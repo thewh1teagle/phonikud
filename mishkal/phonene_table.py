@@ -13,7 +13,7 @@ PHONEME_TABLE = {
     Letters.CHET: 'χ',
     Letters.TET: 't',
     Letters.YOD: 'j',
-    Letters.KAF: 'k',
+    Letters.KAF: 'x',
     Letters.LAMED: 'l',
     Letters.MEM: 'm',
     Letters.NUN: 'n',
@@ -34,18 +34,20 @@ PHONEME_TABLE = {
     Letters.FINAL_MEM: 'm',
     
     # Symbols
-    LetterSymbol.hataf_segol: 'a',  # HATAF SEGOL
+    LetterSymbol.hataf_segol: 'e',  # HATAF SEGOL
     LetterSymbol.hataf_patah: 'a',  # HATAF PATAH
-    LetterSymbol.hataf_qamats: 'a',  # HATAF QAMATS
+    LetterSymbol.hataf_qamats: 'o',  # HATAF QAMATS
+    LetterSymbol.qamats: 'ɑ',  # QAMATS
+    LetterSymbol.qamats_qatan: 'o',  # QAMATS QATAN
+    LetterSymbol.patah: 'a',  # PATAH
+    
     LetterSymbol.hiriq: 'i',  # HIRIQ
     LetterSymbol.tsere: 'e',  # TSERE
     LetterSymbol.segol: 'e',  # SEGOL
-    LetterSymbol.patah: 'a',  # PATAH
-    LetterSymbol.qamats: 'ɑ',  # QAMATS
     LetterSymbol.holam: 'o',  # HOLAM
     LetterSymbol.holam_haser_for_vav: 'o',  # HOLAM HASER FOR VAV
     LetterSymbol.qubuts: 'u',  # QUBUTS
-    LetterSymbol.qamats_qatan: 'ɔ',  # QAMATS QATAN
+    
     
     LetterSymbol.sheva: '',  # Handled in core
     LetterSymbol.dagesh_or_mapiq: '',  # Handled in core
@@ -53,7 +55,5 @@ PHONEME_TABLE = {
     LetterSymbol.sin_dot: '',  # Handled in core
     LetterSymbol.geresh: '',  # Handled in core
     LetterSymbol.geresh_en: '',  # Handled in core
-    
-    
 }
 

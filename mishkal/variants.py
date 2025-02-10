@@ -90,7 +90,7 @@ class Phoneme:
         if self.phoneme_ready:
             raise RuntimeError(f'Trying to add phonemes for ready letter: {self.letter}. reasons: {self.reasons}', )
         self.phonemes += phonemes
-        self.reasons.append(f'add {phonemes} reason: {reason}')
+        self.reasons.append(f'add {phonemes or "empty"} reason: {reason}')
         
     def __repr__(self):
         return f"Phoneme(phonemes={self.phonemes!r}, word={self.word!r}, letter={self.letter!r}, reasons={self.reasons})"
@@ -129,6 +129,13 @@ class Word:
                 
                 names.append(unicodedata.name(symbol, '?'))
         return ', '.join(names)
+    
+    def get_reasons(self) -> list[str]:
+        reasons = []
+        for phoneme in self.phonemes:
+            for reason in phoneme.reasons:
+                reasons.append(reason)
+        return ', '.join(reasons)
     
     def __repr__(self):
         return ', '.join([repr(i) for i in self.phonemes])
