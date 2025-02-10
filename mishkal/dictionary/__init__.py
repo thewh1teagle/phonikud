@@ -3,6 +3,7 @@ Dictionaries are tab separated key value words
 """
 from pathlib import Path
 import json
+import re
 
 files = Path(__file__).parent.glob('*.json')
 
@@ -24,5 +25,5 @@ class Dictionary:
         TODO: if key doesn't have diacritics expand even diacritized words
         """
         for key, value in self.dict.items():
-            text = text.replace(key, value)
+            text = re.sub(r'\b' + re.escape(key) + r'\b', value, text)
         return text

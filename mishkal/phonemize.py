@@ -87,7 +87,11 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
                 current_phoneme.mark_ready()
             # One before last
             elif index == len(letters) - 2:
-                if next_letter and next_letter.as_str() == Letters.VAV:
+                if (
+                    next_letter and next_letter.as_str() == Letters.VAV 
+                    # Keep j if next is vav with dagesh
+                    and LetterSymbol.dagesh_or_mapiq not in next_letter.symbols
+                ):
                     current_phoneme.add_phonemes('', 'silent yod before last with next vav')
                     current_phoneme.mark_ready()
 
