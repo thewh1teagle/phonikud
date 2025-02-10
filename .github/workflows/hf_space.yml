@@ -27,8 +27,9 @@ jobs:
             git init
             git add .
             git commit -m "latest"
-            git remote add origin https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-            git push -u origin main
+            git remote add space https://huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+            git push --force space main
+            
         env:
             HF_TOKEN: ${{ secrets.HF_TOKEN }}
             HF_USERNAME: "thewh1teagle"
