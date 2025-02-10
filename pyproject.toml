@@ -1,5 +1,5 @@
 [project]
-name = "mishkal-ivrit"
+name = "mishkal-hebrew"
 version = "0.1.5"
 description = "Convert Hebrew text into IPA for TTS systems and learning"
 readme = "README.md"
