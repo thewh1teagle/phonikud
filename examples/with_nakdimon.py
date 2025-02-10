@@ -14,11 +14,11 @@ uv run examples/with_nakdimon.py
 """
 
 from nakdimon_onnx import Nakdimon
-from mishkal import text_to_ipa
+from mishkal import phonemize
 
 nakdimon = Nakdimon("nakdimon.onnx")
 text = "שלום עולם!"
 dotted_text = nakdimon.compute(text)
 
-print('Undotted: ', text_to_ipa(text))
-print('Dotted: ', text_to_ipa(dotted_text))
+print('Undotted: ', phonemize(text))
+print('Dotted: ', phonemize(dotted_text))
