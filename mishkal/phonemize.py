@@ -191,9 +191,13 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             
             # Contains only shva
             elif index == 0:
-                current_phoneme.add_phonemes('e', 'shva in first letter without other diacritics')
-                current_phoneme.mark_as_shva_na()
-                current_phoneme.mark_ready()
+                if (current_letter.as_str() == Letters.SHIN and (next_letter.symbols and next_letter.as_str() != Letters.HEY)):
+                    current_phoneme.add_phonemes('', 'shin and sin in start most of the time shva nah')
+                    current_phoneme.mark_ready()
+                else:
+                    current_phoneme.add_phonemes('e', 'shva in first letter without other diacritics')
+                    current_phoneme.mark_as_shva_na()
+                    current_phoneme.mark_ready()
                 
             elif next_letter and next_letter.niqqud_is_shva():
                 current_phoneme.add_phonemes('', 'fiirst shva in sequence')
