@@ -158,21 +158,25 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             from_table = PHONEME_TABLE.get(current_letter.as_str(), '')
             current_phoneme.add_phonemes(from_table, f'got letter {current_letter.as_str()} from table')
             
-        # Kamatz Gadol and Katan
+        # Kamatz Katan (o)
         if current_letter.contains_patah_like_sound():
+            # Hataf Kamatz
             if current_letter.contains_any_symbol([LetterSymbol.hataf_qamats]):
-                current_phoneme.add_phonemes('o', 'Hataf segol')
+                current_phoneme.add_phonemes('o', 'Hataf qmqts')
                 current_phoneme.mark_ready()
+            
             
         # Shva na and Shva nah
         # https://he.wikipedia.org/wiki/שווא#שווא_נע
         if current_letter.niqqud_is_shva() and not current_phoneme.is_ready():
             if not next_letter and not previous_letter:
                 current_phoneme.add_phonemes('e', 'single letter with shva')
+                current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
 
             if next_letter and next_letter.as_str() == current_letter.as_str():  # Ensure there's a previous and next letter
                 current_phoneme.add_phonemes('e', 'first shva before identical letter')
+                current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
             
             # Two last letters has shva
@@ -184,6 +188,7 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             # Contains only shva
             elif index == 0:
                 current_phoneme.add_phonemes('e', 'shva in first letter without other diacritics')
+                current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
                 
             elif next_letter and next_letter.niqqud_is_shva():
@@ -192,12 +197,14 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
                 
             elif previous_letter.niqqud_is_shva():
                 current_phoneme.add_phonemes('e', 'second shva in sequence')
+                current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
                 
             # elif if previous_letter.is_large_vowel() and not previous_letter.is_stressed():
                 # current_phoneme.add_phonemes('e', 'shva after large unstressed vowel')
             elif current_letter.niqqud_has_dagesh():
                 current_phoneme.add_phonemes('e', 'shva with dagesh')
+                current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
             
             # Always handled

@@ -91,6 +91,7 @@ class Phoneme:
         self.reasons = reasons
         self.phoneme_ready = False
         self.letter_ready = False
+        self._is_shva_na = False
         
     def add_phonemes(self, phonemes: str, reason: str):
         if self.phoneme_ready:
@@ -116,6 +117,11 @@ class Phoneme:
     def mark_ready(self):
         self.phoneme_ready = True
         
+    def mark_as_shva_na(self):
+        self._is_shva_na = True
+    
+    def is_shva_na(self):
+        return self._is_shva_na
 
 class Word:
     def __init__(self, word: str, phonemes: list[Phoneme]):
