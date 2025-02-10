@@ -28,7 +28,7 @@ jobs:
             git branch -m master main
             git add .
             git commit -m "latest"
-            git remote add space https://huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+            git remote add space https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew
             git push --force space main
             
         env:
