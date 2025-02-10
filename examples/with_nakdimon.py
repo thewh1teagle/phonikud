@@ -10,7 +10,7 @@
 # ///
 """
 wget https://github.com/thewh1teagle/nakdimon-onnx/releases/download/v0.1.0/nakdimon.onnx
-uv run examples/with_model_nikud.py
+uv run examples/with_nakdimon.py
 """
 
 from nakdimon_onnx import Nakdimon

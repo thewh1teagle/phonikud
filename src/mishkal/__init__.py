@@ -1,1 +1,0 @@
-from .ipa_from_text import text_to_ipa

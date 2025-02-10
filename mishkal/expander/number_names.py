@@ -179,7 +179,7 @@ POINTS = {
     'נקודה': 'נְקֻדָּה',
 }
 
-ALL_NUMBERS = {
+NUMBER_NAMES = {
     **CURRENCY,
     **HUNDREDS,
     **LARGE,
