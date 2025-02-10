@@ -1,0 +1,35 @@
+name: Push to Hugging Face hub
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: Prepare and push to HF
+        run: |
+            # Prepare space
+            mkdir phonemize-in-hebrew
+            cd phonemize-in-hebrew
+            cp ../examples/editor.py .
+            echo "gradio>=5.15.0" >> requirements.txt
+            echo "mishkal-hebrew" >> requirements.txt
+
+            # Initialize git and force push
+            git init
+            git add .
+            git commit -m "latest"
+            git remote add origin https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+            git push -u origin main
+
+
+        env:
+            HF_TOKEN: ${{ secrets.HF_TOKEN }}
+            HF_USERNAME: "thewh1teagle"
+            SPACE_NAME: "phonemize-in-hebrew"
