@@ -17,6 +17,7 @@ class Letter:
     
     def as_str(self) -> str:
         return self.letter_str
+
     
     def as_str_with_niqqud(self) -> str:
         return self.letter_str + ''.join(self.symbols)
@@ -53,6 +54,13 @@ class Letter:
     
     def contains_all_symbol(self, symbols: iter):
         return all(i in self.symbols for i in symbols)
+    
+    def niqqud_is_shva(self):
+        niqqud = self.plain_niqqud()
+        return len(niqqud) == 1 and LetterSymbol.sheva in self.plain_niqqud()
+    
+    def niqqud_has_dagesh(self):
+        return LetterSymbol.dagesh_or_mapiq in self.symbols
     
     def contains(self, symbols: iter):
         return any(i in self.symbols + self.letter_str for i in symbols)

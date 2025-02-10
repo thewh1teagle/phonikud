@@ -34,7 +34,6 @@ PHONEME_TABLE = {
     Letters.FINAL_MEM: 'm',
     
     # Symbols
-    LetterSymbol.sheva: 'ʔ',  # SHEVA
     LetterSymbol.hataf_segol: 'ə',  # HATAF SEGOL
     LetterSymbol.hataf_patah: 'ə',  # HATAF PATAH
     LetterSymbol.hataf_qamats: 'ə',  # HATAF QAMATS
@@ -48,6 +47,7 @@ PHONEME_TABLE = {
     LetterSymbol.qubuts: 'u',  # QUBUTS
     LetterSymbol.qamats_qatan: 'ɔ',  # QAMATS QATAN
     
+    LetterSymbol.sheva: '',  # Handled in core
     LetterSymbol.dagesh_or_mapiq: '',  # Handled in core
     LetterSymbol.shin_dot: '',  # Handled in core
     LetterSymbol.sin_dot: '',  # Handled in core
