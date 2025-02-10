@@ -3,8 +3,8 @@ Break word into letters and construct phonemes using letter module
 """
 
 from .. import lexicon
-from ..variants import Letter, PhonemizedWord
-from ..letter import phonemize_letters
+from ..variants import Letter, Word
+from mishkal.phonemize import phonemize_letters
 
 def break_into_letters(word: str) -> list[Letter]:
     """
@@ -34,7 +34,7 @@ def break_into_letters(word: str) -> list[Letter]:
 
     return letters
 
-def phonemize_word(word: str) -> PhonemizedWord:
+def phonemize_word(word: str) -> Word:
     """
     Convert Hebrew word into phonemes
     We assume that:

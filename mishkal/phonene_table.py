@@ -1,5 +1,5 @@
-from ..lexicon.symbols import LetterSymbol
-from ..lexicon.letters import Letters
+from .lexicon.symbols import LetterSymbol
+from .lexicon.letters import Letters
 
 PHONEME_TABLE = {
     # Letters
@@ -19,7 +19,7 @@ PHONEME_TABLE = {
     Letters.NUN: 'n',
     Letters.SAMECH: 's',
     Letters.AYIN: 'ʕ',
-    Letters.PEY: 'p',
+    Letters.PEY: 'f',
     Letters.TZADI: 'ts',
     Letters.QOF: 'k',
     Letters.RESH: 'ʁ',

@@ -3,10 +3,10 @@ High level phonemize functions
 """
 
 import unicodedata
-from .word import PhonemizedWord, phonemize_word
+from .word import Word, phonemize_word
            
 
-def phonemize(text: str, debug = False) -> str | list[PhonemizedWord]:
+def phonemize(text: str, debug = False) -> str | list[Word]:
     """
     1. Normalize text
     2. Expand words with expander and dictionary
@@ -20,12 +20,12 @@ def phonemize(text: str, debug = False) -> str | list[PhonemizedWord]:
     if not text:
         return [] if debug else ''
     
-    phonemized: list[PhonemizedWord] = []
+    phonemized: list[Word] = []
     
     for line in text.splitlines():
         for word in line.split():
             phonemes = phonemize_word(word)
-            phonemized_word = PhonemizedWord(word, phonemes)
+            phonemized_word = Word(word, phonemes)
             phonemized.append(phonemized_word)
     if debug:
         return phonemized

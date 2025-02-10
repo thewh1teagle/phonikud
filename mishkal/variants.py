@@ -42,6 +42,15 @@ class Letter:
     def contains_any_symbol(self, symbols: iter):
         return any(i in self.symbols for i in symbols)
     
+    def contains_patah_like_sound(self):
+        return any(
+            i in [
+                LetterSymbol.hataf_patah, LetterSymbol.hataf_qamats, 
+                LetterSymbol.patah, LetterSymbol.qamats, LetterSymbol.qamats_qatan
+            ] 
+            for i in self.symbols
+        )
+    
     def contains_all_symbol(self, symbols: iter):
         return all(i in self.symbols for i in symbols)
     
@@ -94,7 +103,7 @@ class Phoneme:
         self.phoneme_ready = True
         
 
-class PhonemizedWord:
+class Word:
     def __init__(self, word: str, phonemes: list[Phoneme]):
         self.word = word
         self.phonemes = phonemes

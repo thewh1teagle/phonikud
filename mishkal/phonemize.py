@@ -1,19 +1,23 @@
 """
-The core of Mishkal.
+The actual letters phonemization happens here.
 Phonemes generated based on rules.
 
 1. Vav vowels in index + 1
 2. Yod vowels
 3. Dagesh (Bet, Kaf, Kaf sofit, Fey, Fey Sofit), Sin, Shin dots
 5. Het in end like Ko(ax)
-6. Kamatz Gadol and Kamatz Katan (Kol VS Kala)
-7. Shva Nah and Shva Na
+6. Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
+7. Silent He in end with Kamaz / Patah before
+8. Kamatz Gadol and Kamatz Katan (Kol VS Kala)
+9. Shva Nah and Shva Na
+
+All IPA declared only here with add_phonemes() and in phoneme_table.
 """
 
 from mishkal.variants import Letter, Phoneme
-from ..lexicon.symbols import LetterSymbol
-from ..lexicon.letters import Letters
-from .ipa_table import PHONEME_TABLE
+from .lexicon.symbols import LetterSymbol
+from .lexicon.letters import Letters
+from .phonene_table import PHONEME_TABLE
 import unicodedata
 
 def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
@@ -58,6 +62,26 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             elif previous_letter.contains_any_symbol([LetterSymbol.hiriq]):
                 current_phoneme.add_phonemes('', 'yod with previous hirik')
                 current_phoneme.mark_ready()
+
+            
+        # Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
+        if current_letter.contains_any_symbol([LetterSymbol.geresh, LetterSymbol.geresh_en]):
+            if current_letter.as_str()  == Letters.GIMEL:
+                current_phoneme.add_phonemes('d͡ʒ', 'Geresh in gimel like girafa')
+                current_phoneme.mark_letter_ready()
+            if current_letter.as_str() in [Letters.TZADI, Letters.FINAL_TZADI]:
+                current_phoneme.add_phonemes('t͡ʃ', 'Geresh in Tsadi ike chita')
+                current_phoneme.mark_letter_ready()
+            if current_letter.as_str() == Letters.ZAYIN:
+                current_phoneme.add_phonemes('ʒ', 'Geresh in Zain like Zargon')
+                current_phoneme.mark_letter_ready()
+                     
+                
+        # Silent He in end with Kamaz / Patah before
+        if index == len(letters) - 1 and previous_letter and previous_letter.contains_patah_like_sound():
+            current_phoneme.add_phonemes('', 'silent he')
+            current_phoneme.mark_ready()
+            
 
         # Sin dot
         if current_letter.contains_any_symbol([LetterSymbol.sin_dot]):
@@ -105,6 +129,5 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             
         phonemes.append(current_phoneme)
         index += 1
-        
     print(phonemes)
     return phonemes
