@@ -19,7 +19,7 @@ jobs:
             cd phonemize-in-hebrew
             cp ../examples/editor.py app.py
             echo -e "gradio>=5.15.0\nmishkal-hebrew" >> requirements.txt            
-            echo -e "title: Phonemize in Hebrew\nemoji: 🐢\ncolorFrom: red\ncolorTo: green\nsdk: gradio\nsdk_version: 4.44.0\napp_file: app.py\npinned: false\nlicense: mit" >> README.md
+            echo -e "title: Phonemize in Hebrew\n\nemoji: 🐢\n\ncolorFrom: red\n\ncolorTo: green\n\nsdk: gradio\n\nsdk_version: 4.44.0\n\napp_file: app.py\n\npinned: false\n\nlicense: mit" >> README.md
 
             
 
