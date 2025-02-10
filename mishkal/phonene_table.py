@@ -84,4 +84,7 @@ def get_possible_phonemes():
     visitor.visit(tree)
     
     phonemes = sorted([i for i in phonemes if i])
+    phonemes.append(' ') # Space
     return phonemes
+
+POSSIBLE_PHONEMES = get_possible_phonemes()

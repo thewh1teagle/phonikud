@@ -7,7 +7,9 @@ import unicodedata
 from mishkal.phonemize import phonemize_letters
 from mishkal.variants import Word
 from .word import extract_letters
-from .expander import expand_word
+from mishkal.expander import Expander
+
+expander = Expander()
 
 def phonemize(text: str, debug = False) -> str | list[Word]:
     """
@@ -25,13 +27,12 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
     phonemized: list[Word] = []
     
     for line in text.splitlines():
+        line = expander.expand_text(line)
         for word in line.split():
-            words = expand_word(word)
-            for word in words:
-                letters = extract_letters(word)
-                phonemes = phonemize_letters(letters)
-                phonemized_word = Word(word, phonemes)
-                phonemized.append(phonemized_word)
+            letters = extract_letters(word)
+            phonemes = phonemize_letters(letters)
+            phonemized_word = Word(word, phonemes)
+            phonemized.append(phonemized_word)
     if debug:
         return phonemized
     return ' '.join(w.as_phonemes_str() for w in phonemized)

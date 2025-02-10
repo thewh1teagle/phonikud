@@ -5,8 +5,17 @@ This happens before phonemization
 
 from .numbers import num_to_word
 from .dates import date_to_word
+from mishkal.dictionary import Dictionary
 
-def expand_word(word: str):
-    word = date_to_word(word)
-    word = num_to_word(word)
-    return word.split()
+class Expander:
+    def __init__(self):
+        self.dictionary = Dictionary()
+        
+    def expand_text(self, text: str):
+        text = self.dictionary.expand(text)
+        words = []
+        for word in text.split():
+            word = date_to_word(word)
+            word = num_to_word(word)
+            words.append(word)
+        return ' '.join(words)
