@@ -1,5 +1,7 @@
 # Mishkal
-grapheme to phoneme in Hebrew
+
+Grapheme to phoneme in Hebrew
+
 Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
