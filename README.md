@@ -1,6 +1,6 @@
 # Mishkal
 grapheme to phoneme in Hebrew
-Convert Hebrew text into IPA, this useful for TTS systems and learning.
+Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Install
 ```console
