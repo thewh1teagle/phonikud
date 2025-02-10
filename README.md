@@ -10,8 +10,8 @@ pip install mishkal-ivrit
 ## Examples
 ```python
 from mishkal import phonemize
-phonemes = phonemize('שָׁלוֹם עוֹלָם') # ʃalom ?olam
-print(phonemes) # 
+phonemes = phonemize('שָׁלוֹם עוֹלָם') 
+print(phonemes) # ʃalom ?olam
 ```
 
 See [examples](examples)
