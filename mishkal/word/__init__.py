@@ -2,30 +2,11 @@
 Break word into letters and construct phonemes using letter module
 """
 
-import unicodedata
 from .. import lexicon
-from .phoneme import Letter, Phoneme
+from ..variants import Letter, PhonemizedWord
 from ..letter import phonemize_letters
 
-class PhonemizedWord:
-    def __init__(self, word: str, phonemes: list[Phoneme]):
-        self.word = word
-        self.phonemes = phonemes
-    
-    def as_phonemes_str(self) -> str:
-        return ''.join(p.phonemes for p in self.phonemes)
-    
-    def as_word_str(self) -> str:
-        return self.word
-    
-    def symbols_names(self) -> list[str]:
-        names = []
-        for phoneme in self.phonemes:
-            for symbol in phoneme.letter.symbols:
-                names.append(unicodedata.name(symbol, '?'))
-        return ', '.join(names)
-
-def get_letters(word: str) -> list[Letter]:
+def break_into_letters(word: str) -> list[Letter]:
     """
     Splits a Hebrew word into Letter objects where each letter retains its symbols (if present).
     Assumptions:
@@ -72,6 +53,6 @@ def phonemize_word(word: str) -> PhonemizedWord:
     # Filter characters that are in lexicon
     # TODO: logging
     word = ''.join([c for c in word if lexicon.LEXICON.get(c)])
-    letters = get_letters(word)
+    letters = break_into_letters(word)
     phonemes = phonemize_letters(letters)
     return phonemes

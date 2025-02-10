@@ -11,8 +11,7 @@ Phonemes generated based on rules.
 7. Shva Nah and Shva Na
 """
 
-from mishkal.word.phoneme import Letter, Phoneme
-
+from mishkal.variants import Letter, Phoneme
 
 def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
     phonemes: list[Phoneme] = []
