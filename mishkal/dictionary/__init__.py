@@ -25,5 +25,5 @@ class Dictionary:
         TODO: if key doesn't have diacritics expand even diacritized words
         """
         for key, value in self.dict.items():
-            text = re.sub(r'\b' + re.escape(key) + r'\b', value, text)
+            text = re.sub(re.escape(key), value, text)
         return text
