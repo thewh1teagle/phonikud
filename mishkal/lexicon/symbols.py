@@ -2,9 +2,7 @@
 Every possible symbols to letters in Hebrew
 """
 
-from enum import Enum
-
-class LetterSymbol(Enum):
+class LetterSymbol:
     sheva = '\u05B0' # SHEVA
     hataf_segol = '\u05B1' # HATAF SEGOL
     hataf_patah = '\u05B2' # HATAF PATAH
@@ -25,4 +23,10 @@ class LetterSymbol(Enum):
     geresh = '\u05F3' # HEBREW GERESH
     geresh_en = "'" # ENGLISH GERESH
 
-chars = [c.value for c in LetterSymbol]
+    @classmethod
+    def values(cls) -> list[str]:
+        # TODO: get rid of this
+        return [value for name, value in cls.__dict__.items() if not name.startswith('__') and not callable(value) and not isinstance(value, classmethod)]
+
+
+chars = [c for c in LetterSymbol.values()]

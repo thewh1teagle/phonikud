@@ -29,5 +29,6 @@ def phonemize(text: str, debug = False) -> str | list[PhonemizedWord]:
             phonemized.append(phonemized_word)
     if debug:
         return phonemized
+    
 
     return ' '.join(w.as_phonemes_str() for w in phonemized)

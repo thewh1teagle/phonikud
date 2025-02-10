@@ -20,9 +20,9 @@ unicodedata.normalize('NFD', '\uFB30')
 ** Currently punctuation are ignored **
 """
 
-from mishkal.lexicon import (
-    letter_symbol,
-    letters
+from . import (
+    letters,
+    symbols
 )
 import unicodedata
 
@@ -33,7 +33,7 @@ LETTERS = {
 }
 LETTER_SYMBOLS = {
     char: unicodedata.name(char) for char in 
-    letter_symbol.chars
+    symbols.chars
 }
 LEXICON = {
     **LETTERS,
