@@ -3,8 +3,7 @@ Break word into letters and construct phonemes using letter module
 """
 
 from .. import lexicon
-from ..variants import Letter, Word
-from mishkal.phonemize import phonemize_letters
+from ..variants import Letter
 
 def break_into_letters(word: str) -> list[Letter]:
     """
@@ -34,9 +33,9 @@ def break_into_letters(word: str) -> list[Letter]:
 
     return letters
 
-def phonemize_word(word: str) -> Word:
+def extract_letters(word: str) -> list[Letter]:
     """
-    Convert Hebrew word into phonemes
+    Extract letters from word
     We assume that:
         - Dates expanded to words
         - Numbers expanded to word
@@ -46,7 +45,7 @@ def phonemize_word(word: str) -> Word:
         - English words converted to phonemes already
         - Text normalized using unicodedata.normalize('NFD')
     
-    This function phonemize *ONLY* hebrew characters / regular punctuation from LEXICON
+    This function extract *ONLY* hebrew letters and niqqud from LEXICON
     Other characters ignored!
     """
     
@@ -54,5 +53,4 @@ def phonemize_word(word: str) -> Word:
     # TODO: logging
     word = ''.join([c for c in word if lexicon.LEXICON.get(c)])
     letters = break_into_letters(word)
-    phonemes = phonemize_letters(letters)
-    return phonemes
+    return letters

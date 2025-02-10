@@ -203,5 +203,5 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             
         phonemes.append(current_phoneme)
         index += 1
-    print(phonemes)
+    # print(phonemes)
     return phonemes

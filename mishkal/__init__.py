@@ -3,7 +3,10 @@ High level phonemize functions
 """
 
 import unicodedata
-from .word import Word, phonemize_word
+
+from mishkal.phonemize import phonemize_letters
+from mishkal.variants import Word
+from .word import extract_letters
 from .expander import expand_word
 
 def phonemize(text: str, debug = False) -> str | list[Word]:
@@ -25,11 +28,10 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
         for word in line.split():
             words = expand_word(word)
             for word in words:
-                phonemes = phonemize_word(word)
+                letters = extract_letters(word)
+                phonemes = phonemize_letters(letters)
                 phonemized_word = Word(word, phonemes)
                 phonemized.append(phonemized_word)
     if debug:
         return phonemized
-    
-
     return ' '.join(w.as_phonemes_str() for w in phonemized)
