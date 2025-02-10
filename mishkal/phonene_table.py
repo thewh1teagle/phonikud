@@ -1,5 +1,8 @@
 from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
+import ast
+from pathlib import Path
+from functools import lru_cache
 
 PHONEME_TABLE = {
     # Letters
@@ -37,7 +40,7 @@ PHONEME_TABLE = {
     LetterSymbol.hataf_segol: 'e',  # HATAF SEGOL
     LetterSymbol.hataf_patah: 'a',  # HATAF PATAH
     LetterSymbol.hataf_qamats: 'o',  # HATAF QAMATS
-    LetterSymbol.qamats: 'ɑ',  # QAMATS
+    LetterSymbol.qamats: 'a',  # QAMATS
     LetterSymbol.qamats_qatan: 'o',  # QAMATS QATAN
     LetterSymbol.patah: 'a',  # PATAH
     
@@ -57,3 +60,29 @@ PHONEME_TABLE = {
     LetterSymbol.geresh_en: '',  # Handled in core
 }
 
+@lru_cache
+def get_possible_phonemes():
+    phonemes = set(PHONEME_TABLE.values())
+    phonemize_path = Path(__file__).parent / 'phonemize.py'
+
+    with open(phonemize_path, 'r') as file:
+        file_content = file.read()
+
+
+    tree = ast.parse(file_content)
+
+    class FuncCallVisit(ast.NodeVisitor):
+        def visit_Call(self, node):
+            if isinstance(node.func, ast.Attribute) and node.func.attr == 'add_phonemes':
+                if node.args:
+                    first_arg = node.args[0]
+                    if isinstance(first_arg, ast.Constant):
+                        phonemes.add(first_arg.s)  # Collect string arguments
+            # Continue traversing the AST
+            self.generic_visit(node)
+
+    visitor = FuncCallVisit()
+    visitor.visit(tree)
+    
+    phonemes = sorted([i for i in phonemes if i])
+    return phonemes
