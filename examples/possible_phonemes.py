@@ -1,6 +1,8 @@
 """
 Analyze phonemize.py -> add_phonemes() calls
 and collect every phoneme used in Mishkal.
+
+uv run examples/possible_phonemes.py
 """
 import ast
 from pathlib import Path
