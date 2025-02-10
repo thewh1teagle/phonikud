@@ -61,12 +61,16 @@ PHONEME_TABLE = {
 }
 
 @lru_cache
-def get_possible_phonemes():
+def get_phoneme_set():
+    """
+    Return all phonemes used in Hebrew From PHONEME_TABLE 
+    And also by analyzing phonemize.py with function calls to add_phonemes()
+    """
     phonemes = set(PHONEME_TABLE.values())
 
+    # Analyze phoneme_table.py
     with open(phonene_table.__file__, 'r') as file:
         file_content = file.read()
-
 
     tree = ast.parse(file_content)
 
@@ -86,5 +90,3 @@ def get_possible_phonemes():
     phonemes = sorted([i for i in phonemes if i])
     phonemes.append(' ') # Space
     return phonemes
-
-POSSIBLE_PHONEMES = get_possible_phonemes()

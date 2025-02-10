@@ -4,10 +4,11 @@ High level phonemize functions
 
 import unicodedata
 
+from mishkal.word import extract_letters
 from mishkal.phonemize import phonemize_letters
 from mishkal.variants import Word
-from .word import extract_letters
 from mishkal.expander import Expander
+from mishkal.phonene_table import get_phoneme_set # noqa: F401
 
 expander = Expander()
 

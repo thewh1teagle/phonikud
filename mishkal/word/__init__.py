@@ -4,7 +4,6 @@ Break word into letters and construct phonemes using letter module
 
 from .. import lexicon
 from ..variants import Letter
-from ..phonene_table import POSSIBLE_PHONEMES
 
 def break_into_letters(word: str) -> list[Letter]:
     """

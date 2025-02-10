@@ -4,7 +4,7 @@ and collect every phoneme used in Mishkal.
 
 uv run examples/possible_phonemes.py
 """
-from mishkal.phonene_table import get_possible_phonemes
+from mishkal import get_phoneme_set
 
-phonemes = get_possible_phonemes()
+phonemes = get_phoneme_set()
 print(phonemes)
