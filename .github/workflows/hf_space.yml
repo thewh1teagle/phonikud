@@ -25,6 +25,7 @@ jobs:
             git config --global user.email "thewh1teagle"
             git config --global user.name "thewh1teagle"
             git init
+            git branch -m master main
             git add .
             git commit -m "latest"
             git remote add space https://huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
