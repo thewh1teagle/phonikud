@@ -18,6 +18,10 @@ Convert Hebrew text into IPA for TTS systems and learning.
 pip install mishkal-hebrew
 ```
 
+## Play
+
+See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
+
 ## Examples
 ```python
 from mishkal import phonemize
