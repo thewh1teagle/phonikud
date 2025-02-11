@@ -8,9 +8,12 @@ from mishkal.word import extract_letters
 from mishkal.phonemize import phonemize_letters
 from mishkal.variants import Word
 from mishkal.expander import Expander
-from mishkal.phonene_table import get_phoneme_set # noqa: F401
+from mishkal.phoneme_table import get_phoneme_set # noqa: F401
 
 expander = Expander()
+
+def normalize(text: str) -> str:
+    return unicodedata.normalize('NFD', text)
 
 def phonemize(text: str, debug = False) -> str | list[Word]:
     """
@@ -20,7 +23,7 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
     4. Iterate words
     5. Phonemize each word
     """
-    text = unicodedata.normalize('NFD', text)
+    text = normalize(text)
     
     if not text:
         return [] if debug else ''

@@ -2,7 +2,7 @@ from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
 import ast
 from functools import lru_cache
-from mishkal import phonene_table
+from mishkal import phoneme_table
 
 PHONEME_TABLE = {
     # Letters
@@ -69,7 +69,7 @@ def get_phoneme_set():
     phonemes = set(PHONEME_TABLE.values())
 
     # Analyze phoneme_table.py
-    with open(phonene_table.__file__, 'r') as file:
+    with open(phoneme_table.__file__, 'r') as file:
         file_content = file.read()
 
     tree = ast.parse(file_content)

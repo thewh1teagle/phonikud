@@ -18,7 +18,7 @@ All IPA declared only here with add_phonemes() and in phoneme_table.
 from mishkal.variants import Letter, Phoneme
 from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
-from .phonene_table import PHONEME_TABLE
+from .phoneme_table import PHONEME_TABLE
 import unicodedata
 
 def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:

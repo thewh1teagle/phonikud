@@ -24,6 +24,8 @@ from . import (
     letters,
     symbols
 )
+from .letters import Letters
+from .symbols import LetterSymbol
 import unicodedata
 
 # Lexicon dictionary
