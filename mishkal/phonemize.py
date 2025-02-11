@@ -100,10 +100,14 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             if previous_letter and previous_letter.contains_patah_like_sound():
                 current_phoneme.add_phonemes('', 'Silent alef without niqqud after Kamatz like sound')
                 current_phoneme.mark_ready()
-        # Aleft with Kamatz like niqqud
+            elif index == len(letters) - 2: # two before end
+                current_phoneme.add_phonemes('', 'Silent alef without niqqud before end')
+                current_phoneme.mark_ready()
+        # Alef with Kamatz like niqqud
         if current_letter.as_str() == Letters.ALEF and current_letter.contains_patah_like_sound():
             current_phoneme.add_phonemes('', 'Alef already contains patah like sound. no need base letter')
             current_phoneme.mark_letter_ready()
+            
             
         # Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
         if current_letter.contains_any_symbol([LetterSymbol.geresh, LetterSymbol.geresh_en]):
