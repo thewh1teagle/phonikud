@@ -186,7 +186,12 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             if current_letter.contains_any_symbol([LetterSymbol.hataf_qamats]):
                 current_phoneme.add_phonemes('o', 'Hataf qmqts')
                 current_phoneme.mark_ready()
-            
+            if current_letter.contains_any_symbol([LetterSymbol.qamats]):
+                if next_letter and next_letter.niqqud_has_dagesh():
+                    current_phoneme.add_phonemes('o', 'Qamats is katan if next has dagesh')
+                    current_phoneme.mark_ready()
+                # TODO: before Shva nah
+                    
             
         # Shva na and Shva nah
         # https://he.wikipedia.org/wiki/שווא#שווא_נע

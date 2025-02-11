@@ -34,26 +34,27 @@ PHONEME_TABLE = {
     Letters.FINAL_MEM: 'm',
     
     # Symbols
-    LetterSymbol.hataf_segol: 'e',  # HATAF SEGOL
-    LetterSymbol.hataf_patah: 'a',  # HATAF PATAH
-    LetterSymbol.hataf_qamats: 'o',  # HATAF QAMATS
-    LetterSymbol.qamats: 'a',  # QAMATS
-    LetterSymbol.qamats_qatan: 'o',  # QAMATS QATAN
-    LetterSymbol.patah: 'a',  # PATAH
+    LetterSymbol.hataf_segol: 'e',          # HATAF SEGOL
+    LetterSymbol.hataf_patah: 'a',          # HATAF PATAH
     
-    LetterSymbol.hiriq: 'i',  # HIRIQ
-    LetterSymbol.tsere: 'e',  # TSERE
-    LetterSymbol.segol: 'e',  # SEGOL
-    LetterSymbol.holam: 'o',  # HOLAM
+    LetterSymbol.patah: 'a',                # PATAH
+    LetterSymbol.hataf_qamats: 'a',         # HATAF QAMATS
+    LetterSymbol.qamats: 'a',               # QAMATS
+    LetterSymbol.qamats_qatan: 'o',         # QAMATS QATAN
+    LetterSymbol.holam: 'o',                # HOLAM
     LetterSymbol.holam_haser_for_vav: 'o',  # HOLAM HASER FOR VAV
-    LetterSymbol.qubuts: 'u',  # QUBUTS
+    LetterSymbol.hiriq: 'i',                # HIRIQ
+    LetterSymbol.tsere: 'e',                # TSERE
+    LetterSymbol.hataf_segol: 'e',          # HATAF SEGOL
+    LetterSymbol.segol: 'e',                # SEGOL
+    LetterSymbol.qubuts: 'u',               # QUBUTS
     
     
-    LetterSymbol.sheva: '',  # Handled in core
-    LetterSymbol.dagesh_or_mapiq: '',  # Handled in core
-    LetterSymbol.shin_dot: '',  # Handled in core
-    LetterSymbol.sin_dot: '',  # Handled in core
-    LetterSymbol.geresh: '',  # Handled in core
-    LetterSymbol.geresh_en: '',  # Handled in core
+    LetterSymbol.sheva: '',                 # Handled in core
+    LetterSymbol.dagesh_or_mapiq: '',       # Handled in core
+    LetterSymbol.shin_dot: '',              # Handled in core
+    LetterSymbol.sin_dot: '',               # Handled in core
+    LetterSymbol.geresh: '',                # Handled in core
+    LetterSymbol.geresh_en: '',             # Handled in core
 }
 
