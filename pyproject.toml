@@ -1,6 +1,6 @@
 [project]
 name = "mishkal-hebrew"
-version = "0.1.6"
+version = "0.1.7"
 description = "Convert Hebrew text into IPA for TTS systems and learning"
 readme = "README.md"
 authors = [
