@@ -20,7 +20,7 @@ PHONEME_TABLE = {
     Letters.SAMECH: 's',
     Letters.AYIN: 'ʕ',
     Letters.PEY: 'f',
-    Letters.TZADI: 't͡s',
+    Letters.TZADI: 'ts',
     Letters.QOF: 'k',
     Letters.RESH: 'r',
     Letters.SHIN: 'ʃ',
@@ -29,7 +29,7 @@ PHONEME_TABLE = {
     # Final.value letters
     Letters.FINAL_KAF: 'x',
     Letters.FINAL_PEY: 'f',
-    Letters.FINAL_TZADI: 't͡s',
+    Letters.FINAL_TZADI: 'ts',
     Letters.FINAL_NUN: 'n',
     Letters.FINAL_MEM: 'm',
     
