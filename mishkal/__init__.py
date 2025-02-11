@@ -8,7 +8,7 @@ from mishkal.word import extract_letters
 from mishkal.phonemize import phonemize_letters
 from mishkal.variants import Word
 from mishkal.expander import Expander
-from mishkal.phoneme_table import get_phoneme_set # noqa: F401
+from mishkal.phoneme_set import get_phoneme_set # noqa: F401
 
 expander = Expander()
 

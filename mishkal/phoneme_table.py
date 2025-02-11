@@ -1,8 +1,5 @@
 from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
-import ast
-from functools import lru_cache
-from mishkal import phoneme_table
 
 PHONEME_TABLE = {
     # Letters
@@ -13,7 +10,7 @@ PHONEME_TABLE = {
     Letters.HEY: 'h',
     Letters.VAV: 'v',
     Letters.ZAYIN: 'z',
-    Letters.CHET: 'χ',
+    Letters.CHET: 'x',
     Letters.TET: 't',
     Letters.YOD: 'j',
     Letters.KAF: 'x',
@@ -23,16 +20,16 @@ PHONEME_TABLE = {
     Letters.SAMECH: 's',
     Letters.AYIN: 'ʕ',
     Letters.PEY: 'f',
-    Letters.TZADI: 'ts',
+    Letters.TZADI: 't͡s',
     Letters.QOF: 'k',
-    Letters.RESH: 'ʁ',
+    Letters.RESH: 'r',
     Letters.SHIN: 'ʃ',
     Letters.TAV: 't',
     
     # Final.value letters
     Letters.FINAL_KAF: 'x',
     Letters.FINAL_PEY: 'f',
-    Letters.FINAL_TZADI: 'ts',
+    Letters.FINAL_TZADI: 't͡s',
     Letters.FINAL_NUN: 'n',
     Letters.FINAL_MEM: 'm',
     
@@ -60,33 +57,3 @@ PHONEME_TABLE = {
     LetterSymbol.geresh_en: '',  # Handled in core
 }
 
-@lru_cache
-def get_phoneme_set():
-    """
-    Return all phonemes used in Hebrew From PHONEME_TABLE 
-    And also by analyzing phonemize.py with function calls to add_phonemes()
-    """
-    phonemes = set(PHONEME_TABLE.values())
-
-    # Analyze phoneme_table.py
-    with open(phoneme_table.__file__, 'r') as file:
-        file_content = file.read()
-
-    tree = ast.parse(file_content)
-
-    class FuncCallVisit(ast.NodeVisitor):
-        def visit_Call(self, node):
-            if isinstance(node.func, ast.Attribute) and node.func.attr == 'add_phonemes':
-                if node.args:
-                    first_arg = node.args[0]
-                    if isinstance(first_arg, ast.Constant):
-                        phonemes.add(first_arg.s)  # Collect string arguments
-            # Continue traversing the AST
-            self.generic_visit(node)
-
-    visitor = FuncCallVisit()
-    visitor.visit(tree)
-    
-    phonemes = sorted([i for i in phonemes if i])
-    phonemes.append(' ') # Space
-    return phonemes
