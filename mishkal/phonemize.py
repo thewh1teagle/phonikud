@@ -214,8 +214,8 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
             
             # Contains only shva
             elif index == 0:
-                if (current_letter.as_str() == Letters.SHIN and (next_letter.symbols and next_letter.as_str() != Letters.HEY)):
-                    current_phoneme.add_phonemes('', 'Shin and sin in start most of the time shva nah')
+                if (current_letter.as_str() in ['אבוילמנער']):
+                    current_phoneme.add_phonemes('e', 'Not possible to pronunce אבוילמנער as shva nah')
                     current_phoneme.mark_ready()
                 else:
                     current_phoneme.add_phonemes('e', 'Shva in first letter without other diacritics')
@@ -231,8 +231,6 @@ def phonemize_letters(letters: list[Letter]) -> list[Phoneme]:
                 current_phoneme.mark_as_shva_na()
                 current_phoneme.mark_ready()
                 
-            # elif if previous_letter.is_large_vowel() and not previous_letter.is_stressed():
-                # current_phoneme.add_phonemes('e', 'shva after large unstressed vowel')
             elif current_letter.niqqud_has_dagesh():
                 current_phoneme.add_phonemes('e', 'Shva with dagesh')
                 current_phoneme.mark_as_shva_na()
