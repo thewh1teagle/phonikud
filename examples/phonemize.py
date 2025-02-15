@@ -5,6 +5,6 @@ Manual Nakdan https://www.yo-yoo.co.il/tools/niqqud
 """
 from mishkal import phonemize
 
-text = 'שָׁלוֹם עוֹלָם'
+text = 'כל'
 phonemes = phonemize(text)
 print(phonemes)

@@ -6,6 +6,7 @@ We assume that the letters has niqqud, therefore we don't need to know what are 
 import unicodedata
 from mishkal.lexicon.symbols import LetterSymbol
 
+
 class Letter:
     def __init__(self, letter_str: str, symbols: list[str] = []):
         self.letter_str = letter_str

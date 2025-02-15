@@ -5,7 +5,7 @@ Break word into letters and construct phonemes using letter module
 from .. import lexicon
 from ..variants import Letter
 
-def break_into_letters(word: str) -> list[Letter]:
+def break_into_tokens(word: str) -> list[Letter]:
     """
     Splits a Hebrew word into Letter objects where each letter retains its symbols (if present).
     Assumptions:
@@ -28,6 +28,10 @@ def break_into_letters(word: str) -> list[Letter]:
                 symbols.append(word[i])
                 i += 1  # Move to the next character
             letters.append(Letter(char, symbols))
+        # TODO
+        # elif char in lexicon.PUNCTUATION:
+        #     letters.append(Letter(char, []))
+        # TODO: English
         else:
             i += 1  # Skip non-letter characters (shouldn't happen in normal words)
 
@@ -52,5 +56,5 @@ def extract_letters(word: str) -> list[Letter]:
     # Filter characters that are in lexicon
     # TODO: logging
     word = ''.join([c for c in word if lexicon.LEXICON.get(c)])
-    letters = break_into_letters(word)
+    letters = break_into_tokens(word)
     return letters

@@ -28,6 +28,11 @@ from .letters import Letters
 from .symbols import LetterSymbol
 import unicodedata
 
+PUNCTUATION = {
+    char: unicodedata.name(char) for char in 
+    r"""!"'(),-.:?`""" # See string.punctuation
+}
+
 # Lexicon dictionary
 LETTERS = {
     char: unicodedata.name(char) for char in 
@@ -39,7 +44,6 @@ LETTER_SYMBOLS = {
 }
 LEXICON = {
     **LETTERS,
-    # TODO: handle punctuation
-    # **PUNCTUATION, 
+    **PUNCTUATION, 
     **LETTER_SYMBOLS,
 }

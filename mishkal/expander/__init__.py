@@ -12,7 +12,7 @@ class Expander:
         self.dictionary = Dictionary()
         
     def expand_text(self, text: str):
-        text = self.dictionary.expand(text)
+        text = self.dictionary.expand_text(text)
         words = []
         for word in text.split():
             word = date_to_word(word)
