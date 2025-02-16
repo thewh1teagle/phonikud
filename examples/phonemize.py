@@ -5,6 +5,6 @@ Manual Nakdan https://www.yo-yoo.co.il/tools/niqqud
 """
 from mishkal import phonemize
 
-text = 'כל'
-phonemes = phonemize(text)
+text = 'מָה קוֹרֶה?'
+phonemes = phonemize(text, preserve_punctuation=True)
 print(phonemes)

@@ -3,15 +3,19 @@ High level phonemize functions
 """
 
 import unicodedata
+import re
 
 from mishkal.token import extract_letters
 from mishkal.variants import Word
 from mishkal.expander import Expander
 from mishkal.dictionary import Dictionary
 from mishkal.chars_set import pretty_chars_set # noqa: F401
-from .utils import is_only_phonemes
+from .utils import is_phonemized
 from .variants import Phoneme
 from .phonemize import Phonemizer
+from . import config
+from . import lexicon
+from . import chars_set
 
 expander = Expander()
 dictionary = Dictionary()
@@ -20,7 +24,7 @@ phonemizer = Phonemizer()
 def normalize(text: str) -> str:
     return unicodedata.normalize('NFD', text)
 
-def phonemize(text: str, debug = False) -> str | list[Word]:
+def phonemize(text: str, preserve_punctuation = True) -> str:
     """
     1. Normalize text
     2. Expand words with expander and dictionary
@@ -30,10 +34,14 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
     """
     text = normalize(text)
     
-    if not text:
-        return [] if debug else ''
+    phonemized = []
     
-    phonemized: list[Word] = []
+    def phonemize_callback(match: re.Match[str]) -> str:
+        word = match.group(0)
+        letters = extract_letters(word)
+        phonemes = phonemizer.phonemize_letters(letters)
+        phonemes = ''.join(p.phonemes for p in phonemes)
+        return phonemes
     
     for line in text.splitlines():
         if not line: 
@@ -47,14 +55,14 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
         if not line: 
             continue
         for word in line.split():
-            if is_only_phonemes(word):
+            if is_phonemized(word):
                 # TODO: improve
-                phonemized.append(Word(word, [Phoneme(p, word, None, reasons='pre phonemized') for p in word]))
+                phonemized.append(word)
             else:
-                letters = extract_letters(word)
-                phonemes = phonemizer.phonemize_letters(letters)
-                phonemized_word = Word(word, phonemes)
-                phonemized.append(phonemized_word)
-    if debug:
-        return phonemized
-    return ' '.join(w.as_phonemes_str() for w in phonemized)
+                phonemes = re.sub(config.HE_CHARS_PATTERN, phonemize_callback, word)
+                phonemes = ''.join([c for c in phonemes if c in chars_set.get_chars_set()])
+                phonemized.append(phonemes)
+    phonemes = ' '.join(w for w in phonemized)
+    if not preserve_punctuation:
+        phonemes = ''.join(c for c in phonemes if c not in lexicon.PUNCTUATION)
+    return phonemes

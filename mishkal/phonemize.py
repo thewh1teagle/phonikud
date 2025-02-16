@@ -192,7 +192,7 @@ class Phonemizer():
                 if current_letter.contains_any_symbol([LetterSymbol.hataf_qamats]):
                     current_phoneme.add_phonemes('o', 'Hataf qmqts')
                     current_phoneme.mark_ready()
-                if current_letter.contains_any_symbol([LetterSymbol.qamats]):
+                if not current_phoneme.is_ready() and current_letter.contains_any_symbol([LetterSymbol.qamats]):
                     if next_letter and next_letter.niqqud_has_dagesh():
                         current_phoneme.add_phonemes('o', 'Qamats is katan if next has dagesh')
                         current_phoneme.mark_ready()

@@ -45,7 +45,7 @@ def _get_phonemes_with_reasons():
 
 @lru_cache
 def get_chars_set():
-    return sorted(set([
+    return set(sorted([
         'ʔ',   # Alef, Ayin
         'b',   # Bet
         'v',   # Vet, Vav
