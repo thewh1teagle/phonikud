@@ -13,6 +13,14 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Dictionaries with words, symbols, emojies
 - Convert text with niqqud to modern spoken phonemes
 
+## What the library doesn't handle
+
+The following hard to predict even from text with niqqud.
+
+- Shva nah and nah
+- Stress (Atmaha / Milre / Milra. same thing.)
+- Kamatz Katan
+
 ## Install
 ```console
 pip install mishkal-hebrew
