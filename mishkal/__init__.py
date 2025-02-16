@@ -8,7 +8,7 @@ from mishkal.token import extract_letters
 from mishkal.variants import Word
 from mishkal.expander import Expander
 from mishkal.dictionary import Dictionary
-from mishkal.phoneme_set import get_phoneme_set # noqa: F401
+from mishkal.chars_set import pretty_chars_set # noqa: F401
 from .utils import is_only_phonemes
 from .variants import Phoneme
 from .phonemize import Phonemizer
@@ -36,10 +36,16 @@ def phonemize(text: str, debug = False) -> str | list[Word]:
     phonemized: list[Word] = []
     
     for line in text.splitlines():
-        if not line: continue
+        if not line: 
+            continue
+        # Expand
         line = expander.expand_text(line)
-        if not line: continue
+        if not line: 
+            continue
+        # Dictionary
         line = dictionary.expand_text(line)
+        if not line: 
+            continue
         for word in line.split():
             if is_only_phonemes(word):
                 # TODO: improve

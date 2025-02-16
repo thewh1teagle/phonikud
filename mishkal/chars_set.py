@@ -10,6 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 from .phoneme_table import PHONEME_TABLE
 from collections import defaultdict
+from .lexicon import PUNCTUATION
 
 def _get_phonemes_with_reasons():
     """
@@ -43,9 +44,48 @@ def _get_phonemes_with_reasons():
 
 
 @lru_cache
-def get_phoneme_set():
+def get_chars_set():
+    return sorted(set([
+        'ʔ',   # Alef, Ayin
+        'b',   # Bet
+        'v',   # Vet, Vav
+        'g',   # Gimel
+        'dʒ',  # Gimel with geresh, Zain with geresh
+        'd',   # Dalet
+        'h',   # He
+        'z',   # Zain
+        'x',   # Het, Haf
+        't',   # Taf, Tet
+        'j',   # Yod
+        'k',   # Kuf, Kaf
+        'l',   # Lamed
+        'm',   # Mem
+        'n',   # Nun
+        's',   # Sin, Samekh
+        'f',   # Fei
+        'p',   # Pei dgusha
+        'ts',  # tsadik
+        'tʃ',  # Tsadik with geresh
+        'r',   # Resh
+        'ʃ',   # Shin
+        # Vowels
+        'a', # Shamar
+        'e', # Shemer
+        'i', # Shimer
+        'o', # Shomer
+        'u', # Shumar
+
+        # Symbols
+        "'", # stress (0x39)
+        ',', #secondary stress (0x44)
+        # Punctuation
+        *PUNCTUATION.keys()
+    ]))
+
+@lru_cache
+def pretty_chars_set():
     """
-    Return all phonemes used in Mishkal package
+    Return all phonemes used in Mishkal package along with reasons
     """
     
     phonemes = []
