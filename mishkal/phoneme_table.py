@@ -1,11 +1,14 @@
 from .lexicon.symbols import LetterSymbol
 from .lexicon.letters import Letters
 
+STRESS = "'"
+SECOND_STRESS = ','
+
 PHONEME_TABLE = {
     # Letters
     Letters.ALEF: 'ʔ',
     Letters.BET: 'v',
-    Letters.GIMEL: 'ɡ',
+    Letters.GIMEL: 'g',
     Letters.DALET: 'd',
     Letters.HEY: 'h',
     Letters.VAV: 'v',
@@ -18,7 +21,7 @@ PHONEME_TABLE = {
     Letters.MEM: 'm',
     Letters.NUN: 'n',
     Letters.SAMECH: 's',
-    Letters.AYIN: 'ʕ',
+    Letters.AYIN: '?',
     Letters.PEY: 'f',
     Letters.TZADI: 'ts',
     Letters.QOF: 'k',

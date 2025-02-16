@@ -118,13 +118,13 @@ class Phonemizer():
             # Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
             if current_letter.contains_any_symbol([LetterSymbol.geresh, LetterSymbol.geresh_en]):
                 if current_letter.as_str()  == Letters.GIMEL:
-                    current_phoneme.add_phonemes('d͡ʒ', 'Geresh in gimel like girafa')
+                    current_phoneme.add_phonemes('dʒ', 'Geresh in gimel like girafa')
                     current_phoneme.mark_letter_ready()
                 if current_letter.as_str() in [Letters.TZADI, Letters.FINAL_TZADI]:
-                    current_phoneme.add_phonemes('t͡ʃ', 'Geresh in Tsadi like chita')
+                    current_phoneme.add_phonemes('tʃ', 'Geresh in Tsadi like chita')
                     current_phoneme.mark_letter_ready()
                 if current_letter.as_str() == Letters.ZAYIN:
-                    current_phoneme.add_phonemes('d͡ʒ', 'Geresh in Zain like Zargon')
+                    current_phoneme.add_phonemes('dʒ', 'Geresh in Zain like Zargon')
                     current_phoneme.mark_letter_ready()
                         
                     
