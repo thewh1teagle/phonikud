@@ -126,6 +126,9 @@ class Phonemizer():
                 if current_letter.as_str() == Letters.ZAYIN:
                     current_phoneme.add_phonemes('dʒ', 'Geresh in Zain like Zargon')
                     current_phoneme.mark_letter_ready()
+                if current_letter.as_str() == Letters.TAV:
+                    current_phoneme.add_phonemes('ta', 'Geresh in tav like Tamvin')
+                    current_phoneme.mark_letter_ready()
                         
                     
             # Silent He in end with Kamaz / Patah before
