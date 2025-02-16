@@ -13,7 +13,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Dictionaries with words, symbols, emojies
 - Convert text with niqqud to modern spoken phonemes
 
-## What the library doesn't handle
+## Limitiation
 
 The following hard to predict even from text with niqqud.
 
