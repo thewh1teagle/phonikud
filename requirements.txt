@@ -1,0 +1,2 @@
+gradio>=5.15.0
+num2words

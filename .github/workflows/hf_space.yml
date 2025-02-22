@@ -18,8 +18,10 @@ jobs:
             mkdir phonemize-in-hebrew
             cd phonemize-in-hebrew
             cp ../examples/editor.py app.py
-            echo -e "gradio>=5.15.0\nmishkal-hebrew" >> requirements.txt            
+            echo "gradio>=5.15.0" >> requirements.txt            
+            echo "num2words" >> requirements.txt            
             cp ../.github/workflows/hf_readme.md README.md
+            cp -rf ../mishkal .
 
             
 
