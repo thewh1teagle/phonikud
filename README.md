@@ -6,12 +6,13 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
+- Convert text with niqqud to modern spoken phonemes
 - (WIP) Accurate lightweight niqqud model
 - Expand dates into text with niqqud
 - Expand numbers into text with niqqud
 - (WIP) Mixed English in Hebrew
 - Dictionaries with words, symbols, emojies
-- Convert text with niqqud to modern spoken phonemes
+
 
 ## Limitiation
 
@@ -19,7 +20,7 @@ The following hard to predict even from text with niqqud.
 
 - Shva nah and nah
 - Stress (Atmaha / Milre / Milra. same thing.)
-- Kamatz Katan
+- Kamatz Katan (rarely used)
 
 ## Install
 ```console
