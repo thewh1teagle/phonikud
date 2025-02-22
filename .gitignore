@@ -13,3 +13,4 @@ wheels/
 *.onnx
 .DS_Store
 hebrew_diacritized/
+saspeech_gold_standard/
