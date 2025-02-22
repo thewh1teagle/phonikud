@@ -34,7 +34,7 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 ```python
 from mishkal import phonemize
 phonemes = phonemize('שָׁלוֹם עוֹלָם') 
-print(phonemes) # ʃalom ?olam
+print(phonemes) # ʃalom ʔolam
 ```
 
 See [examples](examples)
