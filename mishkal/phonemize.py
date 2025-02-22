@@ -100,9 +100,7 @@ class Phonemizer():
             cur = letters[i]
             prev = letters[i-1] if i > 0 else None
             next = letters[i+1] if i < len(letters)-1 else None
-            
-    
-            
+                        
             # early rules
             
             # Single letter name
