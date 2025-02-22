@@ -2,257 +2,211 @@
 The actual letters phonemization happens here.
 Phonemes generated based on rules.
 
-1. Vav vowels in index + 1
-2. Yod vowels
-3. Alef shketa (After Kamatz)
-4. Dagesh (Bet, Kaf, Kaf sofit, Fey, Fey Sofit), Sin, Shin dots
-5. Het in end like Ko(ax)
-6. Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
-7. Silent He in end with Kamaz / Patah before
-8. Kamatz Gadol and Kamatz Katan (Kol VS Kala)
-9. Shva Nah and Shva Na
+Early rules:
+1. Niqqud malle vowels
+2. Dagesh (custom beged kefet)
+3. Final letter without niqqud
+4. Final Het gnuva
+5. Geresh (Gimel, Ttadik, Zain)
+6. Shva nax and na
+Revised rules:
+1. Consonants
+2. Niqqud
 
-All IPA declared only here with add_phonemes() and in phoneme_table.
+Reference:
+- https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
+- https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
+- https://en.wikipedia.org/wiki/Help:IPA/Hebrew
 """
 
-from mishkal.variants import Letter, Phoneme
-from .lexicon.symbols import LetterSymbol
-from .lexicon.letters import Letters
-from .phoneme_table import PHONEME_TABLE
+from .vocab import LETTERS_NAMES_PHONEMES, Letter, Token
+from mishkal import vocab, utils
+from .expander import Expander
 import unicodedata
-from mishkal import config
+
 
 class Phonemizer():
-
-    def phonemize_letters(self, letters: list[Letter]) -> list[Phoneme]:
-        phonemes: list[Phoneme] = []
+    def __init__(self):
+        self.expander = Expander()
+        
+    def normalize(self, text: str) -> str:
+        # Decompose text
+        text = unicodedata.normalize('NFD', text)
+        # Normalize niqqud
+        for k, v in vocab.NIQQUD_NORMALIZE.items():
+            text = text.replace(k, v)
+        
+        # Normalize letters
+        for k, v in vocab.LETTERS_NORMALIZE.items():
+            text = text.replace(k, v)
+        
+        # Keep only lexicon characters
+        text = ''.join([c for c in text if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS])
+        return text
+        
+    def phonemize(self, text: str, preserve_punctuation = True, return_tokens = True) -> str | list[Token]:
+        text = self.expander.expand_text(text)
+        text = self.normalize(text)
+        tokens: list[Token] = []
+        word = ''
         index = 0
-        current_word_str = ''.join(i.as_str_with_niqqud() for i in letters)
         
+        while index < len(text):
+            cur = text[index]
+            
+            # Collect word
+            if cur in vocab.SET_LETTERS or cur in vocab.SET_NIQQUD or cur == "'":
+                # Add to word
+                word += cur
+                index += 1
+                continue
+            # Phonemize word
+            if len(word) > 0:
+                
+                # Phonemize word
+                letters = utils.extract_letters(word)
+                hebrew_tokens = self.phonemize_hebrew(letters)
+                tokens.extend(hebrew_tokens)
+                word = ''
+
+            # Add punctuation
+            if cur in vocab.SET_PUNCTUATION:
+                if preserve_punctuation or cur == ' ':
+                    tokens.append(Token(cur, cur))
+                index += 1
+            else:
+                # Valid phoneme
+                if cur in vocab.SET_OUTPUT_CHARACTERS:
+                    tokens.append(Token(cur, cur))
+                    index += 1
+                else:
+                    # Ignore
+                    index += 1
+                
+        # Ensure the last accumulated word is phonemized
+        if len(word) > 0:
+            letters = utils.extract_letters(word)            
+            hebrew_tokens = self.phonemize_hebrew(letters)
+            tokens.extend(hebrew_tokens)
         
-        while index < len(letters):
-            current_letter = letters[index]
-            current_phoneme = Phoneme(phonemes='', word=current_word_str, letter=current_letter, reasons=[])
+        if return_tokens:
+            return tokens
+        return ''.join([t.phonemes for t in tokens])
+    
+    def phonemize_hebrew(self, letters: list[Letter]) -> list[Token]:
+        tokens: list[Token] = []
+        i = 0
+        while i < len(letters):
+            cur = letters[i]
+            prev = letters[i-1] if i > 0 else None
+            next = letters[i+1] if i < len(letters)-1 else None
             
-            next_letter = letters[index + 1] if index + 1 < len(letters) else None
-            previous_letter = letters[index - 1] if index - 1 >= 0 else None
+    
             
-            # No way to have oo in Hebrew
-            if index > 0 and phonemes[-1].phonemes.endswith('o') and current_letter.as_str() == Letters.VAV:
-                current_phoneme.add_phonemes('', 'No way to have oo in Hebrew')    
-                current_phoneme.mark_ready()
+            # early rules
             
-            # Vav in middle
-            if (
-                index > 0 
-                and current_letter.as_str() == Letters.VAV  # Vav
-                and (not previous_letter.plain_niqqud()) # No previous niqqud
-                and not current_phoneme.is_ready()
-            ): 
-                
-                # Vav with no niqqud
-                if not current_letter.get_symbols():
-                    # Vav soft last
-                    if index == len(letters) - 1:
-                        current_phoneme.add_phonemes('v', 'last soft vav without niqqud')    
-                        current_phoneme.mark_ready()
+            # Single letter name
+            if not next and not prev and cur and not cur.symbols:
+                token = Token(cur.as_str(), LETTERS_NAMES_PHONEMES.get(cur.letter_str, ''))
+                tokens.append(token)
+                i += 1
+                continue
+            
+            # Vav vowel
+            if not cur.symbols and next: # maybe with dagesh
+                if next == 'ו':
+                    phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, '')
+                    if '\u05BC' in next.symbols: # Dagesh
+                        phoneme += vocab.VOWEL_U
+                    elif '\u05B9' in next.symbols: # Holam
+                        phoneme += vocab.VOWEL_O
+                    elif '\u05BA' in next.symbols: # Holam haser for vav
+                        phoneme += vocab.VOWEL_O
                     else:
-                        current_phoneme.add_phonemes('o', 'Vav without niqqud')
-                        current_phoneme.mark_ready()
-                # Vav with Holam
-                elif current_letter.contains_any_symbol([LetterSymbol.holam, LetterSymbol.holam_haser_for_vav]):
-                    current_phoneme.add_phonemes('o', 'Vav with Holam')
-                    current_phoneme.mark_ready()
-                
-                # Vav with dagesh
-                elif current_letter.contains_any_symbol([LetterSymbol.dagesh_or_mapiq]):
-                    current_phoneme.add_phonemes('u', 'Vav with Dagesh')
-                    current_phoneme.mark_ready()
-
-            # Vav vowel in start
-            if (index == 0 and current_letter.as_str() == Letters.VAV):
-                # Vav with dagesh in start as 'u'
-                if current_letter.contains_any_symbol([LetterSymbol.dagesh_or_mapiq]):
-                    current_phoneme.add_phonemes('u', 'Vav with Dagesh')
-                    current_phoneme.mark_ready()
-                
+                        phoneme += vocab.VOWEL_O # default
+                    token = Token(cur.as_str() + next.as_str(), phoneme)
+                    tokens.append(token)
+                    i += 2
+                    continue
+            # Yod vowel
+            if cur == 'י' and prev and not cur.symbols: # Yod without niqqud
+                if not prev.symbols:
+                    phoneme = vocab.VOWEL_I
+                    token = Token(prev.as_str() + cur.as_str(), phoneme)
+                    tokens.append(token)
+                    i += 1
+                    continue
+                elif '\u05B4' in prev.symbols: # Hirik
+                    phoneme = ''
+                    token = Token(cur.as_str(), phoneme)
+                    tokens.append(token)
+                    i += 1
+                    continue
+            # Some final letters can be silent
+            if not next and cur.letter_str in 'אהע' and not cur.symbols:
+                phoneme = ''
+                token = Token(cur.as_str(), phoneme)
+                tokens.append(token)
+                i += 1
+                continue
+            # Het gnuva
+            if not next and cur == 'ח' and '\u05B7' in cur.symbols: # Patah
+                phoneme = vocab.HET_GNUVA
+                token = Token(cur.as_str(), phoneme)
+                tokens.append(token)
+                i += 1
+                continue
             
-            # Yod in middle as vowel        
-            if (
-                index > 0 and current_letter.as_str() == Letters.YOD
-                and current_letter.is_silent()
-            ):
-                if not previous_letter.plain_niqqud(): # No previous niqqud
-                    current_phoneme.add_phonemes('i', 'Yod in middle with no previous niqqud')
-                    current_phoneme.mark_ready()
-                elif previous_letter.contains_any_symbol([LetterSymbol.hiriq]):
-                    current_phoneme.add_phonemes('', 'Yod with previous hirik')
-                    current_phoneme.mark_ready()
-                # One before last
-                elif index == len(letters) - 2:
-                    if (
-                        next_letter and next_letter.as_str() == Letters.VAV 
-                        # Keep j if next is vav with dagesh
-                        and LetterSymbol.dagesh_or_mapiq not in next_letter.symbols
-                    ):
-                        current_phoneme.add_phonemes('', 'Silent yod before last with next vav')
-                        current_phoneme.mark_ready()
-
-            # Alef with previous Kamatz sound without niqqud
-            if current_letter.as_str() == Letters.ALEF and not current_letter.plain_niqqud():
-                if previous_letter and previous_letter.contains_patah_like_sound():
-                    current_phoneme.add_phonemes('', 'Silent alef without niqqud after Kamatz like sound')
-                    current_phoneme.mark_ready()
-                elif index == len(letters) - 2: # two before end
-                    current_phoneme.add_phonemes('', 'Silent alef without niqqud before end')
-                    current_phoneme.mark_ready()
-                elif index == len(letters) - 1: # two before end
-                    current_phoneme.add_phonemes('', 'Silent alef without niqqud in end')
-                    current_phoneme.mark_ready()
-            # Alef with Kamatz like niqqud
-            if current_letter.as_str() == Letters.ALEF and current_letter.contains_patah_like_sound():
-                current_phoneme.add_phonemes('', 'Alef already contains patah like sound. no need base letter')
-                current_phoneme.mark_letter_ready()
-                
-                
-            # Geresh (Gimel, Ttadik, Tsadik sofit, Zain)
-            if current_letter.contains_any_symbol([LetterSymbol.geresh, LetterSymbol.geresh_en]):
-                if current_letter.as_str()  == Letters.GIMEL:
-                    current_phoneme.add_phonemes('dʒ', 'Geresh in gimel like girafa')
-                    current_phoneme.mark_letter_ready()
-                if current_letter.as_str() in [Letters.TZADI, Letters.FINAL_TZADI]:
-                    current_phoneme.add_phonemes('tʃ', 'Geresh in Tsadi like chita')
-                    current_phoneme.mark_letter_ready()
-                if current_letter.as_str() == Letters.ZAYIN:
-                    current_phoneme.add_phonemes('dʒ', 'Geresh in Zain like Zargon')
-                    current_phoneme.mark_letter_ready()
-                if current_letter.as_str() == Letters.TAV:
-                    current_phoneme.add_phonemes('ta', 'Geresh in tav like Tamvin')
-                    current_phoneme.mark_letter_ready()
-                        
-                    
-            # Silent He in end with Kamaz / Patah before
-            if current_letter.as_str() == Letters.HEY and index == len(letters) - 1 and previous_letter and previous_letter.contains_patah_like_sound():
-                current_phoneme.add_phonemes('', 'Silent he')
-                current_phoneme.mark_ready()
-                
-
-            # Sin dot
-            if current_letter.contains_any_symbol([LetterSymbol.sin_dot]):
-                current_phoneme.add_phonemes('s', 'Sin dot')
-                current_phoneme.mark_letter_ready()
-                
-            # Shin dot
-            if current_letter.contains_any_symbol([LetterSymbol.shin_dot]):
-                current_phoneme.add_phonemes('ʃ', 'Shin dot')
-                current_phoneme.mark_letter_ready()
-                
-            # Dagesh in Vav in start
-            if current_letter.contains_all_symbol([LetterSymbol.dagesh_or_mapiq, Letters.VAV]) and index == 0:
-                current_phoneme.add_phonemes('u', 'Vav with dagesh in start')
-                current_phoneme.mark_ready()
+            # Geresh
+            if "'" in cur.symbols and cur.letter_str in ['ג', 'ז', 'צ']: 
+                phoneme = (
+                    vocab.GIMEL_OR_ZAIN_WITH_DAGESH if cur.letter_str in ['ג', 'ז'] 
+                    else vocab.TSADIK_WITH_DAGESH
+                )
+                phoneme += ''.join([vocab.NIQQUD_PHONEMES.get(niqqud, '') for niqqud in cur.symbols])
+                token = Token(cur.as_str() + (next.as_str() if next else ''), phoneme)
+                tokens.append(token)
+                i += 1
+                continue  
             
-            # Dagesh (Bet, Kaf, Kaf sofit, Fey, Fey Sofit), 
-            if current_letter.contains_any_symbol([LetterSymbol.dagesh_or_mapiq]) and not current_phoneme.is_ready():
-                if current_letter.as_str() == Letters.BET:
-                    current_phoneme.add_phonemes('b', 'Bet')
-                    current_phoneme.mark_letter_ready()
+            # Shva nax and na
+            if '\u05B0' in cur.symbols:
+                phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, '')
+                # First
+                if not prev:
+                    if cur.letter_str in 'למנרי':
+                        phoneme += 'e'
+                    elif next and next.letter_str in 'אהע': # Groni
+                        phoneme += 'e'
+                # Middle
+                else:
+                    # After vav with dagesh nax
+                    if prev and prev.letter_str == 'ו' and '\u05BC' in prev.symbols:
+                        phoneme += '' 
+                    # Double final shva(s) nax
+                    elif i == len(letters) - 1 and prev and '\u05B0' in prev.symbols:
+                        phoneme += ''
+                    elif i == len(letters) - 1 and next and '\u05B0' in next.symbols:
+                        phoneme += ''
+                    # Double shva
+                    elif next and next.letter_str == cur.letter_str:
+                        phoneme += 'e'
+                    # Previous nax
                     
-                if current_letter.as_str() == Letters.KAF:
-                    current_phoneme.add_phonemes('k', 'Kaf')
-                    current_phoneme.mark_letter_ready()
+                    elif tokens:
+                        if '\u05B0' in prev.symbols and not tokens[-1].phonemes.endswith('e'):
+                            phoneme += 'e'
+                token = Token(cur.letter_str, phoneme)
+                tokens.append(token)
+                i += 1
+                continue
                     
-                if current_letter.as_str() == Letters.FINAL_KAF:
-                    current_phoneme.add_phonemes('k', 'Kaf sofit')
-                    current_phoneme.mark_letter_ready()
-                    
-                if current_letter.as_str() == Letters.PEY:
-                    current_phoneme.add_phonemes('p', 'Pey')
-                    current_phoneme.mark_letter_ready()
-                    
-                if current_letter.as_str() == Letters.FINAL_PEY:
-                    current_phoneme.add_phonemes('p', 'Final pey')
-                    current_phoneme.mark_letter_ready()
                 
-                
-            # Het in end like Ko(ax)
-            if current_letter.as_str() == Letters.CHET and current_letter.contains_any_symbol([LetterSymbol.patah]) and index == len(letters) - 1:
-                current_phoneme.add_phonemes('ax', 'Word ends with chet with patah')
-                current_phoneme.mark_ready()
-                
-                
-            # Base letter
-            if not current_phoneme.is_ready() and not current_phoneme.is_letter_ready():
-                from_table = PHONEME_TABLE.get(current_letter.as_str(), '')
-                current_phoneme.add_phonemes(from_table, f'got letter {current_letter.as_str()} from table')
-                
-            # Kamatz Katan (o)
-            if current_letter.contains_patah_like_sound():
-                # Hataf Kamatz
-                if current_letter.contains_any_symbol([LetterSymbol.hataf_qamats]):
-                    current_phoneme.add_phonemes('o', 'Hataf qmqts')
-                    current_phoneme.mark_ready()
-                if not current_phoneme.is_ready() and current_letter.contains_any_symbol([LetterSymbol.qamats]):
-                    if next_letter and next_letter.niqqud_has_dagesh():
-                        current_phoneme.add_phonemes('o', 'Qamats is katan if next has dagesh')
-                        current_phoneme.mark_ready()
-                    # TODO: before Shva nah
-                        
-                
-            # Shva na and Shva nah
-            # https://he.wikipedia.org/wiki/שווא#שווא_נע
-            if current_letter.niqqud_is_shva() and not current_phoneme.is_ready():
-                if not next_letter and not previous_letter:
-                    current_phoneme.add_phonemes('e', 'Single letter with shva')
-                    current_phoneme.mark_as_shva_na()
-                    current_phoneme.mark_ready()
+            # revised rules
+            phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, '')
+            phoneme += ''.join([vocab.NIQQUD_PHONEMES.get(niqqud, '') for niqqud in cur.symbols])
+            token = Token(cur.letter_str, phoneme)
+            tokens.append(token)
+            i += 1
+        return tokens
 
-                if next_letter and next_letter.as_str() == current_letter.as_str():  # Ensure there's a previous and next letter
-                    current_phoneme.add_phonemes('e', 'First shva before identical letter')
-                    current_phoneme.mark_as_shva_na()
-                    current_phoneme.mark_ready()
-                
-                # Two last letters has shva
-                elif index == len(letters) - 1 or index == len(letters) - 2:
-                    if len(letters) > 1 and current_letter.niqqud_is_shva() and letters[-2].niqqud_is_shva():
-                        current_phoneme.add_phonemes('', 'Two shva in end nah both')
-                        current_phoneme.mark_ready()
-                
-                # Contains only shva
-                elif index == 0:
-                    if (current_letter.as_str() in ['אבוילמנער']):
-                        current_phoneme.add_phonemes('e', 'Not possible to pronunce אבוילמנער as shva nah')
-                        current_phoneme.mark_ready()
-                    else:
-                        current_phoneme.add_phonemes('e', 'Shva in first letter without other diacritics')
-                        current_phoneme.mark_as_shva_na()
-                        current_phoneme.mark_ready()
-                    
-                elif next_letter and next_letter.niqqud_is_shva():
-                    current_phoneme.add_phonemes('', 'First shva in sequence')
-                    current_phoneme.mark_ready()
-                    
-                elif previous_letter.niqqud_is_shva():
-                    current_phoneme.add_phonemes('e', 'Second shva in sequence')
-                    current_phoneme.mark_as_shva_na()
-                    current_phoneme.mark_ready()
-                    
-                elif current_letter.niqqud_has_dagesh():
-                    current_phoneme.add_phonemes('e', 'Shva with dagesh')
-                    current_phoneme.mark_as_shva_na()
-                    current_phoneme.mark_ready()
-                
-                # Always handled
-                current_phoneme.mark_ready()
-                
-            
-            # Symbols
-            if not current_phoneme.is_ready():
-                for s in current_letter.get_symbols():
-                    from_table = PHONEME_TABLE.get(s, '')
-                    symbol_name = unicodedata.name(s, '?')
-                    current_phoneme.add_phonemes(from_table, f'got symbol {symbol_name} from table')
-            phonemes.append(current_phoneme)
-            index += 1
-        # print(phonemes)
-        return phonemes

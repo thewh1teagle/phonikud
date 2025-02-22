@@ -5,7 +5,7 @@ This happens before phonemization
 
 from .numbers import num_to_word
 from .dates import date_to_word
-from mishkal.dictionary import Dictionary
+from .dictionary import Dictionary
 
 class Expander:
     def __init__(self):

@@ -3,7 +3,8 @@ uv sync
 uv run gradio examples/editor.py
 """
 
-from mishkal import Word, phonemize
+from mishkal import phonemize
+from mishkal.vocab import Token
 import gradio as gr
 
 default_text = """
@@ -13,17 +14,13 @@ default_text = """
 theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 def on_submit_debug(text: str) -> str:
-    include_reasons = False
-    words: list[Word] = phonemize(text, debug = True)
-    text = ""
-    for phonemized_word in words:
-        text += f'{phonemized_word.as_word_str()} -> {phonemized_word.as_phonemes_str()} ({phonemized_word.symbols_names()})\n'
-    if include_reasons:
-        text += phonemized_word.get_reasons()
-    return text
+    tokens: list[Token] = phonemize(text, preserve_punctuation=True, return_tokens=True)
+    for token in tokens:
+        text += f'{token.token} -> {token.phonemes}\n'
+    return ' '.join(i.phonemes for i in tokens)
 
 def on_submit(text: str) -> str:
-    return phonemize(text, debug = False)
+    return phonemize(text)
 
 with gr.Blocks(theme=theme) as demo:
     text_input = gr.Textbox(value=default_text, label="Text", rtl=True, elem_classes=['input'])

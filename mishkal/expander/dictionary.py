@@ -4,8 +4,7 @@ Dictionaries are tab separated key value words
 from pathlib import Path
 import json
 import re
-from mishkal.utils import has_niqqud, remove_niqqud
-from mishkal import config
+from mishkal.utils import remove_niqqud
 
 files = Path(__file__).parent.glob('*.json')
 
@@ -22,18 +21,19 @@ class Dictionary:
                 self.dict.update(parsed)
             
     def replace_callback(self, match: re.Match[str]) -> str:
-        found = match.group(0)
-        without_niqqud = remove_niqqud(found)
-        replace_word = self.dict.get(without_niqqud)
-        if not replace_word:
-            return found
-        elif not has_niqqud(replace_word):
-            return replace_word
-        return found
+        source = match.group(0)
+        without_niqqud = remove_niqqud(source)
+        without_niqqud_lookup = self.dict.get(without_niqqud)
+        with_niqqud_lookup = self.dict.get(source)
+        if with_niqqud_lookup:
+            return with_niqqud_lookup
+        elif without_niqqud_lookup:
+            return without_niqqud_lookup
+        return source
 
     def expand_text(self, text: str) -> str:
         """
         TODO: if key doesn't have diacritics expand even diacritized words
         """
-        text = re.sub(config.HE_CHARS_PATTERN, self.replace_callback, text)
+        text = re.sub(r'\S+', self.replace_callback, text)
         return text
