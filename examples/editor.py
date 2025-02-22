@@ -20,7 +20,7 @@ def on_submit_debug(text: str) -> str:
     return ' '.join(i.phonemes for i in tokens)
 
 def on_submit(text: str) -> str:
-    return phonemize(text)
+    return phonemize(text, preserve_punctuation=False)
 
 with gr.Blocks(theme=theme) as demo:
     text_input = gr.Textbox(value=default_text, label="Text", rtl=True, elem_classes=['input'])
