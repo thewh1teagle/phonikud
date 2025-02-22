@@ -175,9 +175,9 @@ class Phonemizer():
                 # First
                 if not prev:
                     if cur.letter_str in 'למנרי':
-                        phoneme += 'e'
+                        phoneme += vocab.VOWEL_E
                     elif next and next.letter_str in 'אהע': # Groni
-                        phoneme += 'e'
+                        phoneme += vocab.VOWEL_E
                 # Middle
                 else:
                     # After vav with dagesh nax
@@ -190,14 +190,14 @@ class Phonemizer():
                         phoneme += ''
                     # Double shva same letter
                     elif next and next.letter_str == cur.letter_str:
-                        phoneme += 'e'
+                        phoneme += vocab.VOWEL_E
                     # Double shva
                     elif next and '\u05B0' in next.symbols:
                         phoneme += ''
                     # Previous nax
                     elif tokens:
-                        if '\u05B0' in prev.symbols and not tokens[-1].phonemes.endswith('e'):
-                            phoneme += 'e'
+                        if '\u05B0' in prev.symbols and not tokens[-1].phonemes.endswith(vocab.VOWEL_E):
+                            phoneme += vocab.VOWEL_E
                 token = Token(cur.letter_str, phoneme)
                 tokens.append(token)
                 i += 1
