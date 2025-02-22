@@ -174,7 +174,9 @@ class Phonemizer():
                 phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, '')
                 # First
                 if not prev:
-                    if cur.letter_str in 'למנרי':
+                    if cur.letter_str == 'ו':
+                        phoneme += vocab.VOWEL_E
+                    elif cur.letter_str in 'למנרי':
                         phoneme += vocab.VOWEL_E
                     elif next and next.letter_str in 'אהע': # Groni
                         phoneme += vocab.VOWEL_E
