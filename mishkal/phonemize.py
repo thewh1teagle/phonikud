@@ -188,11 +188,13 @@ class Phonemizer():
                         phoneme += ''
                     elif i == len(letters) - 1 and next and '\u05B0' in next.symbols:
                         phoneme += ''
-                    # Double shva
+                    # Double shva same letter
                     elif next and next.letter_str == cur.letter_str:
                         phoneme += 'e'
+                    # Double shva
+                    elif next and '\u05B0' in next.symbols:
+                        phoneme += ''
                     # Previous nax
-                    
                     elif tokens:
                         if '\u05B0' in prev.symbols and not tokens[-1].phonemes.endswith('e'):
                             phoneme += 'e'
