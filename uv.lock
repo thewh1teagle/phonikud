@@ -431,7 +431,7 @@ wheels = [
 
 [[package]]
 name = "mishkal-hebrew"
-version = "0.2.2"
+version = "0.2.8"
 source = { editable = "." }
 dependencies = [
     { name = "colorlog" },
