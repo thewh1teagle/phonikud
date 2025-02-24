@@ -40,39 +40,71 @@ def extract_time(match):
     return match.group(0)  # Return original text if the format is not recognized
 
 def convert_to_word(h, m): 
-    nums = ["אֶפֶס", "אֶחָד", "שְׁתַּיִם", "שָׁלוֹשׁ", "אַרְבַּע", 
-            "חָמֵשׁ", "שֵׁשׁ", "שֶׁבַע", "שְׁמוֹנֶה", "תֵּשַׁע", 
-            "עָשָׂר", "אַחַד עֶשְׂרֵה", "שְׁתַּיִם עֶשְׂרֵה", "שְׁלוֹשָׁה עֶשְׂרֵה", 
-            "אַרְבַּע עֶשְׂרֵה", "חֲמֵשׁ עֶשְׂרֵה", "שֵׁשׁ עֶשְׂרֵה",  
-            "שְׁבַע עֶשְׂרֵה", "שְׁמוֹנֶה עֶשְׂרֵה", "תְּשַׁע עֶשְׂרֵה",  
-            "עֶשְׂרִים", "עֶשְׂרִים וְאֶחָד", "עֶשְׂרִים וּשְׁתַּיִם",  
-            "עֶשְׂרִים וְשָׁלוֹשׁ", "עֶשְׂרִים וְאַרְבַּע",  
-            "עֶשְׂרִים וְחָמֵשׁ", "עֶשְׂרִים וָשֵׁשׁ", "עֶשְׂרִים וְשֶׁבַע", 
-            "עֶשְׂרִים וּשְׁמוֹנֶה", "עֶשְׂרִים וְתֵשַׁע"]
-  
-    if m == 0: 
-        return f"{nums[h]} בְּדִיּוּק" 
-  
-    elif m == 1: 
-        return f"דַּקָּה אַחַת אַחֲרֵי {nums[h]}" 
-  
-    elif m == 59: 
-        return f"דַּקָּה אַחַת לִפְנֵי {nums[(h % 12) + 1]}" 
-  
-    elif m == 15: 
-        return f"רֶבַע אַחֲרֵי {nums[h]}" 
-  
-    elif m == 30: 
-        return f"חֵצִי אַחֲרֵי {nums[h]}" 
-  
-    elif m == 45: 
-        return f"רֶבַע לִפְנֵי {nums[(h % 12) + 1]}" 
-  
-    elif m <= 30: 
-        return f"{nums[m]} דַּקּוֹת אַחֲרֵי {nums[h]}" 
-  
-    elif m > 30: 
-        return f"{nums[60 - m]} דַּקּוֹת לִפְנֵי {nums[(h % 12) + 1]}" 
+    hours = [
+        "אֶפֶס",
+        "אַחַת",
+        "שְׁנַיִם",  # Will be replaced with "שֵׁנִי" when needed
+        "שָׁלוֹשׁ",
+        "אַרְבַּע",
+        "חָמֵשׁ",
+        "שֵׁשׁ",
+        "שֶׁבַע",
+        "שְׁמוֹנֵה",
+        "תֵּשַׁע",
+        "עֵשֵׂר",
+        "אַחַת עֶשְׂרֵה",
+        "שְׁתֵּים עֶשְׂרֵה"
+    ]
+    
+    tens = [
+        "",
+        "עֵשֵׂר",
+        "עֶשְׂרִים",
+        "שְׁלוֹשִׁים",
+        "אַרְבָּעִים",
+        "חֲמִשִּׁים"
+    ]
+    
+    ten_to_twenty = [
+        "עֵשֵׂר",
+        "אַחַת עֶשְׂרֵה",
+        "שְׁתֵּים עֶשְׂרֵה",
+        "שְׁלוֹשׁ עֶשְׂרֵה",
+        "אַרְבַּע עֶשְׂרֵה",
+        "חֲמֵשׁ עֶשְׂרֵה",
+        "שֵׁשׁ עֶשְׂרֵה",
+        "שְׁבַע עֶשְׂרֵה",
+        "שְׁמוֹנֶה עֶשְׂרֵה",
+        "תְּשַׁע עֶשְׂרֵה"
+    ]
+    
+    vocab = {
+        'minutes': 'דַּקּוֹת',
+        'and': 'וֵ',
+        'shtey': 'שְׁתֵּי'
+    }
+    
+    # Convert 0 hours to 12 (midnight)
+    if h == 0:
+        h = 12
+        
+    elif h > 12:
+        h -= 12
+
+    if m == 0:
+        return f"{hours[h]}"
+    
+    elif 1 <= m <= 9:
+        minute_word = vocab['shtey'] if m == 2 else hours[m]  # Replace "שניים" with "שני"
+        return f"{hours[h]} {vocab['and']}{minute_word} {vocab['minutes']}"
+    
+    elif 10 <= m <= 19:
+        return f"{hours[h]} {vocab['and']}{ten_to_twenty[m - 10]} {vocab['minutes']}"
+    
+    else:
+        tens_part = f"{vocab['and']}{tens[m // 10]}"
+        units_part = f"{vocab['and']}{hours[m % 10]}" if m % 10 != 0 else ""
+        return f"{hours[h]} {tens_part} {units_part} {vocab['minutes']}".strip()
 
 def time_to_word(text: str):
     return re.sub('|'.join(PATTERNS), extract_time, text)

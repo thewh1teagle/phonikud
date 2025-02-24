@@ -18,8 +18,8 @@ class Expander:
         for source_word in text.split():
             word = date_to_word(source_word)
             if word == source_word:
-                word = num_to_word(word)
-            if word == source_word:
                 word = time_to_word(word)
+            if word == source_word:
+                word = num_to_word(word)
             words.append(word)
         return ' '.join(words)
