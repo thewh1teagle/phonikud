@@ -20,6 +20,7 @@ jobs:
             cp ../examples/editor.py app.py
             echo "gradio>=5.15.0" >> requirements.txt            
             echo "num2words" >> requirements.txt            
+            echo "colorlog" >> requirements.txt            
             cp ../.github/workflows/hf_readme.md README.md
             cp -rf ../mishkal .
 
