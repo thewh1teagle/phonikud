@@ -17,7 +17,10 @@ sentences = [
     "כל", # dictionary
     "ווֹלְטֶר", # double vav start
     "הֲווֹלְטֶר", # double vav middle
-    "אֶלֶגַנְטִי" # lookup
+    "אֶלֶגַנְטִי", # lookup
+    "כָּל", # match to one without niqqud
+    "יִשְׂרָאֵל הוּקְמָה בִּשְׁנַת 1948",
+    "₪"
 ]
 
 for sentence in sentences:
