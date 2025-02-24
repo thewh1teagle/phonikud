@@ -20,7 +20,8 @@ sentences = [
     "אֶלֶגַנְטִי", # lookup
     "כָּל", # match to one without niqqud
     "יִשְׂרָאֵל הוּקְמָה בִּשְׁנַת 1948",
-    "₪"
+    "מָחָר בְּשָׁעָה 22:00", # time to word
+    "₪",
 ]
 
 for sentence in sentences:
