@@ -22,27 +22,16 @@ Reference:
 from .vocab import LETTERS_NAMES_PHONEMES, Letter, Token
 from mishkal import vocab, utils
 from .expander import Expander
-import unicodedata
+from mishkal.utils import normalize
 
 
 class Phonemizer():
     def __init__(self):
         self.expander = Expander()
         
-    def normalize(self, text: str) -> str:
-        # Decompose text
-        text = unicodedata.normalize('NFD', text)
-        # Normalize niqqud
-        for k, v in vocab.NIQQUD_NORMALIZE.items():
-            text = text.replace(k, v)
-        
-        # Keep only lexicon characters
-        text = ''.join([c for c in text if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS])
-        return text
-        
     def phonemize(self, text: str, preserve_punctuation = True, return_tokens = True) -> str | list[Token]:
         text = self.expander.expand_text(text)
-        text = self.normalize(text)
+        text = normalize(text)
         tokens: list[Token] = []
         word = ''
         index = 0

@@ -1,12 +1,24 @@
 import re
 from mishkal.phonemize import Letter
 from mishkal import vocab
+import unicodedata
 
 def remove_niqqud(text: str):
     return re.sub(vocab.HE_NIQQUD_PATTERN, '', text)
 
 def has_niqqud(text: str):
     return re.search(vocab.HE_NIQQUD_PATTERN, text) is not None
+
+def normalize(text: str) -> str:
+    # Decompose text
+    text = unicodedata.normalize('NFD', text)
+    # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)
+    for k, v in vocab.NIQQUD_NORMALIZE.items():
+        text = text.replace(k, v)
+    
+    # Keep only lexicon characters
+    text = ''.join([c for c in text if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS])
+    return text
 
 def extract_letters(word: str) -> list[Letter]:
     """

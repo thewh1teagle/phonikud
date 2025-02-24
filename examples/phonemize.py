@@ -17,7 +17,7 @@ sentences = [
     "כל", # dictionary
     "ווֹלְטֶר", # double vav start
     "הֲווֹלְטֶר", # double vav middle
-    "שלום"
+    "אֶלֶגַנְטִי" # lookup
 ]
 
 for sentence in sentences:
