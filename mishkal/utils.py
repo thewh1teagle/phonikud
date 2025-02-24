@@ -10,6 +10,11 @@ def has_niqqud(text: str):
     return re.search(vocab.HE_NIQQUD_PATTERN, text) is not None
 
 def normalize(text: str) -> str:
+    """
+    Normalize unicode (decomposite)
+    Deduplicate niqqud (eg. only Patah instead of Kamatz)
+    Keep only Hebrew characters / punctuation / IPA
+    """
     # Decompose text
     text = unicodedata.normalize('NFD', text)
     # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)

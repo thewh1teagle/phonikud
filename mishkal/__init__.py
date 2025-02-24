@@ -2,6 +2,7 @@
 High level phonemize functions
 """
 from .phonemize import Phonemizer, Token
+from .utils import normalize  # noqa: F401
 
 phonemizer = Phonemizer()
 
