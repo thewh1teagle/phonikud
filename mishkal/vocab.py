@@ -41,7 +41,7 @@ SECONDARY_STRESS = "\u02CC"
 HET_GNUVA = 'ax'
 
 LETTERS_NAMES_PHONEMES = {
-    'א': 'ʔalef',  # Alef, glottal stop
+    'א': 'alef',  # Alef, glottal stop
     'ב': 'bet',  # Bet
     'ג': 'gimel',  # Gimel
     'ד': 'dalet',  # Dalet
@@ -59,7 +59,7 @@ LETTERS_NAMES_PHONEMES = {
     'ן': 'nun sofit',  # Nun Sofit
     'נ': 'nun',  # Nun
     'ס': 'samex',  # Samekh
-    'ע': 'ʔajin',  # Ayin, glottal stop
+    'ע': 'ajin',  # Ayin, glottal stop
     'פ': 'fey',  # Fey
     'ף': 'fey sofit',  # Fey Sofit
     'ץ': 'tsadik sofit',  # Tsadik sofit
@@ -72,7 +72,7 @@ LETTERS_NAMES_PHONEMES = {
 
 # Consonants
 LETTERS_PHONEMES = {
-    'א': 'ʔ',  # Alef, glottal stop
+    'א': '',  # Alef
     'ב': 'v',  # Bet
     'ג': 'g',  # Gimel
     'ד': 'd',  # Dalet
@@ -90,7 +90,7 @@ LETTERS_PHONEMES = {
     'ן': 'n',  # Nun Sofit
     'נ': 'n',  # Nun
     'ס': 's',  # Samekh
-    'ע': 'ʔ',  # Ayin, glottal stop
+    'ע': '',  # Ayin, only voweled
     'פ': 'f',  # Fey
     'ף': 'f',  # Fey Sofit
     'ץ': 'ts',  # Tsadik sofit
