@@ -1,7 +1,5 @@
 # Mishkal
 
-https://medium.com/@thewh1teagle/hebrew-tts-its-not-easy-7f57a7842d57
-
 Grapheme to phoneme in Hebrew
 
 Convert Hebrew text into IPA for TTS systems and learning.
