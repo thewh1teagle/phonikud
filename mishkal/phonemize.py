@@ -36,10 +36,6 @@ class Phonemizer():
         for k, v in vocab.NIQQUD_NORMALIZE.items():
             text = text.replace(k, v)
         
-        # Normalize letters
-        for k, v in vocab.LETTERS_NORMALIZE.items():
-            text = text.replace(k, v)
-        
         # Keep only lexicon characters
         text = ''.join([c for c in text if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS])
         return text

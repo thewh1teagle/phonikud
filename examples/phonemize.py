@@ -16,7 +16,8 @@ sentences = [
     "אַתָּה חַיָּב לִי 50 שֶׁקֶל וְהַסֵּמֶל הוּא ₪", # numbers, symbols
     "כל", # dictionary
     "ווֹלְטֶר", # double vav start
-    "הֲווֹלְטֶר" # double vav middle
+    "הֲווֹלְטֶר", # double vav middle
+    "שלום"
 ]
 
 for sentence in sentences:

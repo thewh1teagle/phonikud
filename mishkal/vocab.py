@@ -155,14 +155,6 @@ NIQQUD_NORMALIZE = {
     '\u05F3': "'",  # Hebrew geresh to regular geresh
 }
 
-LETTERS_NORMALIZE = {
-    '\u05DA': '\u05DB',  # Haf sofit -> Haf
-    '\u05DD': '\u05DE',  # Mem Sofit -> Mem
-    '\u05DF': '\u05E0',  # Nun Sofit -> Nun
-    '\u05E3': '\u05E4',  # Fey Sofit -> Fey
-    '\u05E5': '\u05E6',  # Tsadik sofit -> Tsadik
-}
-
 
 
 
