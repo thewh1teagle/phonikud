@@ -22,8 +22,9 @@ sentences = [
     # "יִשְׂרָאֵל הוּקְמָה בִּשְׁנַת 1948",
     # "₪",
     "מָחָר בְּשָׁעָה 22:00", # time to word
-
+    "אוֹרוֹת ווֹלְטֶר ווֹלֶנְטַיְן אֻרְווֹת אוֹרְחִים אָרְבוּ הוֹוֶה וּוּבְּרִים וָו וִי וּוִיקְטוֹר" # Vavs
 ]
+
 
 for sentence in sentences:
     phonemes = phonemize(sentence, preserve_punctuation=True)

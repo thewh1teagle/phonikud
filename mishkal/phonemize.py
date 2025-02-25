@@ -96,6 +96,43 @@ class Phonemizer():
                 continue
             
             # Vav vowel
+            if cur == 'ו':
+                if not cur.symbols:
+                    if prev and prev == 'ו':
+                        tokens.append(Token(cur.as_str(), ''))
+                        i += 1
+                        continue
+                    if next and next == 'ו':
+                        tokens.append(Token(cur.as_str(), 'v'))
+                        i += 1
+                        continue
+                elif not prev:
+                    if '\u05B0' in cur.symbols: # vav with shva in start
+                        tokens.append(Token(cur.as_str(), 've'))
+                        i += 1
+                        continue
+                    if '\u05BC' in cur.symbols: # vav with dagesh in start
+                        tokens.append(Token(cur.as_str(), 'u'))
+                        i += 1
+                        continue
+                    else:
+                        phoneme = 'v'
+                        phoneme += ''.join([vocab.NIQQUD_PHONEMES.get(niqqud, '') for niqqud in cur.symbols])
+                        tokens.append(Token(cur.as_str(), phoneme))
+                        i += 1
+                        continue
+                elif prev:
+                    if prev.as_str() == cur.as_str():
+                        tokens.append(Token(cur.as_str(), ''))    
+                        i += 1
+                        continue
+                    else:
+                        phoneme = ''.join([vocab.NIQQUD_PHONEMES.get(niqqud, '') for niqqud in cur.symbols])
+                        tokens.append(Token(cur.as_str(), 'v' + phoneme if prev.symbols else phoneme))
+                        i += 1
+                        continue
+                        
+                
             if not cur.symbols and next: # maybe with dagesh
                 if next == 'ו':
                     phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, '')
