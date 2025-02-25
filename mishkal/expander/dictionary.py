@@ -10,6 +10,9 @@ from mishkal import vocab
 import unicodedata
 
 files = Path(__file__).parent.joinpath('../data').glob('*.json')
+# Sort in reverse order to prioritize the most recent and best
+order = {'bronze': 1, 'silver': 2, 'gold': 3}
+files = sorted(files, key=lambda f: order.get(next((x for x in order if x in f.stem), ''), 0))
 
 class Dictionary:
     def __init__(self):        
