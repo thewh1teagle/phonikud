@@ -23,10 +23,11 @@ class Dictionary:
         for file in files:
             with open(file, 'r', encoding='utf-8') as f:
                 parsed: dict = json.load(f)
+                
+                
                 # normalize niqqud keys
                 parsed = {
-                    normalize(k) if all(c in vocab.SET_INPUT_CHARACTERS for c in k) 
-                    else unicodedata.normalize('NFD', k): 
+                    normalize(k): 
                     v for k, v in parsed.items()
                 }
                 self.dict.update(parsed)
