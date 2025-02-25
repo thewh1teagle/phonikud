@@ -55,36 +55,61 @@ Hebrew phonemes:
 Constants
 
 `b` - Bet
+
 `v` - Vet, Vav
+
 `g` - Gimel
+
 `dʒ` - Gimel with geresh, Zain with geresh
+
 `d` - Dalet
+
 `h` - He
+
 `z` - Zain
+
 `x` - Het, Haf
+
 `t` - Taf, Tet
+
 `j` - Yod
+
 `k` - Kuf, Kaf
+
 `l` - Lamed
+
 `m` - Mem
+
 `n` - Nun
+
 `s` - Sin, Samekh
+
 `f` - Fei
+
 `p` - Pei dgusha
+
 `ts` - tsadik
+
 `tʃ` - Tsadik with geresh
+
 `r` - Resh
+
 `ʃ` - Shin
 
 Vowels
 
 `a` - Shamar
+
 `e` - Shemer
+
 `i` - Shimer
+
 `o` - Shomer
+
 `u` - Shumar
 
 Symbols
 
 `ˈ` - stress (0x2C8) visually looks like apostrophe
+
 `ˌ` - secondary stress (0x2CC) visually looks like comma
