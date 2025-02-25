@@ -9,7 +9,7 @@ from mishkal.utils import normalize
 from mishkal import vocab
 import unicodedata
 
-files = Path(__file__).parent.glob('*.json')
+files = Path(__file__).parent.joinpath('../data').glob('*.json')
 
 class Dictionary:
     def __init__(self):        
