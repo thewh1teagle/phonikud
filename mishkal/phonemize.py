@@ -95,6 +95,8 @@ class Phonemizer():
                 i += 1
                 continue
             
+    
+            
             # Vav vowel
             if cur == 'ו':
                 if not cur.symbols:
@@ -103,16 +105,16 @@ class Phonemizer():
                         i += 1
                         continue
                     if next and next == 'ו':
-                        tokens.append(Token(cur.as_str(), 'v'))
+                        tokens.append(Token(cur.as_str(), vocab.LETTERS_PHONEMES[cur.letter_str]))
                         i += 1
                         continue
                 elif not prev:
                     if '\u05B0' in cur.symbols: # vav with shva in start
-                        tokens.append(Token(cur.as_str(), 've'))
+                        tokens.append(Token(cur.as_str(), vocab.LETTERS_PHONEMES[cur.letter_str] + vocab.VOWEL_E))
                         i += 1
                         continue
                     if '\u05BC' in cur.symbols: # vav with dagesh in start
-                        tokens.append(Token(cur.as_str(), 'u'))
+                        tokens.append(Token(cur.as_str(), vocab.VOWEL_U))
                         i += 1
                         continue
                     else:
@@ -128,7 +130,7 @@ class Phonemizer():
                         continue
                     else:
                         phoneme = ''.join([vocab.NIQQUD_PHONEMES.get(niqqud, '') for niqqud in cur.symbols])
-                        tokens.append(Token(cur.as_str(), 'v' + phoneme if prev.symbols else phoneme))
+                        tokens.append(Token(cur.as_str(), vocab.LETTERS_PHONEMES[cur.letter_str] + phoneme if prev.symbols else phoneme))
                         i += 1
                         continue
                         
@@ -149,6 +151,7 @@ class Phonemizer():
                     i += 2
                     continue
             # Yod vowel
+
             if cur == 'י' and prev and not cur.symbols: # Yod without niqqud
                 if not prev.symbols:
                     phoneme = vocab.VOWEL_I
@@ -162,6 +165,7 @@ class Phonemizer():
                     tokens.append(token)
                     i += 1
                     continue
+
             # Some final letters can be silent
             if not next and cur.letter_str in 'אהע' and not cur.symbols:
                 phoneme = ''

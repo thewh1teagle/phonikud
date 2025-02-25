@@ -41,3 +41,11 @@ print(phonemes) # ʃalom olam
 See [examples](examples)
 
 To understand the research and development journey behind Mishkal, check out the full story on [Medium](https://medium.com/@thewh1teagle/hebrew-tts-its-not-easy-7f57a7842d57).
+
+## Docs
+
+- Dictionaries prioritized based on `gold`, `silver`, `bronze`.
+- Hebrew niqqud is normalized and deduplicated phonetically (simplified)
+- Most of the Hebrew rules are happen in `phonemize.py`
+- Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
+- Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
