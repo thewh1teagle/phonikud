@@ -57,9 +57,9 @@ def extract_letters(word: str) -> list[Letter]:
                 symbols.append(word[i])
                 i += 1  # Move to the next character
 
-            if char in 'בכפו' and '\u05BC' in symbols:
-                char += '\u05BC'
-            if '\u05BC' in symbols:
+            if char in 'בכפ' and '\u05BC' in symbols:
+                char += '\u05BC' # Add dagesh to the letter itself
+            if '\u05BC' in symbols and char not in 'ו': # we'll keep dagesh symbol only for vav
                 symbols.remove('\u05BC') # remove dagesh
             # Shin
             if '\u05C1' in symbols:

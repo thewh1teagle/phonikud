@@ -106,8 +106,6 @@ LETTERS_PHONEMES = {
     'פּ': 'p',
     'שׁ': 'ʃ',
     'שׂ': 's',
-    
-    'וּ': 'u'
 }
 
 # Vowels
@@ -142,7 +140,8 @@ SET_LETTER_SYMBOLS = {
 
 """
 We're left with the following niqqud (10):  
-Shva, Hiriq, Tsere, Patah, Holam, Holam haser for vav, Qubuts, Dagesh, Shin dot, Sin dot
+Shva, Hiriq, Tsere, Patah, Holam, Qubuts, Dagesh, 
+Holam haser for vav, Shin dot, Sin dot
 """
 NIQQUD_NORMALIZE = {
     '\u05B1': '\u05B5',  # Hataf Segol -> Tsere
