@@ -54,6 +54,7 @@ To understand the research and development journey behind Mishkal, check out the
 - Most of the Hebrew rules are happen in `phonemize.py`
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
+- It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
 ### Niqqud deduplication
 
