@@ -53,11 +53,17 @@ To understand the research and development journey behind Mishkal, check out the
 #### Niqqud deduplication
 
 Hataf segol -> Tsere
+
 Segol -> Tsere
+
 Hataf patah -> patah
+
 Hataf qamatz -> patah
+
 Qamats -> Patah
+
 Qamats katan -> Holam
+
 Hebrew geresh -> Regular `'` (apostrophe)
 
 #### Niqqud set and symbols
