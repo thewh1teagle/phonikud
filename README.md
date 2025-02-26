@@ -50,7 +50,7 @@ To understand the research and development journey behind Mishkal, check out the
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
 
-Niqqud deduplication:
+#### Niqqud deduplication
 
 Hataf segol -> Tsere
 Segol -> Tsere
@@ -60,13 +60,13 @@ Qamats -> Patah
 Qamats katan -> Holam
 Hebrew geresh -> Regular `'` (apostrophe)
 
-Niqqud set and symbols:
+#### Niqqud set and symbols
 
-`Teres`, `Patah`, `Holam`, `Vav Holam` (ו), `Dagesh` (בכפךף), `Shin dot` (ש), `Sin dot` (ש), `'` (apostrophe eg. `ג'ירפה`)
+`Teres`, `Patah`, `Holam`, `Vav Holam` (`ו`), `Dagesh` (`בכפךף`), `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (apostrophe eg. `ג'ירפה`)
 
 We're left with: `Tsere, Patah, Holam` (and of course `Shin dot`, `Sin dot`, `Vav holam`
 
-Hebrew phonemes:
+#### Hebrew phonemes
 
 Constants
 
