@@ -3,6 +3,11 @@ from mishkal.phonemize import Letter
 from mishkal import vocab
 import unicodedata
 
+NORMALIZE_PATTERNS = {
+    # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
+    "([\u05d0-\u05ea])([\u05b0-\u05c7]{1,2})(\u05bc)": r"\1\3\2",
+}
+
 
 def remove_niqqud(text: str):
     return re.sub(vocab.HE_NIQQUD_PATTERN, "", text)
@@ -20,6 +25,8 @@ def normalize(text: str) -> str:
     """
     # Decompose text
     text = unicodedata.normalize("NFD", text)
+    for k, v in NORMALIZE_PATTERNS.items():
+        text = re.sub(k, v, text)
     # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)
     for k, v in vocab.NIQQUD_NORMALIZE.items():
         text = text.replace(k, v)
