@@ -26,6 +26,34 @@ from mishkal.utils import normalize
 import re
 
 
+# Vav vowel
+vavs = {
+    "doubles_identical": {"וּוּ": "vu", "וֹוֹ": "vo"},
+    "doubles": {
+        "ווּ": "vu",
+        "ווֹ": "vo",
+    },
+    "start": {
+        "וַ": "va",
+        "וְ": "ve",
+        "וֵ": "ve",
+        "וִ": "vi",
+        "וֹ": "vo",
+        "וּ": "u",
+        "וֻ": "vu",
+    },
+    "middle": {
+        "וַ": "va",
+        "וְ": "v",
+        "וֵ": "ve",
+        "וִ": "vi",
+        "וֹ": "o",
+        "וּ": "u",
+        "וֻ": "u",
+    },
+}
+
+
 class Phonemizer:
     def __init__(self):
         self.expander = Expander()
@@ -110,85 +138,46 @@ class Phonemizer:
                 i += 1
                 continue
 
-            # Vav vowel
-            if cur == "ו":
-                if not cur.symbols:
-                    if prev and prev == "ו":
-                        tokens.append(Token(cur.as_str(), ""))
-                        i += 1
-                        continue
-                    if next and next == "ו":
-                        tokens.append(
-                            Token(cur.as_str(), vocab.LETTERS_PHONEMES[cur.letter_str])
-                        )
-                        i += 1
-                        continue
-                elif not prev:
-                    if "\u05b0" in cur.symbols:  # vav with shva in start
-                        tokens.append(
-                            Token(
-                                cur.as_str(),
-                                vocab.LETTERS_PHONEMES[cur.letter_str] + vocab.VOWEL_E,
-                            )
-                        )
-                        i += 1
-                        continue
-                    if "\u05bc" in cur.symbols:  # vav with dagesh in start
-                        tokens.append(Token(cur.as_str(), vocab.VOWEL_U))
-                        i += 1
-                        continue
-                    else:
-                        phoneme = "v"
-                        phoneme += "".join(
-                            [
-                                vocab.NIQQUD_PHONEMES.get(niqqud, "")
-                                for niqqud in cur.symbols
-                            ]
-                        )
-                        tokens.append(Token(cur.as_str(), phoneme))
-                        i += 1
-                        continue
-                elif prev:
-                    if prev.as_str() == cur.as_str():
-                        tokens.append(Token(cur.as_str(), ""))
-                        i += 1
-                        continue
-                    else:
-                        phoneme = "".join(
-                            [
-                                vocab.NIQQUD_PHONEMES.get(niqqud, "")
-                                for niqqud in cur.symbols
-                            ]
-                        )
-                        tokens.append(
-                            Token(
-                                cur.as_str(),
-                                vocab.LETTERS_PHONEMES[cur.letter_str] + phoneme
-                                if prev.symbols
-                                else phoneme,
-                            )
-                        )
-                        i += 1
-                        continue
-
-            if not cur.symbols and next:  # maybe with dagesh
-                if next == "ו":
-                    phoneme = vocab.LETTERS_PHONEMES.get(cur.letter_str, "")
-                    if "\u05bc" in next.symbols:  # Dagesh
-                        phoneme += vocab.VOWEL_U
-                    elif "\u05b9" in next.symbols:  # Holam
-                        phoneme += vocab.VOWEL_O
-                    elif "\u05ba" in next.symbols:  # Holam haser for vav
-                        phoneme += vocab.VOWEL_O
-                    else:
-                        phoneme += vocab.VOWEL_O  # default
-                    token = Token(cur.as_str() + next.as_str(), phoneme)
-                    tokens.append(token)
+            if cur.letter_str == "ו":
+                # special doubles
+                if next and cur.as_str() == next.as_str():
+                    phonemes = vavs["doubles_identical"].get(
+                        cur.as_str() + next.as_str(), "vo"
+                    )
+                    tokens.append(Token(cur.as_str() + next.as_str(), phonemes))
                     i += 2
                     continue
+                # doubles with one has no symbols
+                if next and (
+                    cur == "ו" and next == "ו" and (not cur.symbols or not next.symbols)
+                ):
+                    phonemes = vavs["doubles"].get(cur.as_str() + next.as_str())
+                    if not phonemes:
+                        # take the one with the symbols
+                        letter = cur.as_str() if cur.symbols else next.as_str()
+                        phonemes = vavs["middle"].get(letter, "v")
+                    tokens.append(Token(cur.as_str() + next.as_str(), phonemes))
+                    i += 2
+                    continue
+                # start
+                if not prev:
+                    phonemes = vavs["start"].get(cur.as_str(), "v")
+                    tokens.append(Token(cur.as_str(), phonemes))
+                    i += 1
+                    continue
+                # middle
+                phonemes = vavs["middle"].get(cur.as_str(), "v")
+                tokens.append(Token(cur.as_str(), phonemes))
+                i += 1
+                continue
             # Yod vowel
-
             if cur == "י" and prev and not cur.symbols:  # Yod without niqqud
+                # Not possible to say ii
+                if tokens[-1].phonemes.endswith("i"):
+                    token = Token(prev.as_str() + cur.as_str(), "")
+                    tokens.append(token)
+                    i += 1
+                    continue
                 if not prev.symbols:
                     phoneme = vocab.VOWEL_I
                     token = Token(prev.as_str() + cur.as_str(), phoneme)
