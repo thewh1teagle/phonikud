@@ -20,5 +20,5 @@ nakdimon = Nakdimon("nakdimon.onnx")
 text = "שלום עולם!"
 dotted_text = nakdimon.compute(text)
 
-print('Undotted: ', phonemize(text))
-print('Dotted: ', phonemize(dotted_text))
+print("Undotted: ", phonemize(text))
+print("Dotted: ", phonemize(dotted_text))

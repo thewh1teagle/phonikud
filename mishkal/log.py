@@ -2,6 +2,7 @@ import logging
 import os
 import colorlog
 
+
 def _create_logger():
     """
     Create a logger with colorized output

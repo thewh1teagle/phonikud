@@ -9,10 +9,11 @@ from .time_to_word import time_to_word
 from .dictionary import Dictionary
 from mishkal.log import log
 
+
 class Expander:
     def __init__(self):
         self.dictionary = Dictionary()
-        
+
     def expand_text(self, text: str):
         text = self.dictionary.expand_text(text)
         words = []
@@ -25,6 +26,6 @@ class Expander:
                     word = num_to_word(word)
                 words.append(word)
             except Exception as e:
-                log.error(f'Failed to expand {word} with error: {e}')
+                log.error(f"Failed to expand {word} with error: {e}")
                 words.append(source_word)
-        return ' '.join(words)
+        return " ".join(words)

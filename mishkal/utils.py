@@ -3,11 +3,14 @@ from mishkal.phonemize import Letter
 from mishkal import vocab
 import unicodedata
 
+
 def remove_niqqud(text: str):
-    return re.sub(vocab.HE_NIQQUD_PATTERN, '', text)
+    return re.sub(vocab.HE_NIQQUD_PATTERN, "", text)
+
 
 def has_niqqud(text: str):
     return re.search(vocab.HE_NIQQUD_PATTERN, text) is not None
+
 
 def normalize(text: str) -> str:
     """
@@ -16,14 +19,21 @@ def normalize(text: str) -> str:
     Keep only Hebrew characters / punctuation / IPA
     """
     # Decompose text
-    text = unicodedata.normalize('NFD', text)
+    text = unicodedata.normalize("NFD", text)
     # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)
     for k, v in vocab.NIQQUD_NORMALIZE.items():
         text = text.replace(k, v)
-    
+
     # Keep only lexicon characters
-    text = ''.join([c for c in text if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS])
+    text = "".join(
+        [
+            c
+            for c in text
+            if c in vocab.SET_INPUT_CHARACTERS or c in vocab.SET_OUTPUT_CHARACTERS
+        ]
+    )
     return text
+
 
 def extract_letters(word: str) -> list[Letter]:
     """
@@ -36,7 +46,7 @@ def extract_letters(word: str) -> list[Letter]:
         - Rashey Tavot (acronyms) expanded already
         - English words converted to phonemes already
         - Text normalized using unicodedata.normalize('NFD')
-    
+
     This function extract *ONLY* hebrew letters and niqqud from LEXICON
     Other characters ignored!
     """
@@ -44,7 +54,7 @@ def extract_letters(word: str) -> list[Letter]:
     for niqqud, normalized in vocab.NIQQUD_NORMALIZE.items():
         word = word.replace(niqqud, normalized)
     # Remove non-lexicon characters
-    word = ''.join([c for c in word if c in vocab.SET_INPUT_CHARACTERS])
+    word = "".join([c for c in word if c in vocab.SET_INPUT_CHARACTERS])
     letters = []
     i = 0
     while i < len(word):
@@ -53,22 +63,26 @@ def extract_letters(word: str) -> list[Letter]:
             symbols = []
             i += 1  # Move to potential niqqud
             # Collect symbols attached to this letter
-            while i < len(word) and (word[i] in vocab.SET_LETTER_SYMBOLS or word[i] == "'"):
+            while i < len(word) and (
+                word[i] in vocab.SET_LETTER_SYMBOLS or word[i] == "'"
+            ):
                 symbols.append(word[i])
                 i += 1  # Move to the next character
 
-            if char in 'בכפ' and '\u05BC' in symbols:
-                char += '\u05BC' # Add dagesh to the letter itself
-            if '\u05BC' in symbols and char not in 'ו': # we'll keep dagesh symbol only for vav
-                symbols.remove('\u05BC') # remove dagesh
+            if char in "בכפ" and "\u05bc" in symbols:
+                char += "\u05bc"  # Add dagesh to the letter itself
+            if (
+                "\u05bc" in symbols and char not in "ו"
+            ):  # we'll keep dagesh symbol only for vav
+                symbols.remove("\u05bc")  # remove dagesh
             # Shin
-            if '\u05C1' in symbols:
-                char += '\u05C1'
-                symbols.remove('\u05C1') 
+            if "\u05c1" in symbols:
+                char += "\u05c1"
+                symbols.remove("\u05c1")
             # Sin
-            if '\u05C2' in symbols:
-                char += '\u05C2'
-                symbols.remove('\u05C2') 
+            if "\u05c2" in symbols:
+                char += "\u05c2"
+                symbols.remove("\u05c2")
             letters.append(Letter(char, set(symbols)))
         else:
             i += 1  # Skip non-letter symbols
