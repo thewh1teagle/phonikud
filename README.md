@@ -13,14 +13,15 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - (WIP) Mixed English in Hebrew
 - Dictionaries with words, symbols, emojies
 
-
 ## Limitiation
 
 The following hard to predict even from text with niqqud.
 
-- Shva nah and nah
-- Stress (Atmaha / Milre / Milra. same thing.)
-- Kamatz Katan (rarely used)
+- `Shva nah` and `Shva nah`
+- `Stress` (`Atmaha` / `Milre` / `Milra`. or two.)
+- `Kamatz Katan` (rarely used)
+
+We cover these using dictionaries, and neural network is planned.
 
 ## Install
 
@@ -37,9 +38,10 @@ You can find the package as well in `pypi.org/project/mishkal-hebrew`
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
 ## Examples
+
 ```python
 from mishkal import phonemize
-phonemes = phonemize('שָׁלוֹם עוֹלָם') 
+phonemes = phonemize('שָׁלוֹם עוֹלָם')
 print(phonemes) # ʃalom olam
 ```
 
@@ -68,7 +70,7 @@ To understand the research and development journey behind Mishkal, check out the
 
 ### Niqqud set and symbols
 
-- `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךף`), 
+- `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךף`),
 - `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (`ג'`), `Vav Holam` (`ו`)
 
 ### Hebrew phonemes
