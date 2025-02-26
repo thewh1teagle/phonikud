@@ -2,11 +2,9 @@ from pathlib import Path
 
 
 def test_has_no_breakpoint():
-    files = Path(__file__).parent.glob("**/*.py")
+    files = Path(__file__).parent.joinpath("../mishkal").resolve().glob("**/*.py")
     for file in files:
-        # Skip files that start with 'test'
-        if file.name.startswith("test"):
-            continue
+        print(file)
 
         with open(file, "r") as f:
             content = f.readlines()
