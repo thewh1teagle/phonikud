@@ -6,6 +6,7 @@ import unicodedata
 NORMALIZE_PATTERNS = {
     # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
     "([\u05d0-\u05ea])([\u05b0-\u05c7]{1,2})(\u05bc)": r"\1\3\2",
+    r"([^בכךפף])(\u05bc)": r"\1",
 }
 
 
@@ -94,3 +95,7 @@ def extract_letters(word: str) -> list[Letter]:
         else:
             i += 1  # Skip non-letter symbols
     return letters
+
+
+def get_unicode_names(text: str):
+    return [unicodedata.name(c, "?") for c in text]
