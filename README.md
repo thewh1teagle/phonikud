@@ -70,7 +70,7 @@ To understand the research and development journey behind Mishkal, check out the
 
 ### Niqqud set and symbols
 
-- `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךף`),
+- `Shva`, `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךף`),
 - `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (`ג'`), `Vav Holam` (`ו`)
 
 ### Hebrew phonemes
