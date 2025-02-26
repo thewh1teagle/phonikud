@@ -1,5 +1,6 @@
 """
 uv sync
+uv run pip install gradio>=5.15.0
 uv run gradio examples/editor.py
 """
 
