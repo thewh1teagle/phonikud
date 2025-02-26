@@ -23,9 +23,14 @@ The following hard to predict even from text with niqqud.
 - Kamatz Katan (rarely used)
 
 ## Install
+
+Due to ongoing development, it's recommend to install from git directly.
+
 ```console
-pip install mishkal-hebrew
+pip install git+https://github.com/thewh1teagle/mishkal
 ```
+
+You can find the package as well in `pypi.org/project/mishkal-hebrew`
 
 ## Play
 
