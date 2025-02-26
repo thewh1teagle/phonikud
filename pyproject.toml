@@ -19,6 +19,7 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "gradio>=5.15.0",
+    "pytest>=8.3.4",
     "tqdm>=4.67.1",
 ]
 
