@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - run: |
+          uv sync
           uv run ruff format --diff
           uv run ruff check
           uv run pytest
