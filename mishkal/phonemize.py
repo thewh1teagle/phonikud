@@ -23,6 +23,7 @@ from .vocab import LETTERS_NAMES_PHONEMES, Letter, Token
 from mishkal import vocab, utils
 from .expander import Expander
 from mishkal.utils import normalize
+import re
 
 
 class Phonemizer:
@@ -30,7 +31,11 @@ class Phonemizer:
         self.expander = Expander()
 
     def phonemize(
-        self, text: str, preserve_punctuation=True, return_tokens=True
+        self,
+        text: str,
+        preserve_punctuation=True,
+        preserve_stress=True,
+        return_tokens=True,
     ) -> str | list[Token]:
         text = self.expander.expand_text(text)
         text = normalize(text)
@@ -75,7 +80,14 @@ class Phonemizer:
             hebrew_tokens = self.phonemize_hebrew(letters)
             tokens.extend(hebrew_tokens)
 
+        if not preserve_stress:
+            for token in tokens:
+                token.phonemes = re.sub(
+                    f"{vocab.STRESS}|{vocab.SECONDARY_STRESS}", "", token.phonemes
+                )
+
         if return_tokens:
+            # TODO: return list[Tokens] instead of list[str]?
             return tokens
         return "".join([t.phonemes for t in tokens])
 

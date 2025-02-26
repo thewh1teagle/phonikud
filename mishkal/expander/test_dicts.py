@@ -9,6 +9,6 @@ def test_dictionary():
     dict = Dictionary()
     for k, v in dict.dict.items():
         for c in v:
-            assert c in phonemes_without_punctuation, (
-                f"The value of the word {k} is invalid: {v} the invalid character: {c}"
-            )
+            assert (
+                c in phonemes_without_punctuation
+            ), f"The value of the word {k} is invalid: {v} the invalid character: {c}"
