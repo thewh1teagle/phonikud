@@ -112,4 +112,7 @@ Symbols
 - `ˈ` - stress (0x2C8) visually looks like apostrophe
 - `ˌ` - secondary stress (0x2CC) visually looks like comma
 
-See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
+### Notes
+
+- The glottal stop `ʔ` isn't used, so Ayin and Alef are silent or match their vowels (`a`, `e`, etc.). TTS models handle it well, and it's visually clear.
+- See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
