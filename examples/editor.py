@@ -4,7 +4,7 @@ uv pip install "gradio>=5.15.0"
 uv run gradio examples/editor.py
 """
 
-from mishkal import phonemize
+from mishkal import phonemize, normalize
 from mishkal.vocab import Token
 import gradio as gr
 
@@ -17,9 +17,10 @@ theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 def on_submit_debug(text: str) -> str:
     tokens: list[Token] = phonemize(text, preserve_punctuation=True, return_tokens=True)
+    normalized_text = normalize(text)
     for token in tokens:
         text += f"{token.token} -> {token.phonemes}\n"
-    return " ".join(i.phonemes for i in tokens)
+    return " ".join(i.phonemes for i in tokens) + "\n\nNormalized:\n" + normalized_text
 
 
 def on_submit(text: str) -> str:
