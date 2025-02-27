@@ -6,7 +6,7 @@ import unicodedata
 NORMALIZE_PATTERNS = {
     # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
     "([\u05d0-\u05ea])([\u05b0-\u05c7]{1,2})(\u05bc)": r"\1\3\2",
-    r"([^בכךפף])(\u05bc)": r"\1",
+    r"([^בכךפףו])(\u05bc)": r"\1",
 }
 
 
@@ -25,6 +25,7 @@ def normalize(text: str) -> str:
     Keep only Hebrew characters / punctuation / IPA
     """
     # Decompose text
+
     text = unicodedata.normalize("NFD", text)
     for k, v in NORMALIZE_PATTERNS.items():
         text = re.sub(k, v, text)
