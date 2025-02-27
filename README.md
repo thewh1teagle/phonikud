@@ -58,6 +58,10 @@ To understand the research and development journey behind Mishkal, check out the
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
+### Enhance vocabulary 
+
+One of the best ways to improve this library is to add words with phonemes to the dictionary. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
+
 ### Niqqud deduplication
 
 - `Hataf segol` -> `Tsere`
