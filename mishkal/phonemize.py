@@ -72,13 +72,9 @@ class Phonemizer:
 
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
-
             if self.expander.dictionary.dict.get(word):
                 # skip
                 # TODO: better API
-                return word
-            if all(i in vocab.SET_OUTPUT_CHARACTERS for i in word):
-                # already phonemized
                 return word
             phonemes = fallback(word).strip()
             # TODO: check that it has only IPA?!
@@ -86,7 +82,8 @@ class Phonemizer:
                 vocab.SET_OUTPUT_CHARACTERS.add(c)
             return phonemes
 
-        text = re.sub(fallback_pattern, fallback_replace_callback, text)
+        if fallback is not None:
+            text = re.sub(fallback_pattern, fallback_replace_callback, text)
         text = self.expander.expand_text(text)
         tokens: list[Token] = []
         self.fallback = fallback
