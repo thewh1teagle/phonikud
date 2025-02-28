@@ -41,7 +41,7 @@ class Dictionary:
         # decomposite
         source = unicodedata.normalize("NFD", source)
         raw_lookup = self.dict.get(source)
-        
+
         without_niqqud_lookup = self.dict.get(remove_niqqud(source))
         with_niqqud_lookup = self.dict.get(normalize(source))
         # Compare without niqqud ONLY if source has no niqqud
@@ -57,14 +57,16 @@ class Dictionary:
         raw_source: str = match.group(0)
         if raw_source.isnumeric():
             return raw_source
-        
+
         raw_lookup = self.dict.get(raw_source)
-        
+
         # Compare without niqqud ONLY if source has no niqqud
         if raw_lookup:
             return raw_lookup
         # search by only ', space, regular niqqud, alphabet
-        raw_source = re.sub(r"[\u05B0-\u05EB ']+", self.replace_hebrew_only_callback, raw_source)
+        raw_source = re.sub(
+            r"[\u05B0-\u05EB ']+", self.replace_hebrew_only_callback, raw_source
+        )
         return raw_source
 
     def expand_text(self, text: str) -> str:
@@ -72,6 +74,5 @@ class Dictionary:
         TODO: if key doesn't have diacritics expand even diacritized words
         """
         text = re.sub(r"\S+", self.replace_non_whitespace_callback, text)
-        
-        
+
         return text

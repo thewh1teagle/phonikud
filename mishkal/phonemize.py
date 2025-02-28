@@ -66,14 +66,12 @@ class Phonemizer:
         preserve_stress=True,
         fallback: Callable[[str], str] = None,
     ) -> str:
-        
         he_pattern = r"[\u05b0-\u05ea]+"
         fallback_pattern = r"[a-zA-Z]+"
-        
-        
+
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
-            
+
             if self.expander.dictionary.dict.get(word):
                 # skip
                 # TODO: better API
@@ -85,7 +83,7 @@ class Phonemizer:
             for c in phonemes:
                 vocab.SET_OUTPUT_CHARACTERS.add(c)
             return phonemes
-        
+
         text = re.sub(fallback_pattern, fallback_replace_callback, text)
         text = self.expander.expand_text(text)
         tokens: list[Token] = []
@@ -94,22 +92,24 @@ class Phonemizer:
         def heb_replace_callback(match: re.Match):
             word = match.group(0)
             word = normalize(word)
-            word = ''.join(i for i in word if i in vocab.SET_LETTERS or i in vocab.SET_NIQQUD)
+            word = "".join(
+                i for i in word if i in vocab.SET_LETTERS or i in vocab.SET_NIQQUD
+            )
             letters = utils.extract_letters(word)
             hebrew_tokens = self.phonemize_hebrew(letters)
             tokens.extend(hebrew_tokens)
-            return ''.join(i.phonemes for i in hebrew_tokens)
-        
-        text = re.sub(he_pattern, heb_replace_callback, text)
-        
-        
-        if not preserve_punctuation:
-            text = ''.join(i for i in text if i not in vocab.PUNCTUATION or i == ' ')
-        if not preserve_stress:
-            text = ''.join(i for i in text if i not in [vocab.STRESS, vocab.SECONDARY_STRESS])
-        text = ''.join(i for i in text if i in vocab.SET_OUTPUT_CHARACTERS)
-        return text
+            return "".join(i.phonemes for i in hebrew_tokens)
 
+        text = re.sub(he_pattern, heb_replace_callback, text)
+
+        if not preserve_punctuation:
+            text = "".join(i for i in text if i not in vocab.PUNCTUATION or i == " ")
+        if not preserve_stress:
+            text = "".join(
+                i for i in text if i not in [vocab.STRESS, vocab.SECONDARY_STRESS]
+            )
+        text = "".join(i for i in text if i in vocab.SET_OUTPUT_CHARACTERS)
+        return text
 
     def phonemize_hebrew(self, letters: list[Letter]) -> list[Token]:
         tokens: list[Token] = []

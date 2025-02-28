@@ -5,7 +5,6 @@ uv run gradio examples/editor.py
 """
 
 from mishkal import phonemize, normalize
-from mishkal.vocab import Token
 import gradio as gr
 
 default_text = """
