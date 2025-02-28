@@ -6,11 +6,11 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- Convert text with niqqud to modern spoken phonemes
 - (WIP) Accurate lightweight niqqud model
+- Convert text with niqqud to modern spoken phonemes
 - Expand dates into text with niqqud
 - Expand numbers into text with niqqud
-- (WIP) Mixed English in Hebrew
+- Mixed English in Hebrew with fallback
 - Dictionaries with words, symbols, emojies
 
 ## Limitiation
@@ -115,6 +115,12 @@ Symbols
 
 - `ˈ` - stress (0x2C8) visually looks like apostrophe
 - `ˌ` - secondary stress (0x2CC) visually looks like comma
+
+### Mixed English
+
+You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
+See [examples/with_fallback.py](examples/with_fallback.py) for reference.
+Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
 
 ### Notes
 
