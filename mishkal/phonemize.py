@@ -66,6 +66,7 @@ class Phonemizer:
         preserve_stress=True,
         fallback: Callable[[str], str] = None,
     ) -> str:
+        # TODO: is that enough? what if there's punctuation around? other chars?
         he_pattern = r"[\u05b0-\u05ea]+"
         fallback_pattern = r"[a-zA-Z]+"
 
