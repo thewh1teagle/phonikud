@@ -80,6 +80,7 @@ class Phonemizer:
                 # already phonemized
                 return word
             phonemes = fallback(word).strip()
+            # TODO: check that it has only IPA?!
             for c in phonemes:
                 vocab.SET_OUTPUT_CHARACTERS.add(c)
             return phonemes
