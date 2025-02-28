@@ -25,20 +25,23 @@ class Dictionary:
     def load_dictionaries(self):
         for file in files:
             with open(file, "r", encoding="utf-8") as f:
-                parsed: dict = json.load(f)
+                dictionary: dict = json.load(f)
+                normalized_dictionary = {}
 
                 # normalize niqqud keys
-                parsed = {normalize(k): v for k, v in parsed.items()}
-                self.dict.update(parsed)
+                for k, v in dictionary.items():
+                    k = normalize(k)
+                    # Ensure not empty
+                    if k and v:
+                        normalized_dictionary[k] = v
+                self.dict.update(normalized_dictionary)
 
     def replace_hebrew_only_callback(self, match: re.Match[str]) -> str:
-        raw_source: str = match.group(0)
+        source: str = match.group(0)
         # decomposite
-        source = unicodedata.normalize("NFD", raw_source)
-
-        # Keep only ', space, regular niqqud, alphabet
-        source = re.sub(r"[^'\u05B0-\u05EB ]", "", source)
-        raw_lookup = self.dict.get(raw_source)
+        source = unicodedata.normalize("NFD", source)
+        raw_lookup = self.dict.get(source)
+        
         without_niqqud_lookup = self.dict.get(remove_niqqud(source))
         with_niqqud_lookup = self.dict.get(normalize(source))
         # Compare without niqqud ONLY if source has no niqqud
@@ -48,21 +51,27 @@ class Dictionary:
             return without_niqqud_lookup
         elif with_niqqud_lookup:
             return with_niqqud_lookup
-        return raw_source
+        return source
 
     def replace_non_whitespace_callback(self, match: re.Match[str]) -> str:
         raw_source: str = match.group(0)
         if raw_source.isnumeric():
             return raw_source
+        
         raw_lookup = self.dict.get(raw_source)
+        
         # Compare without niqqud ONLY if source has no niqqud
         if raw_lookup:
             return raw_lookup
-        return self.replace_hebrew_only_callback(match)
+        # search by only ', space, regular niqqud, alphabet
+        raw_source = re.sub(r"[\u05B0-\u05EB ']+", self.replace_hebrew_only_callback, raw_source)
+        return raw_source
 
     def expand_text(self, text: str) -> str:
         """
         TODO: if key doesn't have diacritics expand even diacritized words
         """
         text = re.sub(r"\S+", self.replace_non_whitespace_callback, text)
+        
+        
         return text

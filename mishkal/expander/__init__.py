@@ -16,6 +16,7 @@ class Expander:
 
     def expand_text(self, text: str):
         text = self.dictionary.expand_text(text)
+        
         words = []
         for source_word in text.split():
             try:

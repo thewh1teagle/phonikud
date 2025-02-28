@@ -24,6 +24,7 @@ from mishkal import vocab, utils
 from .expander import Expander
 from mishkal.utils import normalize
 import re
+from typing import Callable
 
 
 # Vav vowel
@@ -63,61 +64,52 @@ class Phonemizer:
         text: str,
         preserve_punctuation=True,
         preserve_stress=True,
-        return_tokens=True,
-    ) -> str | list[Token]:
+        fallback: Callable[[str], str] = None,
+    ) -> str:
+        
+        he_pattern = r"[\u05b0-\u05ea]+"
+        fallback_pattern = r"[a-zA-Z]+"
+        
+        
+        def fallback_replace_callback(match: re.Match):
+            word = match.group(0)
+            
+            if self.expander.dictionary.dict.get(word):
+                # skip
+                # TODO: better API
+                return word
+            if all(i in vocab.SET_OUTPUT_CHARACTERS for i in word):
+                # already phonemized
+                return word
+            phonemes = fallback(word).strip()
+            for c in phonemes:
+                vocab.SET_OUTPUT_CHARACTERS.add(c)
+            return phonemes
+        
+        text = re.sub(fallback_pattern, fallback_replace_callback, text)
         text = self.expander.expand_text(text)
-        text = normalize(text)
         tokens: list[Token] = []
-        word = ""
-        index = 0
+        self.fallback = fallback
 
-        while index < len(text):
-            cur = text[index]
-
-            # Collect word
-            if cur in vocab.SET_LETTERS or cur in vocab.SET_NIQQUD or cur == "'":
-                # Add to word
-                word += cur
-                index += 1
-                continue
-            # Phonemize word
-            if len(word) > 0:
-                # Phonemize word
-                letters = utils.extract_letters(word)
-                hebrew_tokens = self.phonemize_hebrew(letters)
-                tokens.extend(hebrew_tokens)
-                word = ""
-
-            # Add punctuation
-            if cur in vocab.SET_PUNCTUATION:
-                if preserve_punctuation or cur == " ":
-                    tokens.append(Token(cur, cur))
-                index += 1
-            else:
-                # Valid phoneme
-                if cur in vocab.SET_OUTPUT_CHARACTERS:
-                    tokens.append(Token(cur, cur))
-                    index += 1
-                else:
-                    # Ignore
-                    index += 1
-
-        # Ensure the last accumulated word is phonemized
-        if len(word) > 0:
+        def heb_replace_callback(match: re.Match):
+            word = match.group(0)
+            word = normalize(word)
+            word = ''.join(i for i in word if i in vocab.SET_LETTERS or i in vocab.SET_NIQQUD)
             letters = utils.extract_letters(word)
             hebrew_tokens = self.phonemize_hebrew(letters)
             tokens.extend(hebrew_tokens)
-
+            return ''.join(i.phonemes for i in hebrew_tokens)
+        
+        text = re.sub(he_pattern, heb_replace_callback, text)
+        
+        
+        if not preserve_punctuation:
+            text = ''.join(i for i in text if i not in vocab.PUNCTUATION or i == ' ')
         if not preserve_stress:
-            for token in tokens:
-                token.phonemes = re.sub(
-                    f"{vocab.STRESS}|{vocab.SECONDARY_STRESS}", "", token.phonemes
-                )
+            text = ''.join(i for i in text if i not in [vocab.STRESS, vocab.SECONDARY_STRESS])
+        text = ''.join(i for i in text if i in vocab.SET_OUTPUT_CHARACTERS)
+        return text
 
-        if return_tokens:
-            # TODO: return list[Tokens] instead of list[str]?
-            return tokens
-        return "".join([t.phonemes for t in tokens])
 
     def phonemize_hebrew(self, letters: list[Letter]) -> list[Token]:
         tokens: list[Token] = []
