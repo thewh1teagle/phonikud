@@ -1,4 +1,3 @@
-
 from mishkal import phonemize
 
 text = """
@@ -12,8 +11,9 @@ Esdf$fsdADsf
 
 """
 
+
 def test_invalid_input():
     print(phonemize(text))
-    
-    
+
+
 test_invalid_input()
