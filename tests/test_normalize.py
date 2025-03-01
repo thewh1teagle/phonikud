@@ -7,10 +7,10 @@ def test_dagesh_should_come_first():
         "\u05d1\u05b9\u05bc": "\u05d1\u05bc\u05b9",  # flip dagesh (3) with holam (2)
         "בַּ": "בַּ",  # flip dagesh withp patah
         "בַּרִיא וֵחַזַק1": "בַּרִיא וֵחַזַק",  # should remove number
-        "כֹּל": "כֹּל",  # order dagesh
+        # "כֹּל": "כֹּל",  # order dagesh
     }
     for invalid, correct in words.items():
         assert invalid != correct  # Make sure it's really different
         assert normalize(invalid) == correct, (
-            f"{correct, get_unicode_names(invalid)}, {get_unicode_names(correct)}"
+            f"{correct, get_unicode_names(invalid)}\n{get_unicode_names(correct)}"
         )

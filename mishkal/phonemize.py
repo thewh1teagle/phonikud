@@ -108,6 +108,7 @@ class Phonemizer:
                 i for i in text if i not in [vocab.STRESS, vocab.SECONDARY_STRESS]
             )
         text = "".join(i for i in text if i in vocab.SET_OUTPUT_CHARACTERS)
+
         return text
 
     def phonemize_hebrew(self, letters: list[Letter]) -> list[Token]:

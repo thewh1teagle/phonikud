@@ -37,7 +37,7 @@ HE_CHARS_PATTERN = (
 )
 HE_NIQQUD_PATTERN = r"[\u05B0-\u05C7]"
 
-PUNCTUATION = r"""- .,"':!?()"""
+PUNCTUATION = r".,!? "
 
 # Special
 GIMEL_OR_ZAIN_WITH_DAGESH = "dʒ"
