@@ -48,8 +48,6 @@ print(phonemes) # ʃalom olam
 
 See [examples](examples)
 
-To understand the research and development journey behind Mishkal, check out the full story on [Medium](https://medium.com/@thewh1teagle/hebrew-tts-its-not-easy-7f57a7842d57).
-
 ## Docs
 
 - Dictionaries prioritized based on `gold`, `silver`, `bronze`.
