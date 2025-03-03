@@ -47,6 +47,7 @@ SIN_WITH_POINT = "s"
 STRESS = "\u02c8"
 SECONDARY_STRESS = "\u02cc"
 HET_GNUVA = "ax"
+W_AS_WALLA = "w"
 
 LETTERS_NAMES_PHONEMES = {
     "א": "alef",  # Alef, glottal stop
