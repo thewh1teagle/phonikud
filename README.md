@@ -17,6 +17,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 The following hard to predict even from text with niqqud.
 
+- Requires diacritized text
 - `Shva nah` and `Shva nah`
 - `Stress` (`Atmaha` / `Milre` / `Milra`. or two.)
 - `Kamatz Katan` (rarely used)
@@ -81,6 +82,7 @@ One of the best ways to improve this library is to add words with phonemes to th
 
 Constants
 
+- `ʔ` - Alef/Ayin 
 - `b` - Bet
 - `v` - Vet, Vav
 - `g` - Gimel
@@ -102,6 +104,7 @@ Constants
 - `tʃ` - Tsadik with geresh
 - `r` - Resh
 - `ʃ` - Shin
+- `w` - Example: `walla`
 
 Vowels
 
@@ -114,7 +117,6 @@ Vowels
 Symbols
 
 - `ˈ` - stress (0x2C8) visually looks like apostrophe
-- `ˌ` - secondary stress (0x2CC) visually looks like comma
 
 ### Mixed English
 
@@ -124,5 +126,6 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 
 ### Notes
 
-- The glottal stop `ʔ` isn't used, so Ayin and Alef are silent or match their vowels (`a`, `e`, etc.). TTS models handle it well, and it's visually clear.
+- There's no secondary stress (usually it's only Milel and Milra)
+- The glottal stop sometimes omited
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
