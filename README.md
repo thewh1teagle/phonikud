@@ -84,7 +84,8 @@ Constants
 - `b` - Bet
 - `v` - Vet, Vav
 - `g` - Gimel
-- `dʒ` - Gimel with geresh, Zain with geresh
+- `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
+- `ʒ`  - Zain with geresh (בֵּז׳)
 - `d` - Dalet
 - `h` - He
 - `z` - Zain
