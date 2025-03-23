@@ -11,7 +11,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Expand dates into text with niqqud
 - Expand numbers into text with niqqud
 - Mixed English in Hebrew with fallback
-- Dictionaries with words, symbols, emojies
+- Dictionaries with words, symbols, emojis
 
 ## Limitiation
 
@@ -43,7 +43,7 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 ```python
 from mishkal import phonemize
 phonemes = phonemize('שָׁלוֹם עוֹלָם')
-print(phonemes) # ʃalom olam
+print(phonemes) # ʃaˈlom oˈlam
 ```
 
 See [examples](examples)
@@ -52,7 +52,7 @@ See [examples](examples)
 
 - Dictionaries prioritized based on `gold`, `silver`, `bronze`.
 - Hebrew niqqud is normalized and deduplicated phonetically (simplified)
-- Most of the Hebrew rules are happen in `phonemize.py`
+- Most of the Hebrew rules happen in `phonemize.py`
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
