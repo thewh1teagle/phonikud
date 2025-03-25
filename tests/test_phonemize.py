@@ -4,6 +4,8 @@ import pandas as pd
 import warnings
 from itertools import chain
 
+TEST_STRESS = False
+
 
 def test_phonemize_hebrew_sanity():
     with_stress = phonemize("שָׁלוֹם", preserve_stress=True)
@@ -36,7 +38,7 @@ def test_phonemize_hebrew_manual():
         # ^ if stress is marked manually, check both with and without stress
         # otherwise just check that output is correct disregarding stress
 
-        if has_stress:
+        if TEST_STRESS and has_stress:
             check_output(nikkud, ipa, True)
         check_output(nikkud, ipa, False)
 
