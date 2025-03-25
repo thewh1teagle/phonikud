@@ -2,6 +2,7 @@ from mishkal import phonemize, vocab
 import os
 import pandas as pd
 import warnings
+from itertools import chain
 
 
 def test_phonemize_hebrew_sanity():
@@ -9,28 +10,36 @@ def test_phonemize_hebrew_sanity():
     without_stress = phonemize("שָׁלוֹם", preserve_stress=False)
     assert without_stress == "ʃalom" and vocab.STRESS in with_stress
 
-def test_phonemize_hebrew_exhaustive_no_stress():
-    filename = os.path.join(
-        os.path.dirname(__file__),
-        "phonemize_test_cases_no_stress.csv"
-    )
-    df = pd.read_csv(filename)
-    for row in df.itertuples():
-        output = phonemize(row.hebrew_with_nikkud, preserve_stress=False)
-        # assert output == row.ipa
-        # For now, just print warning since they will not all pass:
-        if output != row.ipa:
-            warnings.warn(f"Incorrect phonemization (no stress): {output} != {row.ipa} ({row.hebrew_with_nikkud})")
 
-def test_phonemize_hebrew_exhaustive_with_stress():
+def test_phonemize_hebrew_manual():
+    UNICODE_STRESS_MARK = chr(712)
     filename = os.path.join(
         os.path.dirname(__file__),
-        "phonemize_test_cases_with_stress.csv"
+        "manual_phonemize_test_cases.csv"
     )
     df = pd.read_csv(filename)
+
+    def check_output(nikkud, ipa, using_stress):
+        output = phonemize(nikkud, preserve_stress=using_stress)
+        x, y = ipa, output
+        if not using_stress:
+            x = x.replace(UNICODE_STRESS_MARK, '')
+            y = y.replace(UNICODE_STRESS_MARK, '')
+        parenthetical = "" if using_stress else "; no stress"
+        if x != y:
+            warnings.warn(
+                f"Incorrect phonemization: {x} != {y} ({nikkud}{parenthetical})")
+            # ^TODO: use assert once all tests pass
+
     for row in df.itertuples():
-        output = phonemize(row.hebrew_with_nikkud, preserve_stress=True)
-        # assert output == row.ipa
-        # For now, just print warning since they will not all pass:
-        if output != row.ipa:
-            warnings.warn(f"Incorrect phonemization (with stress): {output} != {row.ipa} ({row.hebrew_with_nikkud})")
+
+        nikkud = row.hebrew_with_nikkud
+        ipa = row.ipa
+
+        has_stress = UNICODE_STRESS_MARK in row.ipa
+        # ^ if stress is marked manually, check both with and without stress
+        # otherwise just check that output is correct disregarding stress
+
+        if has_stress:
+            check_output(nikkud, ipa, True)
+        check_output(nikkud, ipa, False)
