@@ -2,7 +2,6 @@ from mishkal import phonemize, vocab
 import os
 import pandas as pd
 import warnings
-from itertools import chain
 
 TEST_STRESS = False
 
