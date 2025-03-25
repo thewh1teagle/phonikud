@@ -31,11 +31,7 @@ def test_phonemize_hebrew_manual():
                 f"Incorrect phonemization: {x} != {y} ({nikkud}{parenthetical})")
             # ^TODO: use assert once all tests pass
 
-    for row in df.itertuples():
-
-        nikkud = row.hebrew_with_nikkud
-        ipa = row.ipa
-
+    def check_pair(nikkud, ipa):
         has_stress = UNICODE_STRESS_MARK in row.ipa
         # ^ if stress is marked manually, check both with and without stress
         # otherwise just check that output is correct disregarding stress
@@ -43,3 +39,14 @@ def test_phonemize_hebrew_manual():
         if has_stress:
             check_output(nikkud, ipa, True)
         check_output(nikkud, ipa, False)
+
+    for row in df.itertuples():
+
+        nikkud_to_check = [row.hebrew_with_nikkud]
+        # also test punctuation variants:
+        if '"' in row.hebrew_with_nikkud:
+            nikkud_to_check.append(row.hebrew_with_nikkud.replace('"', '״'))
+        if "'" in row.hebrew_with_nikkud:
+            nikkud_to_check.append(row.hebrew_with_nikkud.replace("'", "׳"))
+        for nikkud in nikkud_to_check:
+            check_pair(nikkud, row.ipa)
