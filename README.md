@@ -80,12 +80,9 @@ One of the best ways to improve this library is to add words with phonemes to th
 
 Constants
 
-- `ʔ` - Alef/Ayin 
 - `b` - Bet
 - `v` - Vet, Vav
 - `g` - Gimel
-- `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
-- `ʒ`  - Zain with geresh (בֵּז׳)
 - `d` - Dalet
 - `h` - He
 - `z` - Zain
@@ -100,9 +97,12 @@ Constants
 - `f` - Fei
 - `p` - Pei dgusha
 - `ts` - tsadik
-- `tʃ` - Tsadik with geresh
-- `r` - Resh
 - `ʃ` - Shin
+- `tʃ` - Tsadik with geresh
+- `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
+- `ʒ` - Zain with geresh (בֵּז׳)
+- `r` - Resh
+- `ʔ` - Alef/Ayin
 - `w` - Example: `walla`
 
 Vowels
