@@ -128,4 +128,4 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 - There's no secondary stress (usually it's only Milel and Milra)
 - The glottal stop sometimes omited
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
-- See https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology
+- See (Modern Hebrew phonology)[https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology]
