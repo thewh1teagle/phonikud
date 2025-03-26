@@ -1,5 +1,5 @@
 from mishkal import phonemize, vocab
-import os
+from pathlib import Path
 import pandas as pd
 import warnings
 
@@ -14,8 +14,8 @@ def test_phonemize_hebrew_sanity():
 
 def test_phonemize_hebrew_manual():
     UNICODE_STRESS_MARK = chr(712)
-    filename = os.path.join(
-        os.path.dirname(__file__), "manual_phonemize_test_cases.csv"
+    filename = str(
+        Path(__file__) / "manual_phonemize_test_cases.csv"
     )
     df = pd.read_csv(filename)
 
