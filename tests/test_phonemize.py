@@ -14,7 +14,7 @@ def test_phonemize_hebrew_sanity():
 
 def test_phonemize_hebrew_manual():
     UNICODE_STRESS_MARK = chr(712)
-    filename = str(Path(__file__) / "manual_phonemize_test_cases.csv")
+    filename = str(Path(__file__).parent / "manual_phonemize_test_cases.csv")
     df = pd.read_csv(filename)
 
     def check_output(nikkud, ipa, using_stress):
