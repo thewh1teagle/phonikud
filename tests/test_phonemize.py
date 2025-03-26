@@ -48,3 +48,7 @@ def test_phonemize_hebrew_manual():
             nikkud_to_check.append(row.hebrew_with_nikkud.replace("'", "׳"))
         for nikkud in nikkud_to_check:
             check_pair(nikkud, row.ipa)
+
+
+def test_phonemize_hebrew_sentences():
+    pass
