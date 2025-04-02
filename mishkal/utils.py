@@ -10,6 +10,7 @@ def sort_diacritics(match):
 NORMALIZE_PATTERNS = {
     # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
     r"(\p{L})(\p{M}+)": sort_diacritics,
+    '״': '"'
 }
 
 
