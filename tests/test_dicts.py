@@ -1,10 +1,10 @@
 from mishkal.expander.dictionary import Dictionary
-from mishkal import vocab
+from mishkal import lexicon
 
 
 def test_dictionary():
-    phonemes_without_punctuation = vocab.SET_OUTPUT_CHARACTERS.difference(
-        vocab.SET_PUNCTUATION
+    phonemes_without_punctuation = lexicon.SET_OUTPUT_CHARACTERS.difference(
+        lexicon.SET_PUNCTUATION
     )
     dict = Dictionary()
     for k, v in dict.dict.items():

@@ -1,4 +1,4 @@
-from mishkal import vocab
+from mishkal import lexicon
 import unicodedata
 import regex as re
 
@@ -10,16 +10,15 @@ def sort_diacritics(match):
 NORMALIZE_PATTERNS = {
     # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
     r"(\p{L})(\p{M}+)": sort_diacritics,
-    r"([^בכךפףו])(\u05bc)": r"\1",
 }
 
 
 def remove_niqqud(text: str):
-    return re.sub(vocab.HE_NIQQUD_PATTERN, "", text)
+    return re.sub(lexicon.HE_NIQQUD_PATTERN, "", text)
 
 
 def has_niqqud(text: str):
-    return re.search(vocab.HE_NIQQUD_PATTERN, text) is not None
+    return re.search(lexicon.HE_NIQQUD_PATTERN, text) is not None
 
 
 def normalize(text: str) -> str:
@@ -33,12 +32,13 @@ def normalize(text: str) -> str:
     for k, v in NORMALIZE_PATTERNS.items():
         text = re.sub(k, v, text)
     # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)
-    for k, v in vocab.NIQQUD_DEDUPLICATE.items():
+    for k, v in lexicon.NIQQUD_DEDUPLICATE.items():
         text = text.replace(k, v)
     return text
 
 def post_normalize(phonemes: str):
     phonemes = re.sub(r'^h|h$', '', phonemes)
+    phonemes = re.sub(r'^ʔ|ʔ$', '', phonemes)
     return phonemes
 
 def get_unicode_names(text: str):

@@ -1,4 +1,4 @@
-from mishkal import phonemize, vocab
+from mishkal import lexicon, phonemize
 from pathlib import Path
 import pandas as pd
 import warnings
@@ -9,7 +9,7 @@ TEST_STRESS = False
 def test_phonemize_hebrew_sanity():
     with_stress = phonemize("שָׁלוֹם", preserve_stress=True)
     without_stress = phonemize("שָׁלוֹם", preserve_stress=False)
-    assert without_stress == "ʃalom" and vocab.STRESS in with_stress
+    assert without_stress == "ʃalom" and lexicon.STRESS in with_stress
 
 
 def test_phonemize_hebrew_manual():

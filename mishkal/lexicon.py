@@ -84,6 +84,7 @@ LETTERS_PHONEMES = {
     "פּ": "p",
     "שׁ": "ʃ",
     "שׂ": "s",
+    
 }
 
 # Vowels
