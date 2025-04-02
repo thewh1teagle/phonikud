@@ -51,7 +51,7 @@ LETTERS_NAMES_PHONEMES = {
 
 # Consonants
 LETTERS_PHONEMES = {
-    "א": "",  # Alef
+    "א": "ʔ",  # Alef
     "ב": "v",  # Bet
     "ג": "g",  # Gimel
     "ד": "d",  # Dalet
@@ -69,7 +69,7 @@ LETTERS_PHONEMES = {
     "ן": "n",  # Nun Sofit
     "נ": "n",  # Nun
     "ס": "s",  # Samekh
-    "ע": "",  # Ayin, only voweled
+    "ע": "ʔ",  # Ayin, only voweled
     "פ": "f",  # Fey
     "ף": "f",  # Fey Sofit
     "ץ": "ts",  # Tsadik sofit

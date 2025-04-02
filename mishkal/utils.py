@@ -37,9 +37,14 @@ def normalize(text: str) -> str:
     return text
 
 def post_normalize(phonemes: str):
-    phonemes = re.sub(r'^h|h$', '', phonemes)
-    phonemes = re.sub(r'^ʔ|ʔ$', '', phonemes)
-    return phonemes
+    new_phonemes = []
+    for word in phonemes.split(' '):
+        word = re.sub(r'^ʔ|ʔ$', '', word)
+        word = re.sub(r'^ˈʔ', 'ˈ', word)
+        word = re.sub(r'ʔ$', 'ˈ', word)
+        word = re.sub(r'^h|h$', '', word)
+        new_phonemes.append(word)
+    return ' '.join(new_phonemes)
 
 def get_unicode_names(text: str):
     return [unicodedata.name(c, "?") for c in text]

@@ -39,7 +39,6 @@ class Phonemizer:
         # TODO: is that enough? what if there's punctuation around? other chars?
         he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd]+"
         fallback_pattern = r"[a-zA-Z]+"
-        phonemes = []
 
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
@@ -60,13 +59,13 @@ class Phonemizer:
 
         def heb_replace_callback(match: re.Match):
             word = match.group(0)
+            
             word = normalize(word)
             word = "".join(
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
             letters = re.findall(r'(\p{L})(\p{M}*)', word)
-            hebrew_phonemes = self.phonemize_hebrew(letters)
-            phonemes.extend(hebrew_phonemes)
+            phonemes = self.phonemize_hebrew(letters)
             return "".join(phonemes)
 
         text = re.sub(he_pattern, heb_replace_callback, text)
@@ -83,13 +82,11 @@ class Phonemizer:
         return text
 
     def phonemize_hebrew(self, letters: list[str]):
+        
         phonemes = []
         i = 0
         while i < len(letters):
             cur = letters[i]
-            if not cur[1]:
-                i += 1
-                continue
             # prev = letters[i - 1] if i > 0 else None
             # next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
