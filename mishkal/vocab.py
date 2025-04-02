@@ -4,39 +4,11 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 
 import unicodedata
 
-
-class Letter:
-    def __init__(self, letter_str: str, symbols: list[str] = []):
-        self.letter_str = letter_str
-        self.symbols: list[str] = symbols
-
-    def __repr__(self):
-        return f"{self.letter_str + ' ' + ', '.join(unicodedata.name(s) for s in self.symbols)}"
-
-    def __eq__(self, other: str):
-        return (
-            self.letter_str == other or self.letter_str + "".join(self.symbols) == other
-        )
-
-    def as_str(self):
-        return self.letter_str + "".join(self.symbols)
-
-
-class Token:
-    def __init__(self, token: str, phonemes: str = ""):
-        self.token = token
-        self.phonemes: str = phonemes
-
-    def __repr__(self):
-        return f"{self.token} {self.phonemes}"
-
-
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 HE_CHARS_PATTERN = (
     r"\b[\u05B0-\u05EA\u05F3\u0027]+\b"  # Chars including niqqud, geresh and en_geresh
 )
 HE_NIQQUD_PATTERN = r"[\u05B0-\u05C7]"
-
 PUNCTUATION = r".,!? "
 
 # Special
@@ -44,7 +16,7 @@ GIMEL_OR_ZAIN_WITH_DAGESH = "dʒ"
 TSADIK_WITH_DAGESH = "tʃ"
 SHIN_WITH_POINT = "ʃ"
 SIN_WITH_POINT = "s"
-STRESS = "\u02c8"
+STRESS = "\u02c8" # visually looks like '
 SECONDARY_STRESS = "\u02cc"
 HET_GNUVA = "ax"
 W_AS_WALLA = "w"
@@ -151,7 +123,7 @@ We're left with the following niqqud (10):
 Shva, Hiriq, Tsere, Patah, Holam, Qubuts, Dagesh, 
 Holam haser for vav, Shin dot, Sin dot
 """
-NIQQUD_NORMALIZE = {
+NIQQUD_DEDUPLICATE = {
     "\u05b1": "\u05b5",  # Hataf Segol -> Tsere
     "\u05b2": "\u05b7",  # Hataf Patah -> Patah
     "\u05b3": "\u05b9",  # Hataf Qamats -> Holam
