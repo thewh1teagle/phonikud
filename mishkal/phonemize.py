@@ -37,7 +37,7 @@ class Phonemizer:
         fallback: Callable[[str], str] = None,
     ) -> str:
         # TODO: is that enough? what if there's punctuation around? other chars?
-        he_pattern = r"[\u05b0-\u05ea]+"
+        he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd]+"
         fallback_pattern = r"[a-zA-Z]+"
         phonemes = []
 
@@ -91,9 +91,14 @@ class Phonemizer:
             # next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
             phoneme = vocab.LETTERS_PHONEMES.get(cur[0], "")
-            phoneme += "".join(
-                [vocab.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
-            )
+            niqqud_phonemes = [vocab.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
+
+            if '\u05AB' in cur[1] and phoneme:
+                # Ensure ATMAHA is before the letter (before the last phoneme added)
+                niqqud_phonemes.remove(vocab.NIQQUD_PHONEMES['\u05AB'])
+                phoneme = phoneme[:-1] + vocab.NIQQUD_PHONEMES['\u05AB'] + phoneme[-1]
+
+            phoneme += "".join(niqqud_phonemes)
             phonemes.append(phoneme)
             i += 1
         return phonemes

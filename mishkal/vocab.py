@@ -100,6 +100,8 @@ NIQQUD_PHONEMES = {
     "\u05b9": "o",  # Holam
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
+    "\u05ab": "ˈ",  # Stress (Atmaha)
+    "\u05bd": "e"   # Shva na
 }
 
 SET_LETTER_SYMBOLS = {
@@ -154,6 +156,10 @@ SET_NIQQUD = {
     "\u05bc",
     "\u05c1",
     "\u05c2",
+    
+    # shva na and atmaha
+    '\u05bd',# shva na
+    '\u05ab' # atmaha
 }
 SET_LETTERS = set(LETTERS_PHONEMES.keys())
 SET_PUNCTUATION = set(PUNCTUATION)
