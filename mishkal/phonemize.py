@@ -94,6 +94,8 @@ class Phonemizer:
             
             if '\u05bc' in cur[1] and cur[0] + '\u05bc' in lexicon.LETTERS_PHONEMES: # dagesh
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + '\u05bc', ''))
+            elif cur[0] == 'ו':
+                pass
             else:
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
             niqqud_phonemes = [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
