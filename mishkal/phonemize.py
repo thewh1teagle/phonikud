@@ -19,10 +19,9 @@ Reference:
 - https://en.wikipedia.org/wiki/Help:IPA/Hebrew
 """
 
-from mishkal import vocab, utils
+from mishkal import vocab
 from .expander import Expander
 from mishkal.utils import normalize, post_normalize
-import re
 from typing import Callable
 import regex as re
 
@@ -88,8 +87,8 @@ class Phonemizer:
         i = 0
         while i < len(letters):
             cur = letters[i]
-            prev = letters[i - 1] if i > 0 else None
-            next = letters[i + 1] if i < len(letters) - 1 else None
+            # prev = letters[i - 1] if i > 0 else None
+            # next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
             phoneme = vocab.LETTERS_PHONEMES.get(cur[0], "")
             phoneme += "".join(
