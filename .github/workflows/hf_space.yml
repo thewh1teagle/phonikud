@@ -14,29 +14,30 @@ jobs:
           lfs: true
       - name: Prepare and push to HF
         run: |
-            # Prepare space
-            mkdir phonemize-in-hebrew
-            cd phonemize-in-hebrew
-            cp ../examples/editor.py app.py
-            echo "gradio>=5.15.0" >> requirements.txt            
-            echo "num2words" >> requirements.txt            
-            echo "colorlog" >> requirements.txt            
-            cp ../.github/workflows/hf_readme.md README.md
-            cp -rf ../mishkal .
+          # Prepare space
+          mkdir phonemize-in-hebrew
+          cd phonemize-in-hebrew
+          cp ../examples/editor.py app.py
+          echo "gradio>=5.15.0" >> requirements.txt            
+          echo "num2words" >> requirements.txt            
+          echo "colorlog" >> requirements.txt            
+          echo "regex" >> requirements.txt            
+          cp ../.github/workflows/hf_readme.md README.md
+          cp -rf ../mishkal .
 
-            
 
-            # Initialize git and force push
-            git config --global user.email "thewh1teagle"
-            git config --global user.name "thewh1teagle"
-            git init
-            git branch -m master main
-            git add .
-            git commit -m "latest"
-            git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-            git push --force space main
-            
+
+          # Initialize git and force push
+          git config --global user.email "thewh1teagle"
+          git config --global user.name "thewh1teagle"
+          git init
+          git branch -m master main
+          git add .
+          git commit -m "latest"
+          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+          git push --force space main
+
         env:
-            HF_TOKEN: ${{ secrets.HF_TOKEN }}
-            HF_USERNAME: "thewh1teagle"
-            SPACE_NAME: "phonemize-in-hebrew"
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: "thewh1teagle"
+          SPACE_NAME: "phonemize-in-hebrew"
