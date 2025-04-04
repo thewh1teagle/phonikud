@@ -8,7 +8,7 @@ Early rules:
 3. Final letter without niqqud
 4. Final Het gnuva
 5. Geresh (Gimel, Ttadik, Zain)
-6. Shva nax and na
+6. Shva na
 Revised rules:
 1. Consonants
 2. Niqqud
@@ -43,7 +43,7 @@ class Phonemizer:
         # normalize
         text = normalize(text)
         # TODO: is that enough? what if there's punctuation around? other chars?
-        he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd]+"
+        he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd']+"
         fallback_pattern = r"[a-zA-Z]+"
 
         def fallback_replace_callback(match: re.Match):
@@ -72,7 +72,7 @@ class Phonemizer:
             word = "".join(
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
-            letters = re.findall(r"(\p{L})(\p{M}*)", word)
+            letters = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
             phonemes = self.phonemize_hebrew(letters)
             return "".join(phonemes)
 
@@ -99,16 +99,30 @@ class Phonemizer:
             next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
 
-            if (
+            if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
+                if cur[0] == "ת":
+                    phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+                    i += 1
+                    continue
+                else:
+                    # Geresh
+                    phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+
+            elif (
                 "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
             ):  # dagesh
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
             elif cur[0] == "ו":
                 if next and next[0] == "ו":
-                    # double vav
-                    phonemes.append("vo")
-                    i += 2
-                    continue
+                    # patah and next[1] empty
+                    if cur[1] == "\u05b7" and not next[1]:
+                        phonemes.append("w")
+                        i += 2
+                    else:
+                        # double vav
+                        phonemes.append("wo")
+                        i += 2
+                        continue
                 else:
                     # Single vav
 

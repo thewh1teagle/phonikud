@@ -2,15 +2,18 @@ from mishkal import lexicon
 import unicodedata
 import regex as re
 
+
 def sort_diacritics(match):
     letter = match.group(1)
     diacritics = "".join(sorted(match.group(2)))  # Sort diacritics
     return letter + diacritics
 
+
 NORMALIZE_PATTERNS = {
     # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
     r"(\p{L})(\p{M}+)": sort_diacritics,
-    '״': '"'
+    "״": '"',
+    "׳": "'",
 }
 
 
@@ -28,6 +31,7 @@ def normalize(text: str) -> str:
     Deduplicate niqqud (eg. only Patah instead of Kamatz)
     Keep only Hebrew characters / punctuation / IPA
     """
+
     # Decompose text
     text = unicodedata.normalize("NFD", text)
     for k, v in NORMALIZE_PATTERNS.items():
@@ -37,19 +41,21 @@ def normalize(text: str) -> str:
         text = text.replace(k, v)
     return text
 
+
 def post_normalize(phonemes: str):
     new_phonemes = []
-    for word in phonemes.split(' '):
+    for word in phonemes.split(" "):
         # remove glottal stop from start/end
-        word = re.sub(r'^ʔ|ʔ$', '', word)
-        word = re.sub(r'^ˈʔ', 'ˈ', word)
-        word = re.sub(r'ʔ$', 'ˈ', word)
+        word = re.sub(r"^ʔ|ʔ$", "", word)
+        word = re.sub(r"^ˈʔ", "ˈ", word)
+        word = re.sub(r"ʔ$", "ˈ", word)
         # remove h from start/end
-        word = re.sub(r'^h|h$', '', word)
-        word = re.sub(r'^ˈh|ˈh$', 'ˈ', word)
-        word = re.sub(r'ij$', 'i', word)
+        word = re.sub(r"^h|h$", "", word)
+        word = re.sub(r"^ˈh|ˈh$", "ˈ", word)
+        word = re.sub(r"ij$", "i", word)
         new_phonemes.append(word)
-    return ' '.join(new_phonemes)
+    return " ".join(new_phonemes)
+
 
 def get_unicode_names(text: str):
     return [unicodedata.name(c, "?") for c in text]

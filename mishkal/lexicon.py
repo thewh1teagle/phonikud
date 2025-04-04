@@ -14,10 +14,12 @@ GIMEL_OR_ZAIN_WITH_DAGESH = "dʒ"
 TSADIK_WITH_DAGESH = "tʃ"
 SHIN_WITH_POINT = "ʃ"
 SIN_WITH_POINT = "s"
-STRESS = "\u02c8" # visually looks like '
+STRESS = "\u02c8"  # visually looks like '
 SECONDARY_STRESS = "\u02cc"
 HET_GNUVA = "ax"
 W_AS_WALLA = "w"
+
+GERESH_LETTERS = {"ג": "dʒ", "ז": "ʒ", "ת": "ta"}
 
 LETTERS_NAMES_PHONEMES = {
     "א": "alef",  # Alef, glottal stop
@@ -84,7 +86,7 @@ LETTERS_PHONEMES = {
     "פּ": "p",
     "שׁ": "ʃ",
     "שׂ": "s",
-    
+    "'": "",
 }
 
 # Vowels
@@ -102,7 +104,7 @@ NIQQUD_PHONEMES = {
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
     "\u05ab": "ˈ",  # Stress (Atmaha)
-    "\u05bd": "e"   # Shva na
+    "\u05bd": "e",  # Shva na
 }
 
 SET_LETTER_SYMBOLS = {
@@ -137,7 +139,13 @@ NIQQUD_DEDUPLICATE = {
 
 
 SET_OUTPUT_CHARACTERS = set(
-    [*GIMEL_OR_ZAIN_WITH_DAGESH, TSADIK_WITH_DAGESH, SHIN_WITH_POINT, SIN_WITH_POINT]
+    [
+        *GIMEL_OR_ZAIN_WITH_DAGESH,
+        TSADIK_WITH_DAGESH,
+        SHIN_WITH_POINT,
+        SIN_WITH_POINT,
+        W_AS_WALLA,
+    ]
     + [STRESS, SECONDARY_STRESS]
     + list(LETTERS_PHONEMES.values())
     + list(NIQQUD_PHONEMES.values())
@@ -157,10 +165,9 @@ SET_NIQQUD = {
     "\u05bc",
     "\u05c1",
     "\u05c2",
-    
     # shva na and atmaha
-    '\u05bd',# shva na
-    '\u05ab' # atmaha
+    "\u05bd",  # shva na
+    "\u05ab",  # atmaha
 }
 SET_LETTERS = set(LETTERS_PHONEMES.keys())
 SET_PUNCTUATION = set(PUNCTUATION)
