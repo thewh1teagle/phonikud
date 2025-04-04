@@ -25,6 +25,7 @@ from mishkal.utils import get_unicode_names, normalize, post_normalize
 from typing import Callable
 import regex as re
 
+
 class Phonemizer:
     def __init__(self):
         self.expander = Expander()
@@ -34,6 +35,9 @@ class Phonemizer:
         text: str,
         preserve_punctuation=True,
         preserve_stress=True,
+        use_dictionary=False,
+        use_expander=False,
+        use_post_normalize=False,  # For TTS
         fallback: Callable[[str], str] = None,
     ) -> str:
         # normalize
@@ -44,7 +48,8 @@ class Phonemizer:
 
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
-            if self.expander.dictionary.dict.get(word):
+
+            if use_dictionary and self.expander.dictionary.dict.get(word):
                 # skip
                 # TODO: better API
                 return word
@@ -56,17 +61,18 @@ class Phonemizer:
 
         if fallback is not None:
             text = re.sub(fallback_pattern, fallback_replace_callback, text)
-        text = self.expander.expand_text(text)
+        if use_expander:
+            text = self.expander.expand_text(text)
         self.fallback = fallback
 
         def heb_replace_callback(match: re.Match):
             word = match.group(0)
-            
+
             word = normalize(word)
             word = "".join(
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
-            letters = re.findall(r'(\p{L})(\p{M}*)', word)
+            letters = re.findall(r"(\p{L})(\p{M}*)", word)
             phonemes = self.phonemize_hebrew(letters)
             return "".join(phonemes)
 
@@ -78,34 +84,63 @@ class Phonemizer:
             text = "".join(
                 i for i in text if i not in [lexicon.STRESS, lexicon.SECONDARY_STRESS]
             )
-        text = post_normalize(text)
+        if use_post_normalize:
+            text = post_normalize(text)
         text = "".join(i for i in text if i in lexicon.SET_OUTPUT_CHARACTERS)
 
         return text
 
     def phonemize_hebrew(self, letters: list[str]):
-        
         phonemes = []
         i = 0
         while i < len(letters):
             cur = letters[i]
-            # prev = letters[i - 1] if i > 0 else None
-            # next = letters[i + 1] if i < len(letters) - 1 else None
+            prev = letters[i - 1] if i > 0 else None
+            next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
-            
-            
-            if '\u05bc' in cur[1] and cur[0] + '\u05bc' in lexicon.LETTERS_PHONEMES: # dagesh
-                phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + '\u05bc', ''))
-            elif cur[0] == 'ו':
-                pass
+
+            if (
+                "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
+            ):  # dagesh
+                phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
+            elif cur[0] == "ו":
+                if next and next[0] == "ו":
+                    # double vav
+                    phonemes.append("vo")
+                    i += 2
+                    continue
+                else:
+                    # Single vav
+
+                    # Holam haser
+                    if "\u05b9" in cur[1]:
+                        phonemes.append("o")
+                    # Shuruk / Kubutz
+                    elif "\u05bb" in cur[1] or "\u05bc" in cur[1]:
+                        phonemes.append("u")
+                    # Vav with Shva
+                    elif "\u05b0" in cur[1]:
+                        phonemes.append("ve")
+                    # Hirik
+                    elif "\u05b4" in cur[1]:
+                        phonemes.append("vi")
+                    else:
+                        phonemes.append("v")
+                    i += 1
+                    continue
+
             else:
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
-            niqqud_phonemes = [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
+            niqqud_phonemes = [
+                lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]
+            ]
 
-            if '\u05AB' in cur[1] and phonemes:
+            if "\u05ab" in cur[1] and phonemes:
                 # Ensure ATMAHA is before the letter (before the last phoneme added)
-                niqqud_phonemes.remove(lexicon.NIQQUD_PHONEMES['\u05AB'])
-                phonemes = phonemes[:-1] + [lexicon.NIQQUD_PHONEMES['\u05AB']] + [phonemes[-1]]
+                niqqud_phonemes.remove(lexicon.NIQQUD_PHONEMES["\u05ab"])
+                phonemes = (
+                    phonemes[:-1] + [lexicon.NIQQUD_PHONEMES["\u05ab"]] + [phonemes[-1]]
+                )
 
             phonemes.extend(niqqud_phonemes)
             i += 1
