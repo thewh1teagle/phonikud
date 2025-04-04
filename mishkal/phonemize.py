@@ -112,8 +112,12 @@ class Phonemizer:
                 else:
                     # Single vav
 
+                    # Vav with Patah
+                    if "\u05b7" in cur[1]:
+                        phonemes.append("va")
+
                     # Holam haser
-                    if "\u05b9" in cur[1]:
+                    elif "\u05b9" in cur[1]:
                         phonemes.append("o")
                     # Shuruk / Kubutz
                     elif "\u05bb" in cur[1] or "\u05bc" in cur[1]:

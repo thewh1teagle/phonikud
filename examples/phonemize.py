@@ -51,7 +51,7 @@ sentences = [
     # "English",
     # "בַּרִ֫יא",
     # "זֶ֫ה הָיָ֫ה קוֹרֵ֫עַ מִצְּח֫וֹק הֵ֫ם קוֹרְעִ֫ם אוֹתִ֫י"
-    # "וּבֽתוֹלְד֫וֹת",
+    "וּבֽתוֹלְד֫וֹת",
     "ווֹלְטֶר",
     "וִירוּשָׁלַיִם",
     "וְאַתָּה",
@@ -63,5 +63,5 @@ sentences = [
 
 
 for sentence in sentences:
-    phonemes = phonemize(sentence, preserve_punctuation=True)
+    phonemes = phonemize(sentence, preserve_punctuation=True, use_post_normalize=False)
     print(phonemes)
