@@ -21,7 +21,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import get_unicode_names, normalize, post_normalize
+from mishkal.utils import normalize, post_normalize
 from typing import Callable
 import regex as re
 
@@ -93,32 +93,42 @@ class Phonemizer:
     def phonemize_hebrew(self, letters: list[str]):
         phonemes = []
         i = 0
+
         while i < len(letters):
             cur = letters[i]
-            prev = letters[i - 1] if i > 0 else None
+            # prev = letters[i - 1] if i > 0 else None
             next = letters[i + 1] if i < len(letters) - 1 else None
+            skip_diacritics = False
+            skip_consonants = False
             # revised rules
+
+            if cur[0] == "ש" and "\u05c2" in cur[1]:
+                phonemes.append("s")
+                skip_consonants = True
 
             if not next and cur[0] == "ח":
                 # Final Het gnuva
                 phonemes.append("ax")
-                i += 1
-                continue
+                skip_diacritics = True
+                skip_consonants = True
 
             if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
                 if cur[0] == "ת":
                     phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
-                    i += 1
-                    continue
+                    skip_diacritics = True
+                    skip_consonants = True
                 else:
                     # Geresh
                     phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+                    skip_consonants = True
 
             elif (
                 "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
             ):  # dagesh
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
+                skip_consonants = True
             elif cur[0] == "ו":
+                skip_consonants = True
                 if next and next[0] == "ו":
                     # patah and next[1] empty
                     if cur[1] == "\u05b7" and not next[1]:
@@ -127,8 +137,7 @@ class Phonemizer:
                     else:
                         # double vav
                         phonemes.append("wo")
-                        i += 2
-                        continue
+                        skip_diacritics = True
                 else:
                     # Single vav
 
@@ -150,14 +159,15 @@ class Phonemizer:
                         phonemes.append("vi")
                     else:
                         phonemes.append("v")
-                    i += 1
-                    continue
+                    skip_diacritics = True
 
-            else:
+            if not skip_consonants:
                 phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
-            niqqud_phonemes = [
-                lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]
-            ]
+            niqqud_phonemes = (
+                [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
+                if not skip_diacritics
+                else []
+            )
 
             if "\u05ab" in cur[1] and phonemes:
                 # Ensure ATMAHA is before the letter (before the last phoneme added)
