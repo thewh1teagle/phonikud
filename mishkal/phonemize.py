@@ -35,7 +35,6 @@ class Phonemizer:
         text: str,
         preserve_punctuation=True,
         preserve_stress=True,
-        use_dictionary=False,
         use_expander=False,
         use_post_normalize=False,  # For TTS
         fallback: Callable[[str], str] = None,
@@ -49,7 +48,7 @@ class Phonemizer:
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
 
-            if use_dictionary and self.expander.dictionary.dict.get(word):
+            if self.expander.dictionary.dict.get(word):
                 # skip
                 # TODO: better API
                 return word
@@ -96,13 +95,40 @@ class Phonemizer:
 
         while i < len(letters):
             cur = letters[i]
-            # prev = letters[i - 1] if i > 0 else None
+            prev = letters[i - 1] if i > 0 else None
             next = letters[i + 1] if i < len(letters) - 1 else None
             skip_diacritics = False
             skip_consonants = False
             # revised rules
 
+            # יַאלְלָה
+            if cur[0] == "ל" and cur[1] == "\u05b0" and next and next[0] == "ל":
+                skip_diacritics = True
+                skip_consonants = True
+
+            if (
+                cur[0] == "ו"
+                and not prev
+                and next
+                and not next[1]
+                and cur[0] + cur[1] == "וַא"
+            ):
+                i += 1
+                phonemes.append("wa")
+
+            if cur[0] == "א" and not cur[1] and prev:
+                skip_consonants = True
+
+            # TODO ?
+            if cur[0] == "י" and next and not cur[1]:
+                skip_consonants = True
+
             if cur[0] == "ש" and "\u05c2" in cur[1]:
+                phonemes.append("s")
+                skip_consonants = True
+
+            # shin without niqqud after sin = sin
+            if cur[0] == "ש" and not cur[1] and prev and "\u05c2" in prev[1]:
                 phonemes.append("s")
                 skip_consonants = True
 
@@ -151,8 +177,8 @@ class Phonemizer:
                     # Shuruk / Kubutz
                     elif "\u05bb" in cur[1] or "\u05bc" in cur[1]:
                         phonemes.append("u")
-                    # Vav with Shva
-                    elif "\u05b0" in cur[1]:
+                    # Vav with Shva in start
+                    elif "\u05b0" in cur[1] and not prev:
                         phonemes.append("ve")
                     # Hirik
                     elif "\u05b4" in cur[1]:

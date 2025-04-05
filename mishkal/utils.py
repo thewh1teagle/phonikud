@@ -46,13 +46,14 @@ def normalize(text: str) -> str:
 def post_normalize(phonemes: str):
     new_phonemes = []
     for word in phonemes.split(" "):
-        # remove glottal stop from start/end
-        word = re.sub(r"^ʔ|ʔ$", "", word)
+        # remove glottal stop from start and end
+        word = re.sub(r"ʔ$", "", word)
+        word = re.sub(r"^ʔ", "", word)
         word = re.sub(r"^ˈʔ", "ˈ", word)
-        word = re.sub(r"ʔ$", "ˈ", word)
-        # remove h from start/end
-        word = re.sub(r"^h|h$", "", word)
-        word = re.sub(r"^ˈh|ˈh$", "ˈ", word)
+        # remove h from end
+        word = re.sub(r"h$", "", word)
+        word = re.sub(r"ˈh$", "ˈ", word)
+        # remove j followed by a i
         word = re.sub(r"ij", "i", word)
         new_phonemes.append(word)
     return " ".join(new_phonemes)

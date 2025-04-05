@@ -19,7 +19,7 @@ SECONDARY_STRESS = "\u02cc"
 HET_GNUVA = "ax"
 W_AS_WALLA = "w"
 
-GERESH_LETTERS = {"ג": "dʒ", "ז": "ʒ", "ת": "ta"}
+GERESH_LETTERS = {"ג": "dʒ", "ז": "ʒ", "ת": "ta", "צ": "tʃ", "ץ": "tʃ"}
 
 LETTERS_NAMES_PHONEMES = {
     "א": "alef",  # Alef, glottal stop
