@@ -52,7 +52,7 @@ def post_normalize(phonemes: str):
         # remove h from start/end
         word = re.sub(r"^h|h$", "", word)
         word = re.sub(r"^ˈh|ˈh$", "ˈ", word)
-        word = re.sub(r"ij$", "i", word)
+        word = re.sub(r"ij", "i", word)
         new_phonemes.append(word)
     return " ".join(new_phonemes)
 
