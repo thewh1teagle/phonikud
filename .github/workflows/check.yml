@@ -14,4 +14,3 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - name: Pytest
         run: uv run pytest
-        continue-on-error: true

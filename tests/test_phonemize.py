@@ -7,7 +7,6 @@ TEST_STRESS = False
 
 
 def test_phonemize_hebrew_sanity():
-    assert 1 == 2
     with_stress = phonemize("שָׁ֫לוֹם", preserve_stress=True)
     without_stress = phonemize("שָׁ֫לוֹם", preserve_stress=False)
     assert without_stress == "ʃalom" and lexicon.STRESS in with_stress
