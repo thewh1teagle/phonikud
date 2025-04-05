@@ -35,7 +35,6 @@ class Phonemizer:
         text: str,
         preserve_punctuation=True,
         preserve_stress=True,
-        use_dictionary=False,
         use_expander=False,
         use_post_normalize=False,  # For TTS
         fallback: Callable[[str], str] = None,
@@ -49,7 +48,7 @@ class Phonemizer:
         def fallback_replace_callback(match: re.Match):
             word = match.group(0)
 
-            if use_dictionary and self.expander.dictionary.dict.get(word):
+            if self.expander.dictionary.dict.get(word):
                 # skip
                 # TODO: better API
                 return word
