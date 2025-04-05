@@ -20,8 +20,9 @@ def test_phonemize_hebrew_manual():
         filename = str(Path(__file__).parent / basename)
         df = pd.read_csv(filename)
 
-        def check_output(nikkud, ipa, using_stress):
-            output = phonemize(nikkud, preserve_stress=using_stress)
+        def check_output(nikkud, ipa, using_stress, use_post_normalize=True):
+            output = phonemize(nikkud, preserve_stress=using_stress,
+                               use_post_normalize=use_post_normalize)
             x, y = ipa, output
             if not using_stress:
                 x = x.replace(UNICODE_STRESS_MARK, "")
