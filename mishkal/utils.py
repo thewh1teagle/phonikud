@@ -30,6 +30,7 @@ def normalize(text: str) -> str:
     Normalize unicode (decomposite)
     Deduplicate niqqud (eg. only Patah instead of Kamatz)
     Keep only Hebrew characters / punctuation / IPA
+    Sort diacritics
     """
 
     # Decompose text
