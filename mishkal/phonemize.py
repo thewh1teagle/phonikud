@@ -99,6 +99,12 @@ class Phonemizer:
             next = letters[i + 1] if i < len(letters) - 1 else None
             # revised rules
 
+            if not next and cur[0] == "ח":
+                # Final Het gnuva
+                phonemes.append("ax")
+                i += 1
+                continue
+
             if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
                 if cur[0] == "ת":
                     phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
