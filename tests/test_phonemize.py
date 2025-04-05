@@ -2,10 +2,9 @@ from mishkal import lexicon, phonemize
 from pathlib import Path
 import pandas as pd
 import warnings
+from mishkal.lexicon import STRESS
 
 TEST_STRESS = False
-
-UNICODE_STRESS_MARK = chr(712)
 
 
 def test_phonemize_hebrew_sanity():
@@ -30,8 +29,8 @@ def test_phonemize_hebrew_manual():
             )
             x, y = ipa, output
             if not using_stress:
-                x = x.replace(UNICODE_STRESS_MARK, "")
-                y = y.replace(UNICODE_STRESS_MARK, "")
+                x = x.replace(STRESS, "")
+                y = y.replace(STRESS, "")
             parenthetical = "" if using_stress else "; no stress"
             if warn_only:
                 if x != y:
@@ -44,7 +43,7 @@ def test_phonemize_hebrew_manual():
                 )
 
         def check_pair(nikkud, ipa):
-            has_stress = UNICODE_STRESS_MARK in row.ipa
+            has_stress = STRESS in row.ipa
             # ^ if stress is marked manually, check both with and without stress
             # otherwise just check that output is correct disregarding stress
 
