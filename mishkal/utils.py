@@ -62,5 +62,5 @@ def post_normalize(phonemes: str):
 def get_unicode_names(text: str):
     return [unicodedata.name(c, "?") for c in text]
 
-def is_vowel(s: iter):
+def has_vowel(s: iter):
     return any(i in s for i in 'aeiou')

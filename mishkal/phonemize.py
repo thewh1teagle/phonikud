@@ -21,7 +21,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize, is_vowel
+from mishkal.utils import normalize, post_normalize, has_vowel
 from typing import Callable
 import regex as re
 
@@ -94,7 +94,7 @@ class Phonemizer:
         i = 0
 
         syllables = []
-        cur_syllable = []
+        cur_syllable = ['', '']
         while i < len(letters):
             cur = letters[i]
             prev = letters[i - 1] if i > 0 else None
@@ -205,11 +205,30 @@ class Phonemizer:
                     cur_phonemes[:-1] + [lexicon.NIQQUD_PHONEMES["\u05ab"]] + [cur_phonemes[-1]]
                 )
 
-            cur_syllable.append((''.join(cur_phonemes), cur[0] + cur[1]))
+
+            
+
 
             cur_phonemes.extend(niqqud_phonemes)
             phonemes.extend(cur_phonemes)
-            syllables.append((''.join(cur_phonemes), cur[0] + cur[1]))
+
+            if not next:
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+                syllables.append(cur_syllable)
+            elif not prev:
+                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+
+            elif not has_vowel(cur_phonemes):
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+            elif not has_vowel(cur_syllable[1]):
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+            else:
+                syllables.append(cur_syllable)
+                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+
             i += 1
         print(syllables)
         return phonemes
