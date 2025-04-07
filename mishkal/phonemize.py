@@ -21,7 +21,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize, has_vowel
+from mishkal.utils import normalize, post_normalize, has_vowel, has_constant
 from typing import Callable
 import regex as re
 
@@ -162,11 +162,13 @@ class Phonemizer:
                     # patah and next[1] empty
                     if cur[1] == "\u05b7" and not next[1]:
                         cur_phonemes.append("w")
-                        i += 2
+                        skip_diacritics = True
+                        i += 1
                     else:
                         # double vav
                         cur_phonemes.append("wo")
                         skip_diacritics = True
+                        i += 1
                 else:
                     # Single vav
 
@@ -219,7 +221,7 @@ class Phonemizer:
             elif not prev:
                 cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
 
-            elif not has_vowel(cur_phonemes):
+            elif not has_vowel(cur_phonemes):                
                 cur_syllable[0] += cur[0] + cur[1]
                 cur_syllable[1] += ''.join(cur_phonemes)
             elif not has_vowel(cur_syllable[1]):

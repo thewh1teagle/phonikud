@@ -64,3 +64,7 @@ def get_unicode_names(text: str):
 
 def has_vowel(s: iter):
     return any(i in s for i in 'aeiou')
+
+def has_constant(s: iter):
+    return any(i not in 'aeiou' for i in s)
+
