@@ -73,13 +73,13 @@ sentences = [
     # "יִשָּׂשכָר",
     # "יִשָּׂשכָ֫ר",
     # "יַאלְלָה",
-    # "אִיָּ֫ר",
-    # "אֶנְצִיקְלוֹפֶּ֫דְיָה"
+    "אִיָּ֫ר",
+    "אֶנְצִיקְלוֹפֶּ֫דְיָה"
 ]
 
 
 for sentence in sentences:
     phonemes = phonemize(
-        sentence, preserve_punctuation=True, use_post_normalize=False, use_expander=True
+        sentence, preserve_punctuation=True, use_post_normalize=True, use_expander=False
     )
     print(phonemes)
