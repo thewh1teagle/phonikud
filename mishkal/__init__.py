@@ -13,8 +13,8 @@ def phonemize(
     text: str,
     preserve_punctuation=True,
     preserve_stress=True,
-    use_expander=False,
-    use_post_normalize=False,  # For TTS
+    use_expander=True,
+    use_post_normalize=True,  # For TTS
     fallback: Callable[[str], str] = None,
 ) -> str:
     phonemes = phonemizer.phonemize(
