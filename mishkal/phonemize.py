@@ -159,17 +159,21 @@ class Phonemizer:
                 skip_consonants = True
             elif cur[0] == "ו":
                 skip_consonants = True
-                if next and next[0] == "ו":
+                if next and next[0] == "ו" and next[1] == cur[1]:
                     # patah and next[1] empty
                     if cur[1] == "\u05b7" and not next[1]:
                         cur_phonemes.append("w")
                         skip_diacritics = True
                         i += 1
-                    else:
+                    elif cur[1] == next[1]:
                         # double vav
                         cur_phonemes.append("wo")
                         skip_diacritics = True
                         i += 1
+                    else:
+                        # TODO ?
+                        # skip_consonants = False
+                        skip_diacritics = False
                 else:
                     # Single vav
 
@@ -189,6 +193,10 @@ class Phonemizer:
                     # Hirik
                     elif "\u05b4" in cur[1]:
                         cur_phonemes.append("vi")
+                    # Tsere
+                    elif "\u05b5" in cur[1]:
+                        cur_phonemes.append("ve")
+                    
                     else:
                         cur_phonemes.append("v")
                     skip_diacritics = True
@@ -222,9 +230,14 @@ class Phonemizer:
             elif not prev:
                 cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
 
+            elif len(re.findall('[א-ת]', cur_syllable[0])) >= 2 and has_vowel(cur_syllable[1]) and cur[1]:
+                syllables.append(cur_syllable)
+                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+
             elif not has_vowel(cur_phonemes):                
                 cur_syllable[0] += cur[0] + cur[1]
                 cur_syllable[1] += ''.join(cur_phonemes)
+
             elif not has_vowel(cur_syllable[1]):
                 cur_syllable[0] += cur[0] + cur[1]
                 cur_syllable[1] += ''.join(cur_phonemes)
