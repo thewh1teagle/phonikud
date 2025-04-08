@@ -18,8 +18,8 @@ Convert Hebrew text into IPA for TTS systems and learning.
 The following hard to predict even from text with niqqud.
 
 - Requires diacritized text
-- `Shva nah` and `Shva nah`
-- `Stress` (`Atmaha` / `Milre` / `Milra`. or two.)
+- `Shva na` and `Shva nah`
+- `Stress` (`Atmaha` / `Milre` / `Milra`)
 - `Kamatz Katan` (rarely used)
 
 We cover these using dictionaries, and neural network is planned.
