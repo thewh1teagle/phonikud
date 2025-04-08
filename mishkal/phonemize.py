@@ -21,7 +21,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize
+from mishkal.utils import normalize, post_normalize, has_vowel, has_constant
 from typing import Callable
 import regex as re
 
@@ -93,10 +93,13 @@ class Phonemizer:
         phonemes = []
         i = 0
 
+        syllables = []
+        cur_syllable = ['', '']
         while i < len(letters):
             cur = letters[i]
             prev = letters[i - 1] if i > 0 else None
             next = letters[i + 1] if i < len(letters) - 1 else None
+            cur_phonemes = []
             skip_diacritics = False
             skip_consonants = False
             # revised rules
@@ -114,7 +117,7 @@ class Phonemizer:
                 and cur[0] + cur[1] == "וַא"
             ):
                 i += 1
-                phonemes.append("wa")
+                cur_phonemes.append("wa")
 
             if cur[0] == "א" and not cur[1] and prev:
                 skip_consonants = True
@@ -124,71 +127,73 @@ class Phonemizer:
                 skip_consonants = True
 
             if cur[0] == "ש" and "\u05c2" in cur[1]:
-                phonemes.append("s")
+                cur_phonemes.append("s")
                 skip_consonants = True
 
             # shin without niqqud after sin = sin
             if cur[0] == "ש" and not cur[1] and prev and "\u05c2" in prev[1]:
-                phonemes.append("s")
+                cur_phonemes.append("s")
                 skip_consonants = True
 
             if not next and cur[0] == "ח":
                 # Final Het gnuva
-                phonemes.append("ax")
+                cur_phonemes.append("ax")
                 skip_diacritics = True
                 skip_consonants = True
 
             if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
                 if cur[0] == "ת":
-                    phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
                     skip_diacritics = True
                     skip_consonants = True
                 else:
                     # Geresh
-                    phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
                     skip_consonants = True
 
             elif (
                 "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
             ):  # dagesh
-                phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
+                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
                 skip_consonants = True
             elif cur[0] == "ו":
                 skip_consonants = True
                 if next and next[0] == "ו":
                     # patah and next[1] empty
                     if cur[1] == "\u05b7" and not next[1]:
-                        phonemes.append("w")
-                        i += 2
+                        cur_phonemes.append("w")
+                        skip_diacritics = True
+                        i += 1
                     else:
                         # double vav
-                        phonemes.append("wo")
+                        cur_phonemes.append("wo")
                         skip_diacritics = True
+                        i += 1
                 else:
                     # Single vav
 
                     # Vav with Patah
                     if "\u05b7" in cur[1]:
-                        phonemes.append("va")
+                        cur_phonemes.append("va")
 
                     # Holam haser
                     elif "\u05b9" in cur[1]:
-                        phonemes.append("o")
+                        cur_phonemes.append("o")
                     # Shuruk / Kubutz
                     elif "\u05bb" in cur[1] or "\u05bc" in cur[1]:
-                        phonemes.append("u")
+                        cur_phonemes.append("u")
                     # Vav with Shva in start
                     elif "\u05b0" in cur[1] and not prev:
-                        phonemes.append("ve")
+                        cur_phonemes.append("ve")
                     # Hirik
                     elif "\u05b4" in cur[1]:
-                        phonemes.append("vi")
+                        cur_phonemes.append("vi")
                     else:
-                        phonemes.append("v")
+                        cur_phonemes.append("v")
                     skip_diacritics = True
 
             if not skip_consonants:
-                phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
+                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
             niqqud_phonemes = (
                 [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
                 if not skip_diacritics
@@ -198,10 +203,34 @@ class Phonemizer:
             if "\u05ab" in cur[1] and phonemes:
                 # Ensure ATMAHA is before the letter (before the last phoneme added)
                 niqqud_phonemes.remove(lexicon.NIQQUD_PHONEMES["\u05ab"])
-                phonemes = (
-                    phonemes[:-1] + [lexicon.NIQQUD_PHONEMES["\u05ab"]] + [phonemes[-1]]
+                cur_phonemes = (
+                    cur_phonemes[:-1] + [lexicon.NIQQUD_PHONEMES["\u05ab"]] + [cur_phonemes[-1]]
                 )
 
-            phonemes.extend(niqqud_phonemes)
+
+            
+
+
+            cur_phonemes.extend(niqqud_phonemes)
+            phonemes.extend(cur_phonemes)
+
+            if not next:
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+                syllables.append(cur_syllable)
+            elif not prev:
+                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+
+            elif not has_vowel(cur_phonemes):                
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+            elif not has_vowel(cur_syllable[1]):
+                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[1] += ''.join(cur_phonemes)
+            else:
+                syllables.append(cur_syllable)
+                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+
             i += 1
+        print(syllables)
         return phonemes
