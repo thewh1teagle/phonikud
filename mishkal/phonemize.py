@@ -120,7 +120,8 @@ class Phonemizer:
                 cur_phonemes.append("wa")
 
             if cur[0] == "א" and not cur[1] and prev:
-                skip_consonants = True
+                if next and next[0] != 'ו':
+                    skip_consonants = True
 
             # TODO ?
             if cur[0] == "י" and next and not cur[1]:
