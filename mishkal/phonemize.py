@@ -37,6 +37,7 @@ class Phonemizer:
         preserve_stress=True,
         use_expander=False,
         use_post_normalize=False,  # For TTS
+        predict_stress=False,
         fallback: Callable[[str], str] = None,
     ) -> str:
         # normalize
@@ -72,8 +73,22 @@ class Phonemizer:
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
             letters = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
-            phonemes = self.phonemize_hebrew(letters)
-            return "".join(phonemes)
+            syllables = self.phonemize_hebrew(letters)
+            phonemes = "".join(syllable[1] for syllable in syllables)
+
+            if predict_stress and lexicon.STRESS not in phonemes:
+                stressed = []
+
+                # Iterate through each syllable
+                for idx, syllable in enumerate(syllables):
+                    # If it's the last syllable, add stress
+                    if idx == len(syllables) - 1:
+                        stressed.append(f'ˈ{syllable[1]}')
+                    else:
+                        stressed.append(syllable[1])
+                phonemes = "".join(stressed)
+            
+            return phonemes
 
         text = re.sub(he_pattern, heb_replace_callback, text)
 
@@ -246,5 +261,4 @@ class Phonemizer:
                 cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
 
             i += 1
-        print(syllables)
-        return phonemes
+        return syllables
