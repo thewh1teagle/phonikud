@@ -51,6 +51,7 @@ See [examples](examples)
 ## Docs
 
 - Dictionaries prioritized based on `gold`, `silver`, `bronze`.
+- It's recommend to add niqqud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
 - Hebrew niqqud is normalized and deduplicated phonetically (simplified)
 - Most of the Hebrew rules happen in `phonemize.py`
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
@@ -59,7 +60,7 @@ See [examples](examples)
 
 ### Enhance vocabulary
 
-One of the best ways to improve this library is to add words with phonemes to the dictionary. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
+One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and atmaha. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
 
 ### Niqqud deduplication
 
@@ -125,7 +126,7 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 
 ### Notes
 
-- There's no secondary stress (usually it's only Milel and Milra)
-- The glottal stop sometimes omited
+- There's no secondary stress (only Milel and Milra)
+- The glottal stop/h sometimes omited
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
