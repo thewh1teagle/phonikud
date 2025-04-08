@@ -128,5 +128,6 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 
 - There's no secondary stress (only Milel and Milra)
 - The glottal stop/h sometimes omited
+- Stress placed usually on the last syllable (milra), sometimes on one before milra (milhel) and rarely one before milhel
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
