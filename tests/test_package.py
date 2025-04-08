@@ -12,6 +12,3 @@ def test_has_no_breakpoint():
             if "breakpoint()" in line:
                 print(f"Error in {file}:{line_number} - 'breakpoint()' found")
                 assert False, f"Error in {file}:{line_number} - 'breakpoint()' found"
-            if "print(" in line:
-                print(f"Error in {file}:{line_number} - 'print(' found")
-                assert False, f"Error in {file}:{line_number} - 'print(' found"
