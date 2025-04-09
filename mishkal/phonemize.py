@@ -22,10 +22,10 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize, has_vowel, has_constant
+from mishkal.utils import normalize, post_normalize, has_vowel, has_constant, remove_niqqud
 from typing import Callable
 import regex as re
-from mishkal.variants import Letter
+from mishkal.variants import Letter, Syllable
 
 class Phonemizer:
     def __init__(self):
@@ -76,8 +76,8 @@ class Phonemizer:
             )
             letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
             letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
-            syllables = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
-            phonemes = "".join(syllable[1] for syllable in syllables)
+            syllables: list[Syllable] = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
+            phonemes = "".join(syllable.phones for syllable in syllables)
             if use_post_normalize:
                 phonemes = post_normalize(phonemes)
 
@@ -85,13 +85,21 @@ class Phonemizer:
             if predict_stress and lexicon.STRESS not in phonemes:
                 stressed = []
 
+                is_milra = True
+
+                milhel_patterns = ['יים', 'וע', 'טו']
+                if any(remove_niqqud(syllables[-1].chars).endswith(i) for i in milhel_patterns):
+                    is_milra = False
+
                 # Iterate through each syllable
                 for idx, syllable in enumerate(syllables):
                     # If it's the last syllable, add stress
-                    if idx == len(syllables) - 1:
-                        stressed.append(f'ˈ{syllable[1]}')
+                    if not is_milra and idx == len(syllables) - 2:
+                        stressed.append(f'ˈ{syllable.phones}')
+                    elif is_milra and idx == len(syllables) - 1:
+                        stressed.append(f'ˈ{syllable.phones}')
                     else:
-                        stressed.append(syllable[1])
+                        stressed.append(syllable.phones)
                 phonemes = "".join(stressed)
                 phonemes = post_normalize(phonemes)
             
@@ -125,13 +133,13 @@ class Phonemizer:
 
         return text
 
-    def phonemize_hebrew(self, letters: list[Letter], predict_shva_na: bool) -> list[str]:
+    def phonemize_hebrew(self, letters: list[Letter], predict_shva_na: bool) -> list[Syllable]:
         phonemes = []
         i = 0
 
         
         syllables = []
-        cur_syllable = ['', '']
+        cur_syllable = Syllable('', '')
         while i < len(letters):
             cur = letters[i]
             prev = letters[i - 1] if i > 0 else None
@@ -271,26 +279,26 @@ class Phonemizer:
             
 
             if not next:
-                cur_syllable[0] += cur.char + cur.diac
-                cur_syllable[1] += ''.join(cur_phonemes)
+                cur_syllable.chars += cur.char + cur.diac
+                cur_syllable.phones += ''.join(cur_phonemes)
                 syllables.append(cur_syllable)
             elif not prev:
-                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
+                cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
 
-            elif len(re.findall('[א-ת]', cur_syllable[0])) >= 2 and has_vowel(cur_syllable[1]) and cur.diac:
+            elif len(re.findall('[א-ת]', cur_syllable.chars)) >= 2 and has_vowel(cur_syllable.phones) and cur.diac:
                 syllables.append(cur_syllable)
-                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
+                cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
 
             elif not has_vowel(cur_phonemes):                
-                cur_syllable[0] += cur.char + cur.diac
-                cur_syllable[1] += ''.join(cur_phonemes)
+                cur_syllable.chars += cur.char + cur.diac
+                cur_syllable.phones += ''.join(cur_phonemes)
 
-            elif not has_vowel(cur_syllable[1]):
-                cur_syllable[0] += cur.char + cur.diac
-                cur_syllable[1] += ''.join(cur_phonemes)
+            elif not has_vowel(cur_syllable.phones):
+                cur_syllable.chars += cur.char + cur.diac
+                cur_syllable.phones += ''.join(cur_phonemes)
             else:
                 syllables.append(cur_syllable)
-                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
+                cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
             i += skip_offset + 1
             
         return syllables
