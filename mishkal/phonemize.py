@@ -91,7 +91,7 @@ class Phonemizer:
                 is_milra = True
 
                 milhel_patterns = ['יים', 'וע', 'טו']
-                if any(remove_niqqud(syllables[-1].chars).endswith(i) for i in milhel_patterns):
+                if syllables and any(remove_niqqud(syllables[-1].chars).endswith(i) for i in milhel_patterns):
                     is_milra = False
 
                 # Iterate through each syllable

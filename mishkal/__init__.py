@@ -15,8 +15,8 @@ def phonemize(
     preserve_stress=True,
     use_expander=True,
     use_post_normalize=True,  # For TTS
-    predict_stress=False,
-    predict_shva_nah=False,
+    predict_stress=True,
+    predict_shva_nah=True,
     fallback: Callable[[str], str] = None,
 ) -> str:
     phonemes = phonemizer.phonemize(
