@@ -105,6 +105,10 @@ NIQQUD_PHONEMES = {
     "\u05b9": "o",  # Holam
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
+
+    "\u05b3": 'o', # Hataf qamats
+    "\u05b8": "a", # Kamataz
+    
     ATAMAHA_DIACRITIC: "ˈ",  # Stress (Atmaha)
     SHVA_NA_DIACRITIC: "e",  # Shva na
 }
@@ -119,6 +123,8 @@ SET_LETTER_SYMBOLS = {
     "\u05bb",  # Qubuts
     "\u05bc",  # Dagesh
     "\u05c1",  # Shin dot
+    "\u05b3", # Hataf qamats
+    "\u05b8", # Kamataz
     "\u05c2",  # Sin dot
     "'",  # Geresh
 }
@@ -131,10 +137,10 @@ Holam haser for vav, Shin dot, Sin dot
 NIQQUD_DEDUPLICATE = {
     "\u05b1": "\u05b5",  # Hataf Segol -> Tsere
     "\u05b2": "\u05b7",  # Hataf Patah -> Patah
-    "\u05b3": "\u05b9",  # Hataf Qamats -> Holam
+    # "\u05b3": "\u05b9",  # Hataf Qamats -> Holam
     "\u05b6": "\u05b5",  # Segol -> Tsere
     # Kamatz -> Patah
-    "\u05b8": "\u05b7",  # Qamats -> Patah
+    # "\u05b8": "\u05b7",  # Qamats -> Patah
     "\u05c7": "\u05b9",  # Qamats Qatan -> Holam
     "\u05f3": "'",  # Hebrew geresh to regular geresh
 }
@@ -157,16 +163,18 @@ SET_OUTPUT_CHARACTERS = set(
 
 SET_NIQQUD = {
     # Shva, Hiriq, Tsere, Patah, Holam, Holam haser for vav, Qubuts, Dagesh, Shin dot, Sin dot
-    "\u05b0",
-    "\u05b4",
-    "\u05b5",
-    "\u05b7",
-    "\u05b9",
-    "\u05ba",
-    "\u05bb",
-    "\u05bc",
-    "\u05c1",
-    "\u05c2",
+    "\u05b0", # Shva
+    "\u05b4", # Hiriq
+    "\u05b5", # Tsere
+    "\u05b7", # Patah
+    "\u05b9", # Holam
+    "\u05ba", # Holam for vav
+    "\u05bb", # Qubuts
+    "\u05bc", # Dagesh
+    "\u05c1", # Shin
+    "\u05c2", # Sin
+    "\u05b3", # Hataf qamats
+    "\u05b8", # Kamataz
     # shva na and atmaha
     "\u05bd",  # shva na
     "\u05ab",  # atmaha

@@ -15,6 +15,7 @@ Revised rules:
 
 Reference:
 - https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
+- https://hebrew-academy.org.il/2010/03/24/צהרים-נעמי-הגיית-קמץ-לפני-חט/
 - https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 - https://en.wikipedia.org/wiki/Help:IPA/Hebrew
 - https://he.wikipedia.org/wiki/הברה
@@ -44,6 +45,8 @@ class Phonemizer:
     ) -> str:
         # normalize
         text = normalize(text)
+        
+        
         # TODO: is that enough? what if there's punctuation around? other chars?
         he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd']+"
         fallback_pattern = r"[a-zA-Z]+"
@@ -105,6 +108,7 @@ class Phonemizer:
             
             return phonemes
 
+        
         text = re.sub(he_pattern, heb_replace_callback, text)
 
         if not preserve_punctuation:
@@ -141,6 +145,7 @@ class Phonemizer:
         syllables = []
         cur_syllable = Syllable('', '')
         while i < len(letters):
+            
             cur = letters[i]
             prev = letters[i - 1] if i > 0 else None
             next = letters[i + 1] if i < len(letters) - 1 else None
@@ -170,7 +175,7 @@ class Phonemizer:
                     skip_constants = True
 
             # TODO ?
-            if cur.char == "י" and next and not cur.diac:
+            if cur.char == "י" and next and not cur.diac and prev.char + prev.diac != 'אֵ':
                 skip_constants = True
 
             if cur.char == "ש" and "\u05c2" in cur.diac:
@@ -207,7 +212,7 @@ class Phonemizer:
                 skip_constants = True
                 if next and next.char == "ו" and next.diac == cur.diac:
                     # patah and next.diac empty
-                    if cur.diac == "\u05b7" and not next.diac:
+                    if cur.diac in ["\u05b7", "\u05b8"] and not next.diac:
                         cur_phonemes.append("w")
                         skip_diacritics = True
                         skip_offset += 1
@@ -224,7 +229,7 @@ class Phonemizer:
                     # Single vav
 
                     # Vav with Patah
-                    if "\u05b7" in cur.diac:
+                    if re.search("[\u05b7-\u05b8]", cur.diac):
                         cur_phonemes.append("va")
 
                     # Holam haser
@@ -264,7 +269,9 @@ class Phonemizer:
                         cur_phonemes.append("e")
                         skip_diacritics = True
 
-                
+            if '\u05b8' in cur.diac and next and '\u05b3' in next.diac:
+                cur_phonemes.append('o')
+                skip_diacritics = True
 
             niqqud_phonemes = (
                 [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur.diac]
@@ -300,5 +307,4 @@ class Phonemizer:
                 syllables.append(cur_syllable)
                 cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
             i += skip_offset + 1
-            
         return syllables
