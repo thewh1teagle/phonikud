@@ -25,7 +25,7 @@ from .expander import Expander
 from mishkal.utils import normalize, post_normalize, has_vowel, has_constant
 from typing import Callable
 import regex as re
-
+from mishkal.variants import Letter
 
 class Phonemizer:
     def __init__(self):
@@ -74,11 +74,13 @@ class Phonemizer:
             word = "".join(
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
-            letters = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
+            letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
+            letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
             syllables = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
             phonemes = "".join(syllable[1] for syllable in syllables)
-            if post_normalize:
+            if use_post_normalize:
                 phonemes = post_normalize(phonemes)
+
 
             if predict_stress and lexicon.STRESS not in phonemes:
                 stressed = []
@@ -91,6 +93,7 @@ class Phonemizer:
                     else:
                         stressed.append(syllable[1])
                 phonemes = "".join(stressed)
+                phonemes = post_normalize(phonemes)
             
             return phonemes
 
@@ -122,7 +125,7 @@ class Phonemizer:
 
         return text
 
-    def phonemize_hebrew(self, letters: list[str], predict_shva_na: bool) -> list[str]:
+    def phonemize_hebrew(self, letters: list[Letter], predict_shva_na: bool) -> list[str]:
         phonemes = []
         i = 0
 
@@ -140,67 +143,67 @@ class Phonemizer:
             # revised rules
 
             # יַאלְלָה
-            if cur[0] == "ל" and cur[1] == "\u05b0" and next and next[0] == "ל":
+            if cur.char == "ל" and cur.diac == "\u05b0" and next and next.char == "ל":
                 skip_diacritics = True
                 skip_constants = True
 
             if (
-                cur[0] == "ו"
+                cur.char == "ו"
                 and not prev
                 and next
-                and not next[1]
-                and cur[0] + cur[1] == "וַא"
+                and not next.diac
+                and cur.char + cur.diac == "וַא"
             ):
                 skip_offset += 1
                 cur_phonemes.append("wa")
 
-            if cur[0] == "א" and not cur[1] and prev:
-                if next and next[0] != 'ו':
+            if cur.char == "א" and not cur.diac and prev:
+                if next and next.char != 'ו':
                     skip_constants = True
 
             # TODO ?
-            if cur[0] == "י" and next and not cur[1]:
+            if cur.char == "י" and next and not cur.diac:
                 skip_constants = True
 
-            if cur[0] == "ש" and "\u05c2" in cur[1]:
+            if cur.char == "ש" and "\u05c2" in cur.diac:
                 cur_phonemes.append("s")
                 skip_constants = True
 
             # shin without niqqud after sin = sin
-            if cur[0] == "ש" and not cur[1] and prev and "\u05c2" in prev[1]:
+            if cur.char == "ש" and not cur.diac and prev and "\u05c2" in prev.diac:
                 cur_phonemes.append("s")
                 skip_constants = True
 
-            if not next and cur[0] == "ח" and '\u05b7' in cur[1]:
+            if not next and cur.char == "ח" and '\u05b7' in cur.diac:
                 # Final Het gnuva
                 cur_phonemes.append("ax")
                 skip_diacritics = True
                 skip_constants = True
 
-            if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
-                if cur[0] == "ת":
-                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+            if cur and "'" in cur.diac and cur.char in lexicon.GERESH_LETTERS:
+                if cur.char == "ת":
+                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur.char, ""))
                     skip_diacritics = True
                     skip_constants = True
                 else:
                     # Geresh
-                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
+                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur.char, ""))
                     skip_constants = True
 
             elif (
-                "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
+                "\u05bc" in cur.diac and cur.char + "\u05bc" in lexicon.LETTERS_PHONEMES
             ):  # dagesh
-                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
+                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + "\u05bc", ""))
                 skip_constants = True
-            elif cur[0] == "ו":
+            elif cur.char == "ו":
                 skip_constants = True
-                if next and next[0] == "ו" and next[1] == cur[1]:
-                    # patah and next[1] empty
-                    if cur[1] == "\u05b7" and not next[1]:
+                if next and next.char == "ו" and next.diac == cur.diac:
+                    # patah and next.diac empty
+                    if cur.diac == "\u05b7" and not next.diac:
                         cur_phonemes.append("w")
                         skip_diacritics = True
                         skip_offset += 1
-                    elif cur[1] == next[1]:
+                    elif cur.diac == next.diac:
                         # double vav
                         cur_phonemes.append("wo")
                         skip_diacritics = True
@@ -213,23 +216,23 @@ class Phonemizer:
                     # Single vav
 
                     # Vav with Patah
-                    if "\u05b7" in cur[1]:
+                    if "\u05b7" in cur.diac:
                         cur_phonemes.append("va")
 
                     # Holam haser
-                    elif "\u05b9" in cur[1]:
+                    elif "\u05b9" in cur.diac:
                         cur_phonemes.append("o")
                     # Shuruk / Kubutz
-                    elif "\u05bb" in cur[1] or "\u05bc" in cur[1]:
+                    elif "\u05bb" in cur.diac or "\u05bc" in cur.diac:
                         cur_phonemes.append("u")
                     # Vav with Shva in start
-                    elif "\u05b0" in cur[1] and not prev:
+                    elif "\u05b0" in cur.diac and not prev:
                         cur_phonemes.append("ve")
                     # Hirik
-                    elif "\u05b4" in cur[1]:
+                    elif "\u05b4" in cur.diac:
                         cur_phonemes.append("vi")
                     # Tsere
-                    elif "\u05b5" in cur[1]:
+                    elif "\u05b5" in cur.diac:
                         cur_phonemes.append("ve")
                     
                     else:
@@ -237,26 +240,26 @@ class Phonemizer:
                     skip_diacritics = True
 
             if not skip_constants:
-                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
+                cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
             
-            if predict_shva_na and '\u05b0' in cur[1] and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur[1]:
+            if predict_shva_na and '\u05b0' in cur.diac and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur.diac:
                 # shva na prediction
                 if not prev:
-                    if cur[0] in 'למנרי' or cur[0] in 'אהע' or cur[0] in 'וכלב':
+                    if cur.char in 'למנרי' or cur.char in 'אהע' or cur.char in 'וכלב':
                         cur_phonemes.append("e")
                         skip_diacritics = True 
                 else:
-                    if next and next[0] == cur[0]:
+                    if next and next.char == cur.char:
                         cur_phonemes.append("e")
                         skip_diacritics = True
-                    elif prev and '\u05b0' in prev[1] and phonemes[-1] != 'e':
+                    elif prev and '\u05b0' in prev.diac and phonemes[-1] != 'e':
                         cur_phonemes.append("e")
                         skip_diacritics = True
 
                 
 
             niqqud_phonemes = (
-                [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
+                [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur.diac]
                 if not skip_diacritics
                 else []
             )            
@@ -268,26 +271,26 @@ class Phonemizer:
             
 
             if not next:
-                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[0] += cur.char + cur.diac
                 cur_syllable[1] += ''.join(cur_phonemes)
                 syllables.append(cur_syllable)
             elif not prev:
-                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
 
-            elif len(re.findall('[א-ת]', cur_syllable[0])) >= 2 and has_vowel(cur_syllable[1]) and cur[1]:
+            elif len(re.findall('[א-ת]', cur_syllable[0])) >= 2 and has_vowel(cur_syllable[1]) and cur.diac:
                 syllables.append(cur_syllable)
-                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
 
             elif not has_vowel(cur_phonemes):                
-                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[0] += cur.char + cur.diac
                 cur_syllable[1] += ''.join(cur_phonemes)
 
             elif not has_vowel(cur_syllable[1]):
-                cur_syllable[0] += cur[0] + cur[1]
+                cur_syllable[0] += cur.char + cur.diac
                 cur_syllable[1] += ''.join(cur_phonemes)
             else:
                 syllables.append(cur_syllable)
-                cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
+                cur_syllable = [cur.char + cur.diac, ''.join(cur_phonemes)]
             i += skip_offset + 1
             
         return syllables
