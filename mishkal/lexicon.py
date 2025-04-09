@@ -15,7 +15,6 @@ TSADIK_WITH_DAGESH = "tʃ"
 SHIN_WITH_POINT = "ʃ"
 SIN_WITH_POINT = "s"
 STRESS = "\u02c8"  # visually looks like '
-SECONDARY_STRESS = "\u02cc"
 HET_GNUVA = "ax"
 W_AS_WALLA = "w"
 
@@ -96,6 +95,9 @@ VOWEL_I = "i"
 VOWEL_O = "o"
 VOWEL_U = "u"
 
+SHVA_NA_DIACRITIC = "\u05bd"
+ATAMAHA_DIACRITIC = "\u05ab"
+
 NIQQUD_PHONEMES = {
     "\u05b4": "i",  # Hiriq
     "\u05b5": "e",  # Tsere
@@ -103,8 +105,8 @@ NIQQUD_PHONEMES = {
     "\u05b9": "o",  # Holam
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
-    "\u05ab": "ˈ",  # Stress (Atmaha)
-    "\u05bd": "e",  # Shva na
+    ATAMAHA_DIACRITIC: "ˈ",  # Stress (Atmaha)
+    SHVA_NA_DIACRITIC: "e",  # Shva na
 }
 
 SET_LETTER_SYMBOLS = {
@@ -146,7 +148,7 @@ SET_OUTPUT_CHARACTERS = set(
         SIN_WITH_POINT,
         W_AS_WALLA,
     ]
-    + [STRESS, SECONDARY_STRESS]
+    + [STRESS]
     + list(LETTERS_PHONEMES.values())
     + list(NIQQUD_PHONEMES.values())
     + [VOWEL_A, VOWEL_E, VOWEL_I, VOWEL_O, VOWEL_U]

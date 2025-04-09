@@ -17,6 +17,7 @@ Reference:
 - https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
 - https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 - https://en.wikipedia.org/wiki/Help:IPA/Hebrew
+- https://he.wikipedia.org/wiki/הברה
 """
 
 from mishkal import lexicon
@@ -38,6 +39,7 @@ class Phonemizer:
         use_expander=False,
         use_post_normalize=False,  # For TTS
         predict_stress=False,
+        predict_shva_nah=False,
         fallback: Callable[[str], str] = None,
     ) -> str:
         # normalize
@@ -73,7 +75,7 @@ class Phonemizer:
                 i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
             )
             letters = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
-            syllables = self.phonemize_hebrew(letters)
+            syllables = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
             phonemes = "".join(syllable[1] for syllable in syllables)
 
             if predict_stress and lexicon.STRESS not in phonemes:
@@ -96,7 +98,7 @@ class Phonemizer:
             text = "".join(i for i in text if i not in lexicon.PUNCTUATION or i == " ")
         if not preserve_stress:
             text = "".join(
-                i for i in text if i not in [lexicon.STRESS, lexicon.SECONDARY_STRESS]
+                i for i in text if i not in [lexicon.STRESS]
             )
         if use_post_normalize:
             text = post_normalize(text)
@@ -104,10 +106,11 @@ class Phonemizer:
 
         return text
 
-    def phonemize_hebrew(self, letters: list[str]):
+    def phonemize_hebrew(self, letters: list[str], predict_shva_na: bool ):
         phonemes = []
         i = 0
 
+        
         syllables = []
         cur_syllable = ['', '']
         while i < len(letters):
@@ -116,13 +119,14 @@ class Phonemizer:
             next = letters[i + 1] if i < len(letters) - 1 else None
             cur_phonemes = []
             skip_diacritics = False
-            skip_consonants = False
+            skip_constants = False
+            skip_offset = 0
             # revised rules
 
             # יַאלְלָה
             if cur[0] == "ל" and cur[1] == "\u05b0" and next and next[0] == "ל":
                 skip_diacritics = True
-                skip_consonants = True
+                skip_constants = True
 
             if (
                 cur[0] == "ו"
@@ -131,60 +135,60 @@ class Phonemizer:
                 and not next[1]
                 and cur[0] + cur[1] == "וַא"
             ):
-                i += 1
+                skip_offset += 1
                 cur_phonemes.append("wa")
 
             if cur[0] == "א" and not cur[1] and prev:
                 if next and next[0] != 'ו':
-                    skip_consonants = True
+                    skip_constants = True
 
             # TODO ?
             if cur[0] == "י" and next and not cur[1]:
-                skip_consonants = True
+                skip_constants = True
 
             if cur[0] == "ש" and "\u05c2" in cur[1]:
                 cur_phonemes.append("s")
-                skip_consonants = True
+                skip_constants = True
 
             # shin without niqqud after sin = sin
             if cur[0] == "ש" and not cur[1] and prev and "\u05c2" in prev[1]:
                 cur_phonemes.append("s")
-                skip_consonants = True
+                skip_constants = True
 
-            if not next and cur[0] == "ח":
+            if not next and cur[0] == "ח" and '\u05b7' in cur[1]:
                 # Final Het gnuva
                 cur_phonemes.append("ax")
                 skip_diacritics = True
-                skip_consonants = True
+                skip_constants = True
 
             if cur and "'" in cur[1] and cur[0] in lexicon.GERESH_LETTERS:
                 if cur[0] == "ת":
                     cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
                     skip_diacritics = True
-                    skip_consonants = True
+                    skip_constants = True
                 else:
                     # Geresh
                     cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur[0], ""))
-                    skip_consonants = True
+                    skip_constants = True
 
             elif (
                 "\u05bc" in cur[1] and cur[0] + "\u05bc" in lexicon.LETTERS_PHONEMES
             ):  # dagesh
                 cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0] + "\u05bc", ""))
-                skip_consonants = True
+                skip_constants = True
             elif cur[0] == "ו":
-                skip_consonants = True
+                skip_constants = True
                 if next and next[0] == "ו" and next[1] == cur[1]:
                     # patah and next[1] empty
                     if cur[1] == "\u05b7" and not next[1]:
                         cur_phonemes.append("w")
                         skip_diacritics = True
-                        i += 1
+                        skip_offset += 1
                     elif cur[1] == next[1]:
                         # double vav
                         cur_phonemes.append("wo")
                         skip_diacritics = True
-                        i += 1
+                        skip_offset += 1
                     else:
                         # TODO ?
                         # skip_consonants = False
@@ -216,27 +220,42 @@ class Phonemizer:
                         cur_phonemes.append("v")
                     skip_diacritics = True
 
-            if not skip_consonants:
+            if not skip_constants:
                 cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur[0], ""))
+            
+            if predict_shva_na and '\u05b0' in cur[1] and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur[1]:
+                # shva na prediction
+                if not prev:
+                    if cur[0] in 'למנרי' or cur[0] in 'אהע' or cur[0] in 'וכלב':
+                        cur_phonemes.append("e")
+                        skip_diacritics = True 
+                else:
+                    if next and next[0] == cur[0]:
+                        cur_phonemes.append("e")
+                        skip_diacritics = True
+                    elif prev and '\u05b0' in prev[1] and phonemes[-1] != 'e':
+                        cur_phonemes.append("e")
+                        skip_diacritics = True
+
+                
+
             niqqud_phonemes = (
                 [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
                 if not skip_diacritics
                 else []
             )
 
-            if "\u05ab" in cur[1] and phonemes:
-                # Ensure ATMAHA is before the letter (before the last phoneme added)
-                niqqud_phonemes.remove(lexicon.NIQQUD_PHONEMES["\u05ab"])
-                cur_phonemes = (
-                    cur_phonemes[:-1] + [lexicon.NIQQUD_PHONEMES["\u05ab"]] + [cur_phonemes[-1]]
-                )
-
+            
 
             
 
-
+            
+            
             cur_phonemes.extend(niqqud_phonemes)
+            # Ensure the stress is at the beginning of the syllable
+            cur_phonemes.sort(key=lambda x: x != 'ˈ')
             phonemes.extend(cur_phonemes)
+            
 
             if not next:
                 cur_syllable[0] += cur[0] + cur[1]
@@ -259,6 +278,6 @@ class Phonemizer:
             else:
                 syllables.append(cur_syllable)
                 cur_syllable = [cur[0] + cur[1], ''.join(cur_phonemes)]
-
-            i += 1
+            i += skip_offset + 1
+            
         return syllables
