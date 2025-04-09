@@ -100,6 +100,23 @@ class Phonemizer:
             text = "".join(
                 i for i in text if i not in [lexicon.STRESS]
             )
+
+        def expand_hyper_phonemes(text: str):
+            """
+            Expand hyper phonemes into normal phonemes
+            eg. [hello](/hɛˈloʊ/) -> hɛˈloʊ
+            """
+            def hyper_phonemes_callback(match: re.Match):
+                matched_phonemes = match.group(2)
+                for c in matched_phonemes:
+                    lexicon.SET_OUTPUT_CHARACTERS.add(c)
+                return matched_phonemes  # The phoneme is in the second group
+
+            text = re.sub(r"\[(.+?)\]\(\/(.+?)\/\)", hyper_phonemes_callback, text)
+            return text
+
+        text = expand_hyper_phonemes(text)
+
         if use_post_normalize:
             text = post_normalize(text)
         text = "".join(i for i in text if i in lexicon.SET_OUTPUT_CHARACTERS)
