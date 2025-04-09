@@ -97,12 +97,12 @@ Constants
 - `s` - Sin, Samekh
 - `f` - Fei
 - `p` - Pei dgusha
+- `r` - Resh
 - `ts` - tsadik
 - `ʃ` - Shin
 - `tʃ` - Tsadik with geresh
 - `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
 - `ʒ` - Zain with geresh (בֵּז׳)
-- `r` - Resh
 - `ʔ` - Alef/Ayin
 - `w` - Example: `walla`
 
