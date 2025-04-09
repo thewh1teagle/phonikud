@@ -77,6 +77,8 @@ class Phonemizer:
             letters = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
             syllables = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
             phonemes = "".join(syllable[1] for syllable in syllables)
+            if post_normalize:
+                phonemes = post_normalize(phonemes)
 
             if predict_stress and lexicon.STRESS not in phonemes:
                 stressed = []
@@ -116,14 +118,11 @@ class Phonemizer:
             return text
 
         text = expand_hyper_phonemes(text)
-
-        if use_post_normalize:
-            text = post_normalize(text)
         text = "".join(i for i in text if i in lexicon.SET_OUTPUT_CHARACTERS)
 
         return text
 
-    def phonemize_hebrew(self, letters: list[str], predict_shva_na: bool ):
+    def phonemize_hebrew(self, letters: list[str], predict_shva_na: bool) -> list[str]:
         phonemes = []
         i = 0
 
@@ -260,13 +259,7 @@ class Phonemizer:
                 [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur[1]]
                 if not skip_diacritics
                 else []
-            )
-
-            
-
-            
-
-            
+            )            
             
             cur_phonemes.extend(niqqud_phonemes)
             # Ensure the stress is at the beginning of the syllable
