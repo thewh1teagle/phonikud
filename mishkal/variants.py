@@ -8,7 +8,7 @@ class Letter:
     def __repr__(self):
         return f"[Letter] {self.char}{''.join(self.diac)}"
     
-    def __eq__(self, value):
+    def __eq__(self, value: 'Letter'):
         return value.diac == self.diac and value.char == self.char
     
 class Syllable:
@@ -19,5 +19,5 @@ class Syllable:
     def __repr__(self):
         return f'[Syllable] {self.chars}: {self.phones}'
     
-    def __eq__(self, value):
+    def __eq__(self, value: 'Syllable'):
         return self.chars == value.chars and self.phones == value.phones
