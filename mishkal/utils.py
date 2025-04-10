@@ -1,7 +1,6 @@
 from mishkal import lexicon
 import unicodedata
 import regex as re
-
 from mishkal.variants import Letter
 
 
@@ -12,12 +11,11 @@ def sort_diacritics(match):
 
 
 NORMALIZE_PATTERNS = {
-    # Alphabet followed by 1/2 symbols then dagesh. make dagesh first
+    # Sort diacritics
     r"(\p{L})(\p{M}+)": sort_diacritics,
-    "״": '"',
-    "׳": "'",
+    "״": '"', # Hebrew geresh to normal geresh
+    "׳": "'", # Same
 }
-
 
 def remove_nikud(text: str):
     return re.sub(lexicon.HE_NIKUD_PATTERN, "", text)
@@ -30,7 +28,6 @@ def has_nikud(text: str):
 def normalize(text: str) -> str:
     """
     Normalize unicode (decomposite)
-    Deduplicate nikud (eg. only Patah instead of Kamatz)
     Keep only Hebrew characters / punctuation / IPA
     Sort diacritics
     """
@@ -39,9 +36,8 @@ def normalize(text: str) -> str:
     text = unicodedata.normalize("NFD", text)
     for k, v in NORMALIZE_PATTERNS.items():
         text = re.sub(k, v, text)
-    # Normalize nikud, remove duplicate phonetics 'sounds' (eg. only Patah)
-    for k, v in lexicon.NIKUD_DEDUPLICATE.items():
-        text = text.replace(k, v)
+    for k, v in lexicon.DEDUPLICATE.items():
+        text = re.sub(k, v, text)
     return text
 
 

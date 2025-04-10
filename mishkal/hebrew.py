@@ -26,6 +26,18 @@ from mishkal.variants import Letter, Syllable
 from mishkal import lexicon
 import re
 
+SHVA = "\u05b0"
+SIN = "\u05c2"
+PATAH = '\u05b7'
+KAMATZ = '\u05b8'
+HATAF_KAMATZ = '\u05b3'
+DAGESH = "\u05bc"
+HOLAM = "\u05b9"
+HIRIK = "\u05b4"
+PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
+KUBUTS = "\u05bb"
+TSERE = "\u05b5"
+
 def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Syllable]:
     phonemes = []
     i = 0
@@ -44,7 +56,7 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
         # revised rules
 
         # יַאלְלָה
-        if cur.char == "ל" and cur.diac == "\u05b0" and next and next.char == "ל":
+        if cur.char == "ל" and cur.diac == SHVA and next and next.char == "ל":
             skip_diacritics = True
             skip_constants = True
 
@@ -66,16 +78,16 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
         if cur.char == "י" and next and not cur.diac and prev.char + prev.diac != 'אֵ':
             skip_constants = True
 
-        if cur.char == "ש" and "\u05c2" in cur.diac:
+        if cur.char == "ש" and SIN in cur.diac:
             cur_phonemes.append("s")
             skip_constants = True
 
         # shin without nikud after sin = sin
-        if cur.char == "ש" and not cur.diac and prev and "\u05c2" in prev.diac:
+        if cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
             cur_phonemes.append("s")
             skip_constants = True
 
-        if not next and cur.char == "ח" and '\u05b7' in cur.diac:
+        if not next and cur.char == "ח" and PATAH in cur.diac:
             # Final Het gnuva
             cur_phonemes.append("ax")
             skip_diacritics = True
@@ -92,15 +104,15 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
                 skip_constants = True
 
         elif (
-            "\u05bc" in cur.diac and cur.char + "\u05bc" in lexicon.LETTERS_PHONEMES
+            DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES
         ):  # dagesh
-            cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + "\u05bc", ""))
+            cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
             skip_constants = True
         elif cur.char == "ו":
             skip_constants = True
             if next and next.char == "ו" and next.diac == cur.diac:
                 # patah and next.diac empty
-                if cur.diac in ["\u05b7", "\u05b8"] and not next.diac:
+                if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
                     cur_phonemes.append("w")
                     skip_diacritics = True
                     skip_offset += 1
@@ -117,23 +129,23 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
                 # Single vav
 
                 # Vav with Patah
-                if re.search("[\u05b7-\u05b8]", cur.diac):
+                if re.search(PATAH_LIKE_PATTERN, cur.diac):
                     cur_phonemes.append("va")
 
                 # Holam haser
-                elif "\u05b9" in cur.diac:
+                elif HOLAM in cur.diac:
                     cur_phonemes.append("o")
                 # Shuruk / Kubutz
-                elif "\u05bb" in cur.diac or "\u05bc" in cur.diac:
+                elif KUBUTS in cur.diac or DAGESH in cur.diac:
                     cur_phonemes.append("u")
                 # Vav with Shva in start
-                elif "\u05b0" in cur.diac and not prev:
+                elif SHVA in cur.diac and not prev:
                     cur_phonemes.append("ve")
                 # Hirik
-                elif "\u05b4" in cur.diac:
+                elif HIRIK in cur.diac:
                     cur_phonemes.append("vi")
                 # Tsere
-                elif "\u05b5" in cur.diac:
+                elif TSERE in cur.diac:
                     cur_phonemes.append("ve")
                 
                 else:
@@ -143,7 +155,7 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
         if not skip_constants:
             cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
         
-        if predict_shva_na and '\u05b0' in cur.diac and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur.diac:
+        if predict_shva_na and SHVA in cur.diac and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur.diac:
             # shva na prediction
             if not prev:
                 if cur.char in 'למנרי' or cur.char in 'אהע' or cur.char in 'וכלב':
@@ -153,11 +165,11 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
                 if next and next.char == cur.char:
                     cur_phonemes.append("e")
                     skip_diacritics = True
-                elif prev and '\u05b0' in prev.diac and phonemes[-1] != 'e':
+                elif prev and SHVA in prev.diac and phonemes[-1] != 'e':
                     cur_phonemes.append("e")
                     skip_diacritics = True
 
-        if '\u05b8' in cur.diac and next and '\u05b3' in next.diac:
+        if KAMATZ in cur.diac and next and HATAF_KAMATZ in next.diac:
             cur_phonemes.append('o')
             skip_diacritics = True
 

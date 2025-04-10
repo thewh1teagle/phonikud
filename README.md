@@ -58,8 +58,6 @@ See [examples](examples)
 - It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
-- Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
-- Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
 ### Enhance vocabulary
@@ -72,8 +70,13 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 ### Nikud set and symbols
 
-- `Shva`, `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךףו`),
-- `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (`ג'`), `Vav Holam` (`ו`)
+- Chars from `\u05b0` to `\u05ea` (Letters and nikud) 
+- `'"` (Gershaim), 
+- `\u05ab` (Stress)
+- `\u05bd` (Shva na)
+
+See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
+
 
 ### Hebrew phonemes
 
