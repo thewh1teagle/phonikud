@@ -6,6 +6,8 @@ import regex as re
 from mishkal.variants import Letter, Syllable
 from mishkal.hebrew import phonemize_hebrew
 
+ENGLISH_PHONEMES = set() # When using fallback
+
 class Phonemizer:
     def __init__(self):
         self.expander = Expander()
@@ -38,8 +40,8 @@ class Phonemizer:
                 return word
             phonemes = fallback(word).strip()
             # TODO: check that it has only IPA?!
-            # for c in phonemes:
-            #     lexicon.SET_OUTPUT_CHARACTERS.add(c)
+            for c in phonemes:
+                ENGLISH_PHONEMES.add(c)
             return phonemes
 
         if fallback is not None:
@@ -82,7 +84,7 @@ class Phonemizer:
             
             return phonemes
 
-        
+
         text = re.sub(lexicon.HE_PATTERN, heb_replace_callback, text)
 
         if not preserve_punctuation:
@@ -107,5 +109,8 @@ class Phonemizer:
             return text
 
         text = expand_hyper_phonemes(text)
+
+        if use_post_normalize:
+            text = ''.join(i for i in text if i in lexicon.SET_PHONEMES or i in ENGLISH_PHONEMES or i == ' ')
 
         return text

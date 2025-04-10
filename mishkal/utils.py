@@ -2,7 +2,7 @@ from mishkal import lexicon
 import unicodedata
 import regex as re
 from mishkal.variants import Letter
-
+import mishkal
 
 def sort_diacritics(match):
     letter = match.group(1)
@@ -52,7 +52,8 @@ def post_normalize(phonemes: str):
         # remove j followed by a i
         word = re.sub(r"ij", "i", word)
         new_phonemes.append(word)
-    return " ".join(new_phonemes)
+    phonemes = " ".join(new_phonemes)
+    return phonemes
 
 def get_letters(word: str):
     letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
