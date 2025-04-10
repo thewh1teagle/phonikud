@@ -23,7 +23,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize, has_vowel, has_constant, remove_nikud
+from mishkal.utils import get_letters, normalize, post_normalize, has_vowel, has_constant, remove_nikud
 from typing import Callable
 import regex as re
 from mishkal.variants import Letter, Syllable
@@ -48,7 +48,7 @@ class Phonemizer:
         
         
         # TODO: is that enough? what if there's punctuation around? other chars?
-        he_pattern = r"[\u05b0-\u05ea\u05ab\u05bd']+"
+        
         fallback_pattern = r"[a-zA-Z]+"
 
         def fallback_replace_callback(match: re.Match):
@@ -60,8 +60,8 @@ class Phonemizer:
                 return word
             phonemes = fallback(word).strip()
             # TODO: check that it has only IPA?!
-            for c in phonemes:
-                lexicon.SET_OUTPUT_CHARACTERS.add(c)
+            # for c in phonemes:
+            #     lexicon.SET_OUTPUT_CHARACTERS.add(c)
             return phonemes
 
         if fallback is not None:
@@ -74,11 +74,7 @@ class Phonemizer:
             word = match.group(0)
 
             word = normalize(word)
-            word = "".join(
-                i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIKUD
-            )
-            letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
-            letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
+            letters: list[Letter] = get_letters(word)
             syllables: list[Syllable] = self.phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
             phonemes = "".join(syllable.phones for syllable in syllables)
             if use_post_normalize:
@@ -109,7 +105,7 @@ class Phonemizer:
             return phonemes
 
         
-        text = re.sub(he_pattern, heb_replace_callback, text)
+        text = re.sub(lexicon.HE_PATTERN, heb_replace_callback, text)
 
         if not preserve_punctuation:
             text = "".join(i for i in text if i not in lexicon.PUNCTUATION or i == " ")
@@ -125,15 +121,14 @@ class Phonemizer:
             """
             def hyper_phonemes_callback(match: re.Match):
                 matched_phonemes = match.group(2)
-                for c in matched_phonemes:
-                    lexicon.SET_OUTPUT_CHARACTERS.add(c)
+                # for c in matched_phonemes:
+                #     lexicon.SET_OUTPUT_CHARACTERS.add(c)
                 return matched_phonemes  # The phoneme is in the second group
 
             text = re.sub(r"\[(.+?)\]\(\/(.+?)\/\)", hyper_phonemes_callback, text)
             return text
 
         text = expand_hyper_phonemes(text)
-        text = "".join(i for i in text if i in lexicon.SET_OUTPUT_CHARACTERS)
 
         return text
 
@@ -193,14 +188,14 @@ class Phonemizer:
                 skip_diacritics = True
                 skip_constants = True
 
-            if cur and "'" in cur.diac and cur.char in lexicon.GERESH_LETTERS:
+            if cur and "'" in cur.diac and cur.char in lexicon.GERESH_PHONEMES:
                 if cur.char == "ת":
-                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur.char, ""))
+                    cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
                     skip_diacritics = True
                     skip_constants = True
                 else:
                     # Geresh
-                    cur_phonemes.append(lexicon.GERESH_LETTERS.get(cur.char, ""))
+                    cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
                     skip_constants = True
 
             elif (
@@ -273,6 +268,8 @@ class Phonemizer:
                 cur_phonemes.append('o')
                 skip_diacritics = True
 
+
+            
             nikud_phonemes = (
                 [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
                 if not skip_diacritics
@@ -283,6 +280,8 @@ class Phonemizer:
             # Ensure the stress is at the beginning of the syllable
             cur_phonemes.sort(key=lambda x: x != 'ˈ')
             phonemes.extend(cur_phonemes)
+            
+            cur_phonemes = [p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)]
             
 
             if not next:

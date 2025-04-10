@@ -2,6 +2,8 @@ from mishkal import lexicon
 import unicodedata
 import regex as re
 
+from mishkal.variants import Letter
+
 
 def sort_diacritics(match):
     letter = match.group(1)
@@ -56,6 +58,10 @@ def post_normalize(phonemes: str):
         new_phonemes.append(word)
     return " ".join(new_phonemes)
 
+def get_letters(word: str):
+    letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
+    letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
+    return letters
 
 def get_unicode_names(text: str):
     return [unicodedata.name(c, "?") for c in text]
