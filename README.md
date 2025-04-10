@@ -6,23 +6,24 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- Accurate lightweight niqqud model
-- Convert text with niqqud to modern spoken phonemes
-- Expand dates into text with niqqud
-- Expand numbers into text with niqqud
+- Accurate lightweight nikud model
+- Convert text with nikud to modern spoken phonemes
+- Expand dates into text with nikud
+- Expand numbers into text with nikud
 - Mixed English in Hebrew with fallback
 - Dictionaries with words, symbols, emojis
 
 ## Limitiation
 
-The following hard to predict even from text with niqqud.
+- The library depends on text with nikud,
+- the following hard to predict even from text with nikud
+  - `Milhel` - 
+      also named as `Atamha` / `Stress`. 
+      most of the time it's `Milra`
+  - `Shva na`. most of the time it's `Shva nah`
 
-- Requires diacritized text
-- `Shva na` and `Shva nah`
-- `Stress` (`Atmaha` / `Milre` / `Milra`)
-- `Kamatz Katan` (rarely used)
 
-We cover these using dictionaries, and neural network is planned.
+We cover these using predictions, and enhanced nakdan is planned.
 
 ## Install
 
@@ -38,7 +39,7 @@ You can find the package as well in `pypi.org/project/mishkal-hebrew`
 
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
-## Examples
+## Usage
 
 ```python
 from mishkal import phonemize
@@ -46,13 +47,16 @@ phonemes = phonemize('שָׁלוֹם עוֹלָם')
 print(phonemes) # ʃaˈlom oˈlam
 ```
 
+Please use [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) for adding diacritics.
+
+## Examples
+
 See [examples](examples)
 
 ## Docs
 
-- Dictionaries prioritized based on `gold`, `silver`, `bronze`.
-- It's recommend to add niqqud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
-- Hebrew niqqud is normalized and deduplicated phonetically (simplified)
+- It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
+- Hebrew nikud is normalized and deduplicated phonetically (simplified)
 - Most of the Hebrew rules happen in `phonemize.py`
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
@@ -62,7 +66,7 @@ See [examples](examples)
 
 One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and atmaha. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
 
-### Niqqud deduplication
+### nikud deduplication
 
 - `Hataf segol` -> `Tsere`
 - `Segol` -> `Tsere`
@@ -72,7 +76,7 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 - `Qamats katan` -> `Holam`
 - `Hebrew Geresh` -> Regular `'` (`apostrophe`)
 
-### Niqqud set and symbols
+### Nikud set and symbols
 
 - `Shva`, `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךףו`),
 - `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (`ג'`), `Vav Holam` (`ו`)
