@@ -81,8 +81,8 @@ NIKUD_DEDUPLICATE = {
     "\u05f3": "'",  # Hebrew geresh to regular geresh
 }
 
-SET_PHONEMES = {
+SET_PHONEMES = set(sorted({
     *NIKUD_PHONEMES.values(), 
     *LETTERS_PHONEMES.values(), 
     *GERESH_PHONEMES.values()
-}
+}))
