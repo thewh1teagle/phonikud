@@ -56,7 +56,7 @@ See [examples](examples)
 ## Docs
 
 - It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
-- Hebrew nikud is normalized and deduplicated phonetically (simplified)
+- Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
 - Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
 - Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
@@ -66,14 +66,8 @@ See [examples](examples)
 
 One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and atmaha. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
 
-### nikud deduplication
+### Deduplication
 
-- `Hataf segol` -> `Tsere`
-- `Segol` -> `Tsere`
-- `Hataf patah` -> `Patah`
-- `Hataf qamatz` -> `Patah`
-- `Qamats` -> `Patah`
-- `Qamats katan` -> `Holam`
 - `Hebrew Geresh` -> Regular `'` (`apostrophe`)
 
 ### Nikud set and symbols
