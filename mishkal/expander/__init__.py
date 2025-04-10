@@ -1,5 +1,5 @@
 """
-Expand dates and numbers into words with niqqud
+Expand dates and numbers into words with nikud
 This happens before phonemization
 """
 

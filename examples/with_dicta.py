@@ -14,7 +14,7 @@ model = AutoModel.from_pretrained(
 model.eval()
 
 sentence = "בשנת 1948 השלים אפרים קישון את לימודיו בפיסול מתכת ובתולדות האמנות והחל לפרסם מאמרים הומוריסטיים"
-niqqud = model.predict([sentence], tokenizer)
-phonemes = phonemize(niqqud)
-print(niqqud)
+nikud = model.predict([sentence], tokenizer)
+phonemes = phonemize(nikud)
+print(nikud)
 print(phonemes)

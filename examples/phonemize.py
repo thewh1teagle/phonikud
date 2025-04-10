@@ -1,7 +1,7 @@
 """
 Quick Nakdan https://nakdanlive.dicta.org.il
 Pro Nakdan https://nakdanpro.dicta.org.il
-Manual Nakdan https://www.yo-yoo.co.il/tools/niqqud
+Manual Nakdan https://www.yo-yoo.co.il/tools/nikud
 """
 
 from mishkal import phonemize
@@ -19,7 +19,7 @@ sentences = [
     # "ווֹלְטֶר",  # double vav start
     # "הֲווֹלְטֶר",  # double vav middle
     # "אֶלֶגַנְטִי",  # lookup
-    # "כָּל",  # match to one without niqqud
+    # "כָּל",  # match to one without nikud
     # "יִשְׂרָאֵל הוּקְמָה בִּשְׁנַת 1948",
     # "₪",
     # "מָחָר בְּשָׁעָה 22:00",  # time to word

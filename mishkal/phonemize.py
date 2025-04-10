@@ -3,15 +3,15 @@ The actual letters phonemization happens here.
 Phonemes generated based on rules.
 
 Early rules:
-1. Niqqud malle vowels
+1. Nikud malle vowels
 2. Dagesh (custom beged kefet)
-3. Final letter without niqqud
+3. Final letter without nikud
 4. Final Het gnuva
 5. Geresh (Gimel, Ttadik, Zain)
 6. Shva na
 Revised rules:
 1. Consonants
-2. Niqqud
+2. Nikud
 
 Reference:
 - https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
@@ -23,7 +23,7 @@ Reference:
 
 from mishkal import lexicon
 from .expander import Expander
-from mishkal.utils import normalize, post_normalize, has_vowel, has_constant, remove_niqqud
+from mishkal.utils import normalize, post_normalize, has_vowel, has_constant, remove_nikud
 from typing import Callable
 import regex as re
 from mishkal.variants import Letter, Syllable
@@ -75,7 +75,7 @@ class Phonemizer:
 
             word = normalize(word)
             word = "".join(
-                i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIQQUD
+                i for i in word if i in lexicon.SET_LETTERS or i in lexicon.SET_NIKUD
             )
             letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
             letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
@@ -91,7 +91,7 @@ class Phonemizer:
                 is_milra = True
 
                 milhel_patterns = ['יים', 'וע', 'טו']
-                if syllables and any(remove_niqqud(syllables[-1].chars).endswith(i) for i in milhel_patterns):
+                if syllables and any(remove_nikud(syllables[-1].chars).endswith(i) for i in milhel_patterns):
                     is_milra = False
 
                 # Iterate through each syllable
@@ -182,7 +182,7 @@ class Phonemizer:
                 cur_phonemes.append("s")
                 skip_constants = True
 
-            # shin without niqqud after sin = sin
+            # shin without nikud after sin = sin
             if cur.char == "ש" and not cur.diac and prev and "\u05c2" in prev.diac:
                 cur_phonemes.append("s")
                 skip_constants = True
@@ -273,13 +273,13 @@ class Phonemizer:
                 cur_phonemes.append('o')
                 skip_diacritics = True
 
-            niqqud_phonemes = (
-                [lexicon.NIQQUD_PHONEMES.get(niqqud, "") for niqqud in cur.diac]
+            nikud_phonemes = (
+                [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
                 if not skip_diacritics
                 else []
             )            
             
-            cur_phonemes.extend(niqqud_phonemes)
+            cur_phonemes.extend(nikud_phonemes)
             # Ensure the stress is at the beginning of the syllable
             cur_phonemes.sort(key=lambda x: x != 'ˈ')
             phonemes.extend(cur_phonemes)

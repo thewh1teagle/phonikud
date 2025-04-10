@@ -17,18 +17,18 @@ NORMALIZE_PATTERNS = {
 }
 
 
-def remove_niqqud(text: str):
-    return re.sub(lexicon.HE_NIQQUD_PATTERN, "", text)
+def remove_nikud(text: str):
+    return re.sub(lexicon.HE_NIKUD_PATTERN, "", text)
 
 
-def has_niqqud(text: str):
-    return re.search(lexicon.HE_NIQQUD_PATTERN, text) is not None
+def has_nikud(text: str):
+    return re.search(lexicon.HE_NIKUD_PATTERN, text) is not None
 
 
 def normalize(text: str) -> str:
     """
     Normalize unicode (decomposite)
-    Deduplicate niqqud (eg. only Patah instead of Kamatz)
+    Deduplicate nikud (eg. only Patah instead of Kamatz)
     Keep only Hebrew characters / punctuation / IPA
     Sort diacritics
     """
@@ -37,8 +37,8 @@ def normalize(text: str) -> str:
     text = unicodedata.normalize("NFD", text)
     for k, v in NORMALIZE_PATTERNS.items():
         text = re.sub(k, v, text)
-    # Normalize niqqud, remove duplicate phonetics 'sounds' (eg. only Patah)
-    for k, v in lexicon.NIQQUD_DEDUPLICATE.items():
+    # Normalize nikud, remove duplicate phonetics 'sounds' (eg. only Patah)
+    for k, v in lexicon.NIKUD_DEDUPLICATE.items():
         text = text.replace(k, v)
     return text
 

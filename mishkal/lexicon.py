@@ -4,9 +4,9 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 HE_CHARS_PATTERN = (
-    r"\b[\u05B0-\u05EA\u05F3\u0027]+\b"  # Chars including niqqud, geresh and en_geresh
+    r"\b[\u05B0-\u05EA\u05F3\u0027]+\b"  # Chars including nikud, geresh and en_geresh
 )
-HE_NIQQUD_PATTERN = r"[\u05B0-\u05C7]"
+HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
 PUNCTUATION = r".,!? "
 
 # Special
@@ -98,7 +98,7 @@ VOWEL_U = "u"
 SHVA_NA_DIACRITIC = "\u05bd"
 ATAMAHA_DIACRITIC = "\u05ab"
 
-NIQQUD_PHONEMES = {
+NIKUD_PHONEMES = {
     "\u05b4": "i",  # Hiriq
     "\u05b5": "e",  # Tsere
     "\u05b7": "a",  # Patah
@@ -130,11 +130,11 @@ SET_LETTER_SYMBOLS = {
 }
 
 """
-We're left with the following niqqud (10):  
+We're left with the following nikud (10):  
 Shva, Hiriq, Tsere, Patah, Holam, Qubuts, Dagesh, 
 Holam haser for vav, Shin dot, Sin dot
 """
-NIQQUD_DEDUPLICATE = {
+NIKUD_DEDUPLICATE = {
     "\u05b1": "\u05b5",  # Hataf Segol -> Tsere
     "\u05b2": "\u05b7",  # Hataf Patah -> Patah
     # "\u05b3": "\u05b9",  # Hataf Qamats -> Holam
@@ -156,12 +156,12 @@ SET_OUTPUT_CHARACTERS = set(
     ]
     + [STRESS]
     + list(LETTERS_PHONEMES.values())
-    + list(NIQQUD_PHONEMES.values())
+    + list(NIKUD_PHONEMES.values())
     + [VOWEL_A, VOWEL_E, VOWEL_I, VOWEL_O, VOWEL_U]
     + list(PUNCTUATION)
 )
 
-SET_NIQQUD = {
+SET_NIKUD = {
     # Shva, Hiriq, Tsere, Patah, Holam, Holam haser for vav, Qubuts, Dagesh, Shin dot, Sin dot
     "\u05b0", # Shva
     "\u05b4", # Hiriq
@@ -185,5 +185,5 @@ SET_PUNCTUATION = set(PUNCTUATION)
 
 # Set for fast lookup
 SET_INPUT_CHARACTERS = set(
-    list(LETTERS_PHONEMES.keys()) + list(SET_NIQQUD) + list(PUNCTUATION) + ["'"]
+    list(LETTERS_PHONEMES.keys()) + list(SET_NIKUD) + list(PUNCTUATION) + ["'"]
 )
