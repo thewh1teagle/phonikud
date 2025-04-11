@@ -44,7 +44,7 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 ```python
 from mishkal import phonemize
 phonemes = phonemize('שָׁלוֹם עוֹלָם')
-print(phonemes) # ʃaˈlom oˈlam
+print(phonemes) # ʃalˈom olˈam
 ```
 
 Please use [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) for adding diacritics.
