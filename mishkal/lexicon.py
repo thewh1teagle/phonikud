@@ -73,6 +73,7 @@ NIKUD_PHONEMES = {
     SHVA_NA_DIACRITIC: "e",  # Shva na
 }
 
+# Deprecated
 DEDUPLICATE = {
     # "\u05b1": "\u05b5",  # Hataf Segol -> Tsere
     # "\u05b2": "\u05b7",  # Hataf Patah -> Patah
