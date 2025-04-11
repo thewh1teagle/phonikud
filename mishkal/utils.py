@@ -69,3 +69,34 @@ def has_vowel(s: iter):
 def has_constant(s: iter):
     return any(i not in 'aeiou' for i in s)
 
+
+
+def get_syllables(phonemes: list[str]) -> list[str]:
+    syllables = []
+    cur_syllable = ''
+
+    i = 0
+    while i < len(phonemes):
+        # Add current phoneme to the syllable
+        cur_syllable += phonemes[i]
+        
+        # If we have a vowel in the current syllable
+        if has_vowel(cur_syllable):
+            # If there's a next phoneme that's a consonant followed by a vowel-containing phoneme
+            if i+2 < len(phonemes) and not has_vowel(phonemes[i+1]) and has_vowel(phonemes[i+2]):
+                # End the current syllable and start a new one
+                syllables.append(cur_syllable)
+                cur_syllable = ''
+            # If we're at the end or next phoneme has a vowel
+            elif i+1 >= len(phonemes) or has_vowel(phonemes[i+1]):
+                # End the current syllable
+                syllables.append(cur_syllable)
+                cur_syllable = ''
+        
+        i += 1
+    
+    # Add any remaining syllable
+    if cur_syllable:
+        syllables.append(cur_syllable)
+    
+    return syllables

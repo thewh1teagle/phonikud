@@ -38,12 +38,10 @@ PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
 KUBUTS = "\u05bb"
 TSERE = "\u05b5"
 
-def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Syllable]:
+def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
     phonemes = []
     i = 0
 
-    syllables = []
-    cur_syllable = Syllable('', '')
     while i < len(letters):
         
         cur = letters[i]
@@ -180,35 +178,11 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[Sylla
             if not skip_diacritics
             else []
         )            
-        
         cur_phonemes.extend(nikud_phonemes)
         # Ensure the stress is at the beginning of the syllable
         cur_phonemes.sort(key=lambda x: x != 'ˈ')
-        phonemes.extend(cur_phonemes)
-        
         cur_phonemes = [p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)]
-        
-
-        if not next:
-            cur_syllable.chars += cur.char + cur.diac
-            cur_syllable.phones += ''.join(cur_phonemes)
-            syllables.append(cur_syllable)
-        elif not prev:
-            cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
-
-        elif len(re.findall('[א-ת]', cur_syllable.chars)) >= 2 and has_vowel(cur_syllable.phones) and cur.diac:
-            syllables.append(cur_syllable)
-            cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
-
-        elif not has_vowel(cur_phonemes):                
-            cur_syllable.chars += cur.char + cur.diac
-            cur_syllable.phones += ''.join(cur_phonemes)
-
-        elif not has_vowel(cur_syllable.phones):
-            cur_syllable.chars += cur.char + cur.diac
-            cur_syllable.phones += ''.join(cur_phonemes)
-        else:
-            syllables.append(cur_syllable)
-            cur_syllable = Syllable(cur.char + cur.diac, ''.join(cur_phonemes))
+        phonemes.extend(cur_phonemes)
         i += skip_offset + 1
-    return syllables
+    return phonemes
+

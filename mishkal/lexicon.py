@@ -3,6 +3,9 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 """
 
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
+
+MILHEL_PATTERNS = ['יים', 'וע', 'טו', "דיה"] # Used for stress prediction
+
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\'"]+'
 HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
 PUNCTUATION = r".,!? "
