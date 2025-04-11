@@ -76,7 +76,7 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
             skip_constants = True
 
     # TODO ?
-    if cur.char == "י" and next and not cur.diac and prev.char + prev.diac != 'אֵ':
+    if cur.char == "י" and next and not cur.diac and prev and prev.char + prev.diac != 'אֵ':
         skip_constants = True
 
     if cur.char == "ש" and SIN in cur.diac:
