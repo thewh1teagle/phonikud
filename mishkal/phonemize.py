@@ -1,11 +1,12 @@
 from mishkal import lexicon
+from mishkal.variants import Letter
 from .expander import Expander
 from mishkal.utils import get_letters, normalize, post_normalize, has_vowel, has_constant, remove_nikud, get_syllables
 from typing import Callable
 import regex as re
 from mishkal.hebrew import phonemize_hebrew
 
-ENGLISH_PHONEMES = set() # When using fallback
+ADDITIONAL_PHONEMES = set() # When using fallback
 
 class Phonemizer:
     def __init__(self):
@@ -40,7 +41,7 @@ class Phonemizer:
             phonemes = fallback(word).strip()
             # TODO: check that it has only IPA?!
             for c in phonemes:
-                ENGLISH_PHONEMES.add(c)
+                ADDITIONAL_PHONEMES.add(c)
             return phonemes
 
         if fallback is not None:
@@ -89,8 +90,8 @@ class Phonemizer:
             """
             def hyper_phonemes_callback(match: re.Match):
                 matched_phonemes = match.group(2)
-                # for c in matched_phonemes:
-                #     lexicon.SET_OUTPUT_CHARACTERS.add(c)
+                for c in matched_phonemes:
+                    ADDITIONAL_PHONEMES.add(c)
                 return matched_phonemes  # The phoneme is in the second group
 
             text = re.sub(r"\[(.+?)\]\(\/(.+?)\/\)", hyper_phonemes_callback, text)
@@ -99,6 +100,6 @@ class Phonemizer:
         text = expand_hyper_phonemes(text)
 
         if use_post_normalize:
-            text = ''.join(i for i in text if i in lexicon.SET_PHONEMES or i in ENGLISH_PHONEMES or i == ' ')
+            text = ''.join(i for i in text if i in lexicon.SET_PHONEMES or i in ADDITIONAL_PHONEMES or i == ' ')
 
         return text
