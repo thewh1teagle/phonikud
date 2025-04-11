@@ -166,7 +166,7 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
             if next and next.char == cur.char:
                 cur_phonemes.append("e")
                 skip_diacritics = True
-            elif prev and SHVA in prev.diac and phonemes[-1] != 'e':
+            elif prev and SHVA in prev.diac and cur_phonemes[-1] != 'e':
                 cur_phonemes.append("e")
                 skip_diacritics = True
 

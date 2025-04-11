@@ -3,16 +3,29 @@ uv run pytest tests/test_syllables.py
 """
 
 from mishkal.phonemize import Phonemizer
-from mishkal.utils import get_letters
+from mishkal.utils import get_letters, get_syllables
 from mishkal.hebrew import phonemize_hebrew
-
 
 phonemizer = Phonemizer()
 
+test_data = {
+    "אוֹפַנַּיִים": ['ʔo', 'fa', 'na', 'jim'],
+    "אֵיתָנוּת": ['ʔej', 'ta', 'nut'],
+    "רֵיחַ": ['re', 'ax'],
+    "אֵיתָנוּת": ['ʔej', 'ta', 'nut'],
+    "אֵיר֫וֹפָּה": ['ʔej', 'ˈro', 'pah'],
+    "צָהֳרַ֫יִם": ['tso', 'ho', 'ˈra', 'jim'],
+    "דַּוָָר": ['da', 'var'],
+    "עַכְשָׁ֫יו": ['ʔax', 'ˈʃav'],
+    "כׇּל": ['kol'],
+    "הַמָּלֵ": ['ha', 'ma', 'le'],
+    "רוּחַ": ['ru', 'ax'],
+    "אֶנְצִיקְלוֹפֶּ֫דְיָה": ['ʔen', 'tsik', 'lo', 'ˈped', 'jah'],
+}
 
-# def test_syllables():
-#     for word, syllables in words.items():
-#         letters = get_letters(word)
-#         result = phonemize_hebrew(letters, predict_shva_na=False)
-#         print(result)
-# test_syllables()
+def test_syllables():
+    for w, s in test_data.items():
+        letters = get_letters(w)
+        phonemes = phonemize_hebrew(letters, False)
+        result = get_syllables(phonemes)
+        assert result == s

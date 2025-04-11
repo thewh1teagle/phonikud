@@ -78,6 +78,7 @@ def get_syllables(phonemes: list[str]) -> list[str]:
     i = 0
     while i < len(phonemes):
         # Add current phoneme to the syllable
+
         cur_syllable += phonemes[i]
         
         # If we have a vowel in the current syllable
@@ -98,5 +99,11 @@ def get_syllables(phonemes: list[str]) -> list[str]:
     # Add any remaining syllable
     if cur_syllable:
         syllables.append(cur_syllable)
+
+    # Iterate over syllables and move any syllable ending with lexicon.STRESS to the next one
+    for i in range(len(syllables) - 1):  # Ensure we're not at the last syllable
+        if syllables[i].endswith(lexicon.STRESS):
+            syllables[i+1] = lexicon.STRESS + syllables[i+1]  # Move stress to next syllable
+            syllables[i] = syllables[i][:-len(lexicon.STRESS)]  # Remove stress from current syllable
     
     return syllables
