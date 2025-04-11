@@ -3,7 +3,6 @@ from .expander import Expander
 from mishkal.utils import get_letters, normalize, post_normalize, has_vowel, has_constant, remove_nikud, get_syllables
 from typing import Callable
 import regex as re
-from mishkal.variants import Letter, Syllable
 from mishkal.hebrew import phonemize_hebrew
 
 ENGLISH_PHONEMES = set() # When using fallback
