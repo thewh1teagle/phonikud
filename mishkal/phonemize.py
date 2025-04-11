@@ -96,6 +96,5 @@ class Phonemizer:
                 i for i in text if i not in [lexicon.STRESS]
             )
         if use_post_normalize:
-            text = ''.join(i for i in text if i in lexicon.SET_PHONEMES or i in ADDITIONAL_PHONEMES or i == ' ')
-
+            text = ''.join(i for i in text if i in lexicon.SET_PHONEMES or i in ADDITIONAL_PHONEMES or i == ' ' or i in lexicon.PUNCTUATION)
         return text
