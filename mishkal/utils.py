@@ -107,3 +107,12 @@ def get_syllables(phonemes: list[str]) -> list[str]:
             syllables[i] = syllables[i][:-len(lexicon.STRESS)]  # Remove stress from current syllable
     
     return syllables
+
+
+def sort_stress(phonemes: list[str]):
+    if 'ˈ' not in phonemes:
+        return phonemes
+    phonemes = [p for p in phonemes if p != 'ˈ']
+    insert_pos = next((i for i, p in enumerate(phonemes) if p in 'aeiou'), len(phonemes))
+    phonemes.insert(insert_pos, 'ˈ')
+    return phonemes

@@ -20,6 +20,7 @@ Reference:
 from mishkal.variants import Letter
 from mishkal import lexicon
 import re
+from mishkal.utils import sort_stress
 
 SHVA = "\u05b0"
 SIN = "\u05c2"
@@ -183,6 +184,6 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
     )            
     cur_phonemes.extend(nikud_phonemes)
     # Ensure the stress is at the beginning of the syllable
-    cur_phonemes.sort(key=lambda x: x != 'ˈ')
+    cur_phonemes = sort_stress(cur_phonemes)
     cur_phonemes = [p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)]
     return cur_phonemes, skip_offset
