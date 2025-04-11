@@ -99,6 +99,7 @@ sentences = [
     "קֵרֵחַ"
 ]
 
+# TODO: wolter and add to tests
 
 
 for sentence in sentences:
