@@ -48,8 +48,12 @@ class Phonemizer:
         if use_expander:
             text = self.expander.expand_text(text)
 
-        def heb_replace_callback(match: re.Match):
+        def heb_replace_callback(match: re.Match, original_text: str):
             word = match.group(0)
+            start_offset = match.start()
+            if start_offset > 0 and original_text[start_offset - 1] == '[':
+                # Skip if it starts with [ as it's used for hyper phonemes
+                return word
 
             word = normalize(word)
             letters: list[Letter] = get_letters(word)
@@ -74,7 +78,7 @@ class Phonemizer:
             return phonemes
 
 
-        text = re.sub(lexicon.HE_PATTERN, heb_replace_callback, text)
+        text = re.sub(lexicon.HE_PATTERN, lambda match: heb_replace_callback(match, text), text)
 
         def hyper_phonemes_callback(match: re.Match):
             """
