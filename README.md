@@ -70,10 +70,13 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 ### Nikud set and symbols
 
-- Chars from `\u05b0` to `\u05ea` (Letters and nikud) 
-- `'"` (Gershaim), 
-- `\u05ab` (Stress)
-- `\u05bd` (Shva na)
+- Chars from `\u05b0` to `\u05ea` (Letters and nikud)
+- `'"` (Gershaim),
+- `\u05ab` (Atmaha)
+- `\u05bd` (Shva Na)
+
+`\u05ab` and `\u05bd` are not standard - we invented them to mark stress and Shva Na clearly.
+
 
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 
