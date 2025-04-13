@@ -131,7 +131,7 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 ### Notes
 
 - There's no secondary stress (only Milel and Milra)
-- The `ʔ`/`h` trimmed from the suffix
+- The `ʔ`/`h` phonemes trimmed from the suffix
 - Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milhel` and rarely one before `Milhel`
 - Stress should be placed in the syllable always **before** vowel and NOT in the **first** character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
