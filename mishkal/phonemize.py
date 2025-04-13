@@ -2,7 +2,7 @@ from mishkal import lexicon
 from mishkal.variants import Letter
 from .expander import Expander
 from mishkal.utils import get_letters, normalize, post_normalize, has_vowel, has_constant, remove_nikud, get_syllables, sort_stress
-from typing import Callable
+from typing import Callable, Literal
 import regex as re
 from mishkal.hebrew import phonemize_hebrew
 
@@ -24,6 +24,7 @@ class Phonemizer:
         use_post_normalize=False,  # For TTS
         predict_stress=False,
         predict_shva_nah=False,
+        schema: Literal['plain', 'modern'] = 'plain',
         fallback: Callable[[str], str] = None,
     ) -> str | list[str]:
         # normalize
@@ -77,6 +78,11 @@ class Phonemizer:
             phonemes = ''.join(syllables)
             if use_post_normalize:
                 phonemes = post_normalize(phonemes)
+
+            if schema == 'modern':
+                # We'll keep this feature simple for now
+                phonemes = re.sub('r', 'ʁ',phonemes)
+                phonemes = re.sub('x', 'χ', phonemes)
             
             return phonemes
 

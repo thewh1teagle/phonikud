@@ -91,7 +91,7 @@ Constants
 - `d` - Dalet
 - `h` - He
 - `z` - Zain
-- `x` - Het, Haf
+- `χ` - Het, Haf
 - `t` - Taf, Tet
 - `j` - Yod
 - `k` - Kuf, Kaf
@@ -101,7 +101,7 @@ Constants
 - `s` - Sin, Samekh
 - `f` - Fei
 - `p` - Pei dgusha
-- `r` - Resh
+- `ʁ` - Resh
 - `ts` - tsadik
 - `ʃ` - Shin
 - `tʃ` - Tsadik with geresh
@@ -127,10 +127,11 @@ Symbols
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
 See [examples/with_fallback.py](examples/with_fallback.py) for reference.
 Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
-Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin) and `x` (Het).
+Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin), Resh `ʁ` and `χ` (Het).
 
 ### Notes
 
+- The default schema is plain for simplicify (eg. `x` instead of `χ`), for modern hebrew use `phonemize(..., schema='modern')`
 - There's no secondary stress (only `Milel` and `Milra`)
 - The `ʔ`/`h` phonemes trimmed from the suffix
 - Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milel` and rarely one before `Milel`

@@ -4,7 +4,7 @@ High level phonemize functions
 
 from .phonemize import Phonemizer
 from .utils import normalize  # noqa: F401
-from typing import Callable
+from typing import Callable, Literal
 
 phonemizer = Phonemizer()
 
@@ -17,6 +17,7 @@ def phonemize(
     use_post_normalize=True,  # For TTS
     predict_stress=True,
     predict_shva_nah=True,
+    schema: Literal['plain', 'modern'] = 'plain',
     fallback: Callable[[str], str] = None,
 ) -> str:
     phonemes = phonemizer.phonemize(
@@ -27,6 +28,7 @@ def phonemize(
         use_expander=use_expander,
         use_post_normalize=use_post_normalize,
         predict_stress=predict_stress,
+        schema=schema,
         predict_shva_nah=predict_shva_nah,
     )
     return phonemes
