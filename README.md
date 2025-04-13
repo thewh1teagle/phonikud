@@ -66,7 +66,7 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 ### Deduplication
 
-- `Hebrew Geresh` -> `'` (single quote)
+- Hebrew Geresh -> `'` (single quote)
 
 ### Nikud set and symbols
 
