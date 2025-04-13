@@ -20,7 +20,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
   - `Milhel` - 
       also named as `Atamha` / `Stress`. 
       most of the time it's `Milra`
-  - `Shva na`. most of the time it's `Shva nah`
+  - `Shva Na`. most of the time it's `Shva Nax`
 
 
 We cover these using predictions, and enhanced nakdan is planned.
@@ -131,8 +131,8 @@ Note that if you use this with TTS, it is recommended to train the model on phon
 ### Notes
 
 - There's no secondary stress (only Milel and Milra)
-- The glottal stop/h sometimes omited
-- Stress placed usually on the last syllable (milra), sometimes on one before milra (milhel) and rarely one before milhel
-- In the stressed syllable the stress should placed **before** the vowel and NOT in the **first** character of the syllable
+- The `ʔ`/`h` trimmed from the suffix
+- Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milhel` and rarely one before `Milhel`
+- Stress should be placed in the syllable always **before** vowel and NOT in the **first** character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
