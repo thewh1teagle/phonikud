@@ -6,7 +6,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- Accurate lightweight nikud model
+- Lightweight nikud model
 - Convert text with nikud to modern spoken phonemes
 - Expand dates into text with nikud
 - Expand numbers into text with nikud
