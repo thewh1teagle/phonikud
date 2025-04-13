@@ -127,6 +127,7 @@ Symbols
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
 See [examples/with_fallback.py](examples/with_fallback.py) for reference.
 Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
+Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin) and `x` (Het).
 
 ### Notes
 
