@@ -17,7 +17,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 - The library depends on text with nikud,
 - the following hard to predict even from text with nikud
-  - `Milhel` - 
+  - `Milel` - 
       also named as `Atamha` / `Stress`. 
       most of the time it's `Milra`
   - `Shva Na`. most of the time it's `Shva Nax`
@@ -131,9 +131,9 @@ Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin
 
 ### Notes
 
-- There's no secondary stress (only Milel and Milra)
+- There's no secondary stress (only `Milel` and `Milra`)
 - The `ʔ`/`h` phonemes trimmed from the suffix
-- Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milhel` and rarely one before `Milhel`
+- Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milel` and rarely one before `Milel`
 - Stress should be placed in the syllable always **before vowel** and _NOT_ in the first character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
