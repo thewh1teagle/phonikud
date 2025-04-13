@@ -99,6 +99,7 @@ sentences = [
     # "קֵרֵחַ"
     # "שָׁלוֹם חֲבֵרִים! מָה שְׁלוֹמְכֶם?",
     # "אֶנְצִיקְלוֹפֶּ֫דְיָה"
+    "וַאלְלָה"
 ]
 
 # TODO: wolter and add to tests
@@ -109,7 +110,7 @@ for sentence in sentences:
         sentence, 
         preserve_punctuation=True, 
         use_post_normalize=True, 
-        use_expander=False,
+        use_expander=True,
         predict_stress=True
     )
     print(phonemes)

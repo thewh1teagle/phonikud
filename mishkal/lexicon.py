@@ -12,6 +12,7 @@ PUNCTUATION = r".,!? "
 STRESS = "\u02c8"  # visually looks like '
 
 GERESH_PHONEMES = {"ג": "dʒ", "ז": "ʒ", "ת": "ta", "צ": "tʃ", "ץ": "tʃ"}
+SPECIAL_PHONEMES = ['w']
 
 # Consonants
 LETTERS_PHONEMES = {
@@ -88,5 +89,6 @@ DEDUPLICATE = {
 SET_PHONEMES = set(sorted({
     *NIKUD_PHONEMES.values(), 
     *LETTERS_PHONEMES.values(), 
-    *GERESH_PHONEMES.values()
+    *GERESH_PHONEMES.values(),
+    *SPECIAL_PHONEMES
 }))
