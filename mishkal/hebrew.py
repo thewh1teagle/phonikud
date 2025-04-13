@@ -6,7 +6,7 @@ Rules implemented:
 2. Nikud (vowel) processing
 3. Dagesh handling
 4. Geresh handling
-5. Shva na prediction
+5. Shva Na prediction
 6. Special letter combinations
 
 Reference:
@@ -157,12 +157,24 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
     if not skip_constants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
     
-    if predict_shva_na and SHVA in cur.diac and not skip_diacritics and lexicon.SHVA_NA_DIACRITIC not in cur.diac:
-        # shva na prediction
+    if lexicon.SHVA_NA_DIACRITIC not in cur.diac and predict_shva_na and SHVA in cur.diac and not skip_diacritics:
+        # Shva Na prediction
         if not prev:
-            if cur.char in 'למנרי' or cur.char in 'אהע' or cur.char in 'וכלב':
+            # Lamanrey
+            if cur.char in 'למנרי':
                 cur_phonemes.append("e")
                 skip_diacritics = True 
+            # Itsurim groniyim in next one
+            elif next.char in 'אהע':
+                cur_phonemes.append("e")
+                skip_diacritics = True 
+            # Otiot ashimush
+            elif cur.char in 'ול':
+                # TODO: Kaf and Bet?
+                cur_phonemes.append("e")
+                skip_diacritics = True 
+            # TODO: txiliyot "yatan"?
+
         else:
             if next and next.char == cur.char:
                 cur_phonemes.append("e")
