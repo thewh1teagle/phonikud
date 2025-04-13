@@ -120,7 +120,7 @@ Vowels
 
 Symbols
 
-- `ˈ` - stress (0x2C8) visually looks like apostrophe
+- `ˈ` - stress (0x2c8) visually looks like apostrophe
 
 ### Mixed English
 
