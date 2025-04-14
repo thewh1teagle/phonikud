@@ -55,8 +55,9 @@ def post_normalize(phonemes: str):
     phonemes = " ".join(new_phonemes)
     return phonemes
 
+letters_pattern = re.compile(r"(\p{L})([\p{M}']*)")
 def get_letters(word: str):
-    letters: list[tuple[str, str]] = re.findall(r"(\p{L})([\p{M}']*)", word)  # with en_geresh
+    letters: list[tuple[str, str]] = letters_pattern.findall(word)  # with en_geresh
     letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
     return letters
 
