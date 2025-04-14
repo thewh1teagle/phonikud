@@ -166,7 +166,7 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
                 cur_phonemes.append("e")
                 skip_diacritics = True 
             # Itsurim groniyim in next one
-            elif next.char in 'אהע':
+            elif next and next.char in 'אהע':
                 cur_phonemes.append("e")
                 skip_diacritics = True 
             # Otiot ashimush
