@@ -10,11 +10,12 @@ Rules implemented:
 6. Special letter combinations
 
 Reference:
-- https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
-- https://hebrew-academy.org.il/2010/03/24/צהרים-נעמי-הגיית-קמץ-לפני-חט/
 - https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 - https://en.wikipedia.org/wiki/Help:IPA/Hebrew
 - https://he.wikipedia.org/wiki/הברה
+- https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
+- https://hebrew-academy.org.il/2010/03/24/צהרים-נעמי-הגיית-קמץ-לפני-חט
+- https://hebrew-academy.org.il/2022/03/03/מלעיל-ומלרע-על-ההטעמה-בעברית
 """
 
 from mishkal.variants import Letter
