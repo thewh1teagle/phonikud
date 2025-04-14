@@ -56,7 +56,6 @@ class Phonemizer:
                 # Skip if it starts with [ as it's used for hyper phonemes
                 return word
 
-            word = normalize(word)
             letters: list[Letter] = get_letters(word)
             phonemes: list[str] = phonemize_hebrew(letters, predict_shva_na=predict_shva_nah)
             syllables = get_syllables(phonemes)
