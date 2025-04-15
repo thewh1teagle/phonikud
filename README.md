@@ -18,7 +18,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - The library depends on text with nikud,
 - the following hard to predict even from text with nikud
   - `Milel` - 
-      also named as `Atamha` / `Stress`. 
+      position of `Hat'ama` / `Stress`. 
       most of the time it's `Milra`
   - `Shva Na`. most of the time it's `Shva Nax`
 
@@ -62,7 +62,7 @@ See [examples](examples)
 
 ### Enhance vocabulary
 
-One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and atmaha. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
+One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and hat'ama. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
 
 ### Deduplication
 
@@ -72,10 +72,10 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 - Chars from `\u05b0` to `\u05ea` (Letters and nikud)
 - `'"` (Gershaim),
-- `\u05ab` (Atmaha)
+- `\u05ab` (Hatma'a)
 - `\u05bd` (Shva Na)
 
-`\u05ab` and `\u05bd` are not standard - we invented them to mark `Atmaha` and `Shva Na` clearly.
+`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hatma'a` and `Shva Na` clearly.
 
 
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
