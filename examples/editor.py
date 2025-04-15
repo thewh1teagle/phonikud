@@ -22,7 +22,7 @@ def on_submit_debug(text: str, predict_stress) -> str:
 
 
 def on_submit(text: str, predict_stress) -> str:
-    return phonemize(text, preserve_punctuation=False, predict_stress=predict_stress)
+    return phonemize(text, predict_stress=predict_stress)
 
 
 with gr.Blocks(theme=theme) as demo:
@@ -35,7 +35,9 @@ with gr.Blocks(theme=theme) as demo:
     submit_button = gr.Button("Create")
 
     submit_button.click(
-        fn=lambda text, debug, stress: on_submit_debug(text, stress) if debug else on_submit(text, stress),
+        fn=lambda text, debug, stress: on_submit_debug(text, stress)
+        if debug
+        else on_submit(text, stress),
         inputs=[text_input, debug_checkbox, predict_stress_checkbox],
         outputs=[phonemes_output],
     )
