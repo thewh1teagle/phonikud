@@ -17,7 +17,7 @@ def phonemize(
     use_post_normalize=True,  # For TTS
     predict_stress=True,
     predict_shva_nah=True,
-    schema: Literal['plain', 'modern'] = 'plain',
+    schema: Literal["plain", "modern"] = "modern",
     fallback: Callable[[str], str] = None,
 ) -> str:
     phonemes = phonemizer.phonemize(
