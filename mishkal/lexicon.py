@@ -5,10 +5,10 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 
 SHVA_NA_DIACRITIC = "\u05bd"
-ATAMAHA_DIACRITIC = "\u05ab"
+HATAMA_DIACRITIC = "\u05ab"
 STRESS = "\u02c8"  # visually looks like '
 
-MILHEL_PATTERNS = ['יים', 'וע', 'טו', "דיה"] # Used for stress prediction
+MILHEL_PATTERNS = ['יים', 'וע', 'טו', "דיה"]  # Used for stress prediction
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\'"]+'
 HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
 PUNCTUATION = r".,!? "
@@ -17,12 +17,12 @@ SPECIAL_PHONEMES = ['w']
 MODERN_SCHEMA_PHONEMES = ['χ', 'ʁ']
 
 GERESH_PHONEMES = {
-    "ג": "dʒ", 
-    "ז": 
-    "ʒ", 
-    "ת": "ta", 
-    "צ": 
-    "tʃ", 
+    "ג": "dʒ",
+    "ז":
+    "ʒ",
+    "ת": "ta",
+    "צ":
+    "tʃ",
     "ץ": "tʃ"
 }
 
@@ -76,9 +76,9 @@ NIKUD_PHONEMES = {
     "\u05b9": "o",  # Holam
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
-    "\u05b3": 'o', # Hataf qamats
-    "\u05b8": "a", # Kamataz
-    ATAMAHA_DIACRITIC: "ˈ",  # Stress (Atmaha)
+    "\u05b3": 'o',  # Hataf qamats
+    "\u05b8": "a",  # Kamataz
+    HATAMA_DIACRITIC: "ˈ",  # Stress (Atmaha)
     SHVA_NA_DIACRITIC: "e",  # Shva na
 }
 
@@ -87,8 +87,8 @@ DEDUPLICATE = {
 }
 
 SET_PHONEMES = set(sorted({
-    *NIKUD_PHONEMES.values(), 
-    *LETTERS_PHONEMES.values(), 
+    *NIKUD_PHONEMES.values(),
+    *LETTERS_PHONEMES.values(),
     *GERESH_PHONEMES.values(),
     *SPECIAL_PHONEMES,
     *MODERN_SCHEMA_PHONEMES

@@ -8,8 +8,8 @@ TEST_STRESS = False
 
 
 def test_phonemize_hebrew_sanity():
-    with_stress = phonemize("שָׁ֫לוֹם", preserve_stress=True)
-    without_stress = phonemize("שָׁ֫לוֹם", preserve_stress=False)
+    with_stress = phonemize("שָׁ֫לוֹם", preserve_stress=True, schema="plain")
+    without_stress = phonemize("שָׁ֫לוֹם", preserve_stress=False, schema="plain")
     assert without_stress == "ʃalom" and lexicon.STRESS in with_stress
 
 
@@ -19,14 +19,20 @@ def test_phonemize_hebrew_manual():
         df = pd.read_csv(filename)
 
         def check_output(
-            nikkud, ipa, using_stress, use_post_normalize=True, use_expander=True, predict_shva_nah=False
+            nikkud,
+            ipa,
+            using_stress,
+            use_post_normalize=True,
+            use_expander=True,
+            predict_shva_nah=False,
         ):
             output = phonemize(
                 nikkud,
                 preserve_stress=using_stress,
                 use_post_normalize=use_post_normalize,
                 use_expander=use_expander,
-                predict_shva_nah=predict_shva_nah
+                predict_shva_nah=predict_shva_nah,
+                schema="plain",
             )
             x, y = ipa, output
             if not using_stress:
