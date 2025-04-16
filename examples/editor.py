@@ -16,7 +16,7 @@ theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 
 def on_submit_debug(text: str, predict_stress) -> str:
-    phonemes = phonemize(text, preserve_punctuation=True, predict_stress=predict_stress)
+    phonemes = phonemize(text, preserve_punctuation=True, predict_stress=predict_stress, schema='modern')
     normalized_text = normalize(text)
     return phonemes + "\n\nNormalized:\n" + normalized_text
 
