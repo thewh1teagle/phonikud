@@ -150,9 +150,13 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
             # Tsere
             elif TSERE in cur.diac:
                 cur_phonemes.append("ve")
-            
+            elif next and not cur.diac:
+                # It is fine for now since we use Dicta
+                skip_constants = True
+                skip_diacritics = True
             else:
                 cur_phonemes.append("v")
+            
             skip_diacritics = True
 
     if not skip_constants:
