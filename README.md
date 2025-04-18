@@ -83,7 +83,7 @@ See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew
 
 ### Hebrew phonemes
 
-Constants
+Constants (24)
 
 - `b` - Bet
 - `v` - Vet, Vav
@@ -110,7 +110,7 @@ Constants
 - `ʔ` - Alef/Ayin
 - `w` - Example: `walla`
 
-Vowels
+Vowels (5)
 
 - `a` - Shamar
 - `e` - Shemer
@@ -118,7 +118,7 @@ Vowels
 - `o` - Shomer
 - `u` - Shumar
 
-Symbols
+Stress marks (1)
 
 - `ˈ` - stress (0x2c8) visually looks like single quote
 
