@@ -83,7 +83,7 @@ See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew
 
 ### Hebrew phonemes
 
-Constants (24)
+Consonants (24)
 
 - `b` - Bet
 - `v` - Vet, Vav

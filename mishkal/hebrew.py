@@ -54,14 +54,14 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
 def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool):
     cur_phonemes = []
     skip_diacritics = False
-    skip_constants = False
+    skip_consonants = False
     skip_offset = 0
     # revised rules
 
     # יַאלְלָה
     if cur.char == "ל" and cur.diac == SHVA and next and next.char == "ל":
         skip_diacritics = True
-        skip_constants = True
+        skip_consonants = True
 
     if (
         cur.char == "ו"
@@ -75,44 +75,44 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
 
     if cur.char == "א" and not cur.diac and prev:
         if next and next.char != 'ו':
-            skip_constants = True
+            skip_consonants = True
 
     # TODO ?
     if cur.char == "י" and next and not cur.diac and prev and prev.char + prev.diac != 'אֵ':
-        skip_constants = True
+        skip_consonants = True
 
     if cur.char == "ש" and SIN in cur.diac:
         cur_phonemes.append("s")
-        skip_constants = True
+        skip_consonants = True
 
     # shin without nikud after sin = sin
     if cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
         cur_phonemes.append("s")
-        skip_constants = True
+        skip_consonants = True
 
     if not next and cur.char == "ח" and PATAH in cur.diac:
         # Final Het gnuva
         cur_phonemes.append("ax")
         skip_diacritics = True
-        skip_constants = True
+        skip_consonants = True
 
     if cur and "'" in cur.diac and cur.char in lexicon.GERESH_PHONEMES:
         if cur.char == "ת":
             cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
             skip_diacritics = True
-            skip_constants = True
+            skip_consonants = True
         else:
             # Geresh
             cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
-            skip_constants = True
+            skip_consonants = True
 
     elif (
         DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES
     ):  # dagesh
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
-        skip_constants = True
+        skip_consonants = True
     elif cur.char == "ו":
-        skip_constants = True
+        skip_consonants = True
         if next and next.char == "ו" and next.diac == cur.diac:
             # patah and next.diac empty
             if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
@@ -152,14 +152,14 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
                 cur_phonemes.append("ve")
             elif next and not cur.diac:
                 # It is fine for now since we use Dicta
-                skip_constants = True
+                skip_consonants = True
                 skip_diacritics = True
             else:
                 cur_phonemes.append("v")
             
             skip_diacritics = True
 
-    if not skip_constants:
+    if not skip_consonants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
     
     if lexicon.SHVA_NA_DIACRITIC not in cur.diac and predict_shva_na and SHVA in cur.diac and not skip_diacritics:
