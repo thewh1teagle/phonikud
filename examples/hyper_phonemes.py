@@ -1,3 +1,7 @@
+"""
+uv run  examples/hyper_phonemes.py
+"""
+
 from mishkal import phonemize
 
 text = """
