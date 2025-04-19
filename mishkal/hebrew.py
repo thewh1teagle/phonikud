@@ -46,15 +46,16 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
         cur = letters[i]
         prev = letters[i - 1] if i > 0 else None
         next = letters[i + 1] if i < len(letters) - 1 else None
-
         next_phonemes, skip_offset = letter_to_phonemes(cur, prev, next, predict_shva_na)
+        # TODO: split into syllables
+        # next_letters = next_phonemes, letters[i:i+skip_offset+1]
         phonemes.extend(next_phonemes)
         i += skip_offset + 1
 
     return phonemes
 
 
-def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool):
+def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool) -> tuple[str, int]:
     cur_phonemes = []
     skip_diacritics = False
     skip_consonants = False
@@ -211,4 +212,6 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
     # Ensure the stress is at the beginning of the syllable
     cur_phonemes = sort_stress(cur_phonemes)
     cur_phonemes = [p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)]
+    # Remove empty phonemes
+    cur_phonemes = [p for p in cur_phonemes if p]
     return cur_phonemes, skip_offset
