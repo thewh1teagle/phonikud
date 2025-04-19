@@ -1,5 +1,6 @@
 """
 uv pip install phonemizer-fork espeakng-loader
+uv run examples/with_fallback.py
 """
 
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
