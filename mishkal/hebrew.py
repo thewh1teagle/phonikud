@@ -37,6 +37,7 @@ TSERE = "\u05b5"
 HATMAHA = "\u05ab"
 VAV_HOLAM = '\u05ba'
 DAGESH = "\u05bc"
+SEGOL = "\u05b6"
 
 def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
     phonemes = []
@@ -147,6 +148,8 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
             # Holam haser
             elif HOLAM in cur.diac:
                 cur_phonemes.append("o")
+            elif SEGOL in cur.diac:
+                cur_phonemes.append("ve")
             # Shuruk / Kubutz
             elif KUBUTS in cur.diac or DAGESH in cur.diac:
                 cur_phonemes.append("u")
