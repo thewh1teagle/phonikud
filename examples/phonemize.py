@@ -101,7 +101,9 @@ sentences = [
     # "אֶנְצִיקְלוֹפֶּ֫דְיָה",
     # "וַאלְלָה",
     # "בָּךְ",
-    "חֲתֻונָּה"
+    # "חֲתֻונָּה",
+    "דִּוּ֫וּחַ",
+    "יְדָנִ֫ית"
 ]
 
 # TODO: wolter and add to tests
@@ -113,6 +115,7 @@ for sentence in sentences:
         use_post_normalize=True, 
         use_expander=True,
         predict_stress=True,
+        predict_shva_nah=False,
         schema='modern'
     )
     print(phonemes)

@@ -34,6 +34,9 @@ HIRIK = "\u05b4"
 PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
 KUBUTS = "\u05bb"
 TSERE = "\u05b5"
+HATMAHA = "\u05ab"
+VAV_HOLAM = '\u05ba'
+DAGESH = "\u05bc"
 
 def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
     phonemes = []
@@ -113,15 +116,20 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
         skip_consonants = True
     elif cur.char == "ו":
         skip_consonants = True
-        if next and next.char == "ו" and next.diac == cur.diac:
+        if (
+            next and next.char == "ו"
+        ):
             # patah and next.diac empty
             if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
                 cur_phonemes.append("w")
                 skip_diacritics = True
                 skip_offset += 1
-            elif cur.diac == next.diac:
+            elif cur.diac.replace(HATMAHA, '') == next.diac.replace(HATMAHA, ''):
                 # double vav
-                cur_phonemes.append("wo")
+                if DAGESH in cur.diac:
+                    cur_phonemes.append("vu")                 
+                else:
+                    cur_phonemes.append("wo")  
                 skip_diacritics = True
                 skip_offset += 1
             else:
