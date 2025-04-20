@@ -15,7 +15,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Limitiation
 
-- The library depends on text with nikud,
+- The library depends on text with nikud
 - the following hard to predict even from text with nikud
   - `Milel` - 
       position of `Hat'ama` / `Stress`. 
