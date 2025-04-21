@@ -15,7 +15,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Limitiation
 
-- The library depends on text with nikud,
+- The library depends on text with nikud
 - the following hard to predict even from text with nikud
   - `Milel` - 
       position of `Hat'ama` / `Stress`. 
@@ -131,7 +131,7 @@ Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin
 
 ### Notes
 
-- The default schema is plain for simplicify (eg. `x` instead of `χ`), for modern hebrew use `phonemize(..., schema='modern')`
+- The default schema is `modern`. you can use `plain` schema for simplicify (eg. `x` instead of `χ`). use `phonemize(..., schema='plain')`
 - There's no secondary stress (only `Milel` and `Milra`)
 - The `ʔ`/`h` phonemes trimmed from the suffix
 - Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milel` and rarely one before `Milel`
