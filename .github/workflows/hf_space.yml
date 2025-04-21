@@ -18,7 +18,7 @@ jobs:
           mkdir phonemize-in-hebrew
           cd phonemize-in-hebrew
           cp ../examples/editor.py app.py
-          echo "gradio>=5.15.0" >> requirements.txt            
+          echo "gradio>=5.52.2" >> requirements.txt            
           echo "num2words" >> requirements.txt            
           echo "colorlog" >> requirements.txt            
           echo "regex" >> requirements.txt            
