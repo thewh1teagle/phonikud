@@ -1,5 +1,9 @@
+"""
+uv run src/train.py
+"""
+
 from argparse import ArgumentParser
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, BertModel
 from glob import glob
 import os
 from torch.utils.data import Dataset, DataLoader
@@ -8,10 +12,8 @@ import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
 
-ALEF_ORD = ord('א')
-TAF_ORD = ord('ת')
 def is_hebrew_letter(char):
-   return ALEF_ORD <= ord(char) <= TAF_ORD
+   return 'א' <= char <= 'ת'
 
 MATRES_LETTERS = list('אוי')
 def is_matres_letter(char):
@@ -73,7 +75,7 @@ class TrainData(Dataset):
 
         raw_text = ""
         for fn in fns:
-            with open(fn, "r") as f:
+            with open(fn, "r", encoding='utf-8') as f:
                 raw_text += f.read() + "\n"
         raw_text = raw_text.strip()
 
@@ -93,7 +95,7 @@ class PhoNikudModel(nn.Module):
     def __init__(self, args):
         super().__init__()
         self.device = args.device
-        self.base_model = AutoModel.from_pretrained(
+        self.base_model: BertModel = AutoModel.from_pretrained(
             args.model_checkpoint, trust_remote_code=True)
 
         self.mlp = nn.Sequential(
@@ -260,7 +262,7 @@ def main():
     model.eval()
 
     test_fn = os.path.join(args.data_dir, "test.txt")
-    with open(test_fn, "r") as f:
+    with open(test_fn, "r", encoding='utf-8') as f:
         test_text = f.read().strip()
 
     for line in test_text.splitlines():
