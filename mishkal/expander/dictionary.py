@@ -5,7 +5,7 @@ Dictionaries are tab separated key value words
 from pathlib import Path
 import json
 import re
-from mishkal.utils import remove_niqqud
+from mishkal.utils import remove_nikud
 from mishkal.utils import normalize
 import unicodedata
 
@@ -28,7 +28,7 @@ class Dictionary:
                 dictionary: dict = json.load(f)
                 normalized_dictionary = {}
 
-                # normalize niqqud keys
+                # normalize nikud keys
                 for k, v in dictionary.items():
                     k = normalize(k)
                     # Ensure not empty
@@ -42,15 +42,15 @@ class Dictionary:
         source = unicodedata.normalize("NFD", source)
         raw_lookup = self.dict.get(source)
 
-        without_niqqud_lookup = self.dict.get(remove_niqqud(source))
-        with_niqqud_lookup = self.dict.get(normalize(source))
-        # Compare without niqqud ONLY if source has no niqqud
+        without_nikud_lookup = self.dict.get(remove_nikud(source))
+        with_nikud_lookup = self.dict.get(normalize(source))
+        # Compare without nikud ONLY if source has no nikud
         if raw_lookup:
             return raw_lookup
-        if without_niqqud_lookup:
-            return without_niqqud_lookup
-        elif with_niqqud_lookup:
-            return with_niqqud_lookup
+        if without_nikud_lookup:
+            return without_nikud_lookup
+        elif with_nikud_lookup:
+            return with_nikud_lookup
         return source
 
     def replace_non_whitespace_callback(self, match: re.Match[str]) -> str:
@@ -60,10 +60,10 @@ class Dictionary:
 
         raw_lookup = self.dict.get(raw_source)
 
-        # Compare without niqqud ONLY if source has no niqqud
+        # Compare without nikud ONLY if source has no nikud
         if raw_lookup:
             return raw_lookup
-        # search by only ', space, regular niqqud, alphabet
+        # search by only ', space, regular nikud, alphabet
         raw_source = re.sub(
             r"[\u05B0-\u05EB ']+", self.replace_hebrew_only_callback, raw_source
         )

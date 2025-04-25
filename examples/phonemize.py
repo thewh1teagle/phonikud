@@ -1,7 +1,9 @@
 """
 Quick Nakdan https://nakdanlive.dicta.org.il
 Pro Nakdan https://nakdanpro.dicta.org.il
-Manual Nakdan https://www.yo-yoo.co.il/tools/niqqud
+Manual Nakdan https://www.yo-yoo.co.il/tools/nikud
+
+uv run examples/phonemize.py
 """
 
 from mishkal import phonemize
@@ -19,7 +21,7 @@ sentences = [
     # "ווֹלְטֶר",  # double vav start
     # "הֲווֹלְטֶר",  # double vav middle
     # "אֶלֶגַנְטִי",  # lookup
-    # "כָּל",  # match to one without niqqud
+    # "כָּל",  # match to one without nikud
     # "יִשְׂרָאֵל הוּקְמָה בִּשְׁנַת 1948",
     # "₪",
     # "מָחָר בְּשָׁעָה 22:00",  # time to word
@@ -47,12 +49,75 @@ sentences = [
     # "וּוַעֲדַת",
     # "שָׁלוֹם",
     # "וּמֶה",
-    "הַתְּרוּמָה",
-    "English",
-    "בַּרִיא וֵחַזַק1",
+    # "הַתְּרוּמָה",
+    # "English",
+    # "בַּרִ֫יא",
+    # "זֶ֫ה הָיָ֫ה קוֹרֵ֫עַ מִצְּח֫וֹק הֵ֫ם קוֹרְעִ֫ם אוֹתִ֫י",
+    # "וּבֽתוֹלְד֫וֹת",
+    # "וִירוּשָׁלַיִם",
+    # "וְאַתָּה",
+    # "אוּרִי",
+    # "אַוָּרִי",
+    # "וָואלָה",
+    # "ווֹלְטֶר",
+    # "אוֹרִי",
+    # "אֻרִי",
+    # "גִּ׳ירָהּ",
+    # "גִּ'רַ֫פָה",
+    # "זָ'קֵ֫ט",
+    # "תַּ'מְבִין",
+    # "כֹּחַ",
+    # "מֹחַ",
+    # "כָּל",
+    # "רֵיחַ",
+    # "אֶלֶף עֶרֶב",
+    # "לִוְיָתָ֫ן",
+    # "יִשָּׂשכָר",
+    # "יִשָּׂשכָ֫ר",
+    # "יַאלְלָה",
+    # "אִיָּ֫ר",
+    
+    # "קוֹרֶה",
+    # "אָח",
+    # "שְׁמוּרִים",
+    # "עֶ֫רֶב",
+    # "מַגְנִיבָה",
+    # "אוֹפַנַּיִים",
+    # "אֵיתָנוּת",
+    # "רֵיחַ",
+    # "אֵיתָנוּת",
+    # "אֵיר֫וֹפָּה",
+    # "צָהֳרַ֫יִם",
+    # "דַּוָָר",
+    # "עַכְשָׁ֫יו",
+    # "כׇּל אֶחָד יָכוֹל!",
+    # "הַמָּלֵא",
+    # "רוּחַ",
+    # "אֶנְצִיקְלוֹפֶּ֫דְיָה",
+    # 'צַהַ"ל',
+    # "שָׁלוֹם",
+    # "אֶנְצִיקְלוֹפֶּדְיָה",
+    # "אוֹפַנַּייִם @"c
+    # "קֵרֵחַ",
+    # "שָׁלוֹם חֲבֵרִים! מָה שְׁלוֹמְכֶם?",
+    # "אֶנְצִיקְלוֹפֶּ֫דְיָה",
+    # "וַאלְלָה",
+    # "בָּךְ",
+    "חֲתֻונָּה",
+    "דִּוּ֫וּחַ",
+    "שֶׁמְּֽשַׁוֶּ֫קֶת"
 ]
 
+# TODO: wolter and add to tests
 
 for sentence in sentences:
-    phonemes = phonemize(sentence, preserve_punctuation=True)
+    phonemes = phonemize(
+        sentence, 
+        preserve_punctuation=True, 
+        use_post_normalize=True, 
+        use_expander=True,
+        predict_stress=True,
+        predict_shva_nah=False,
+        schema='modern'
+    )
     print(phonemes)

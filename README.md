@@ -6,24 +6,25 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- (WIP) Accurate lightweight niqqud model
-- (WIP) phoneme prediction via nikkud + phonetic features (stress, shva na, ...) -- PhoNikud model (in `phonikud/`)
-- Convert text with niqqud to modern spoken phonemes
-- Expand dates into text with niqqud
-- Expand numbers into text with niqqud
+- Lightweight nikud model
+- (WIP) phoneme prediction via nikud + phonetic features (stress, shva na, ...) see [phonikud](phonikud)
+- Convert text with nikud to modern spoken phonemes
+- Expand dates into text with nikud
+- Expand numbers into text with nikud
 - Mixed English in Hebrew with fallback
 - Dictionaries with words, symbols, emojis
 
 ## Limitiation
 
-The following hard to predict even from text with niqqud.
+- The library depends on text with nikud
+- the following hard to predict even from text with nikud
+  - `Milel` - 
+      position of `Hat'ama` / `Stress`. 
+      most of the time it's `Milra`
+  - `Shva Na`. most of the time it's `Shva Nax`
 
-- Requires diacritized text
-- `Shva nah` and `Shva nah`
-- `Stress` (`Atmaha` / `Milre` / `Milra`. or two.)
-- `Kamatz Katan` (rarely used)
 
-We cover these using dictionaries, and neural network is planned.
+We cover these using predictions, and enhanced nakdan is planned.
 
 ## Install
 
@@ -39,55 +40,70 @@ You can find the package as well in `pypi.org/project/mishkal-hebrew`
 
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
-## Examples
+## Usage
 
 ```python
 from mishkal import phonemize
 phonemes = phonemize('שָׁלוֹם עוֹלָם')
-print(phonemes) # ʃaˈlom oˈlam
+print(phonemes) # ʃalˈom olˈam
 ```
+
+Please use [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) for adding diacritics.
+
+## Examples
 
 See [examples](examples)
 
 ## Docs
 
-- Dictionaries prioritized based on `gold`, `silver`, `bronze`.
-- Hebrew niqqud is normalized and deduplicated phonetically (simplified)
+- It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
+- Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
-- Input chars: `!"'(),-.:` and `0x5B0` to `0x5E0` (normalized later)
-- Output chars: `!"'(),-.:?abdefghijklmnoprsttstʃuvxzʃʒˈˌ`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
 ### Enhance vocabulary
 
-One of the best ways to improve this library is to add words with phonemes to the dictionary. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
+One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and hat'ama. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
 
-### Niqqud deduplication
+### Deduplication
 
-- `Hataf segol` -> `Tsere`
-- `Segol` -> `Tsere`
-- `Hataf patah` -> `Patah`
-- `Hataf qamatz` -> `Patah`
-- `Qamats` -> `Patah`
-- `Qamats katan` -> `Holam`
-- `Hebrew Geresh` -> Regular `'` (`apostrophe`)
+- Hebrew Geresh -> `'` (single quote)
 
-### Niqqud set and symbols
+### Nikud set and symbols
 
-- `Shva`, `Tsere`, `Patah`, `Holam`, `Hirik`, `Qubuts`, `Dagesh` (`בכפךףו`),
-- `Shin dot` (`ש`), `Sin dot` (`ש`), `'` (`ג'`), `Vav Holam` (`ו`)
+- Chars from `\u05b0` to `\u05ea` (Letters and nikud)
+- `'"` (Gershaim),
+- `\u05ab` (Hatma'a)
+- `\u05bd` (Shva Na)
+
+`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hatma'a` and `Shva Na` clearly.
+
+
+See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
+
 
 ### Hebrew phonemes
 
-Constants
+Stress marks (1)
+
+- `ˈ` - stress (0x2c8) visually looks like single quote
+
+Vowels (5)
+
+- `a` - Shamar
+- `e` - Shemer
+- `i` - Shimer
+- `o` - Shomer
+- `u` - Shumar
+
+Consonants (24)
 
 - `b` - Bet
 - `v` - Vet, Vav
-- `g` - Gimel
 - `d` - Dalet
 - `h` - He
 - `z` - Zain
-- `x` - Het, Haf
+- `χ` - Het, Haf
 - `t` - Taf, Tet
 - `j` - Yod
 - `k` - Kuf, Kaf
@@ -97,36 +113,29 @@ Constants
 - `s` - Sin, Samekh
 - `f` - Fei
 - `p` - Pei dgusha
+- `ʁ` - Resh
 - `ts` - tsadik
 - `ʃ` - Shin
 - `tʃ` - Tsadik with geresh
 - `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
 - `ʒ` - Zain with geresh (בֵּז׳)
-- `r` - Resh
 - `ʔ` - Alef/Ayin
 - `w` - Example: `walla`
-
-Vowels
-
-- `a` - Shamar
-- `e` - Shemer
-- `i` - Shimer
-- `o` - Shomer
-- `u` - Shumar
-
-Symbols
-
-- `ˈ` - stress (0x2C8) visually looks like apostrophe
+- `ɡ` - Gimel, Visually looks like g, but its actually `\u0261`
 
 ### Mixed English
 
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
 See [examples/with_fallback.py](examples/with_fallback.py) for reference.
 Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
+Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin), Resh `ʁ` and `χ` (Het).
 
 ### Notes
 
-- There's no secondary stress (usually it's only Milel and Milra)
-- The glottal stop sometimes omited
+- The default schema is `modern`. you can use `plain` schema for simplicify (eg. `x` instead of `χ`). use `phonemize(..., schema='plain')`
+- There's no secondary stress (only `Milel` and `Milra`)
+- The `ʔ`/`h` phonemes trimmed from the suffix
+- Stress placed usually on the last syllable - `Milra`, sometimes on one before - `Milel` and rarely one before `Milel`
+- Stress should be placed in the syllable always **before vowel** and _NOT_ in the first character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
-- See (Modern Hebrew phonology)[https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology]
+- See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)

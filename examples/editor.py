@@ -8,33 +8,37 @@ from mishkal import phonemize, normalize
 import gradio as gr
 
 default_text = """
-כָּל עֶרֶב יָאִיר (הַשֵּׁם הַמָּלֵא וּמְקוֹם הָעֲבוֹדָה שֶׁלּוֹ שְׁמוּרִים בַּמַּעֲרֶכֶת) רָץ 20 קִילוֹמֶטֶר. הוּא מְסַפֵּר לִי שֶׁזֶּה מְנַקֶּה לוֹ אֶת הָרֹאשׁ אַחֲרֵי הָעֲבוֹדָה, "שָׁעָה וָחֵצִי בְּלִי עֲבוֹדָה, אִשָּׁה וִילָדִים" כְּמוֹ שֶׁהוּא מַגְדִּיר זֹאת. אֲבָל אַחֲרֵי הַמִּקְלַחַת הוּא מַתְחִיל בְּמָה שֶׁנִּתָּן לְכַנּוֹת הָעֲבוֹדָה הַשְּׁנִיָּה שֶׁלּוֹ: לִמְצֹא לוֹ קוֹלֵגוֹת חֲדָשׁוֹת לָעֲבוֹדָה, כִּי יָאִיר הוּא כַּנִּרְאֶה הַמֶּלֶךְ שֶׁל "חָבֵר מֵבִיא חָבֵר" בְּיִשְׂרָאֵל.
+כָּל עֶ֫רֶב יָאִ֫יר (הַשֵּׁ֫ם הַמָּלֵ֫א וּמֽק֫וֹם הָעֲבוֹדָ֫ה שֶׁלּ֫וֹ שְׁמוּרִ֫ים בַּמַּעֲרֶ֫כֶת) רָץ 20 קִילוֹמֶ֫טֶר. הוּא מֽסַפֵּ֫ר לִי שֶׁזֶּ֫ה מֽנַקֶּ֫ה לוֹ אֶת הָרֹ֫אשׁ אַחֲרֵ֫י הָעֲבוֹדָ֫ה, "שָׁעָ֫ה וָחֵ֫צִי בְּלִ֫י עֲבוֹדָ֫ה, אִשָּׁ֫ה וִילָדִ֫ים" כְּמ֫וֹ שֶׁה֫וּא מַגְדִּ֫יר זֹאת. אֲבָ֫ל אַחֲרֵ֫י הַמִּקְלַ֫חַת הוּא מַתְחִ֫יל בּֽמָ֫ה שֶׁנִּתָּ֫ן לֽכַנּ֫וֹת הָעֲבוֹדָ֫ה הַשְּׁנִיָּ֫ה שֶׁלּ֫וֹ: לִמְצֹ֫א לוֹ קוֹלֵ֫גוֹת חֲדָשׁ֫וֹת לָעֲבוֹדָ֫ה, כִּי יָאִ֫יר הוּא כַּנִּרְאֶ֫ה הַמֶּ֫לֶךְ שֶׁל "חָבֵ֫ר מֵבִ֫יא חָבֵ֫ר" בּֽיִשְׂרָאֵ֫ל.
+דֻּגְמָא מַגְנִיבָה: [אנציקלופדיה](/ʔantsiklopˈedja/)
 """
 
 theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 
-def on_submit_debug(text: str) -> str:
-    phonemes = phonemize(text, preserve_punctuation=True)
+def on_submit_debug(text: str, predict_stress) -> str:
+    phonemes = phonemize(text, preserve_punctuation=True, predict_stress=predict_stress, schema='modern')
     normalized_text = normalize(text)
     return phonemes + "\n\nNormalized:\n" + normalized_text
 
 
-def on_submit(text: str) -> str:
-    return phonemize(text, preserve_punctuation=False)
+def on_submit(text: str, predict_stress) -> str:
+    return phonemize(text, predict_stress=predict_stress)
 
 
 with gr.Blocks(theme=theme) as demo:
     text_input = gr.Textbox(
         value=default_text, label="Text", rtl=True, elem_classes=["input"]
     )
-    checkbox = gr.Checkbox(value=False, label="Enable Debug Mode")
+    debug_checkbox = gr.Checkbox(value=False, label="Enable Debug Mode")
+    predict_stress_checkbox = gr.Checkbox(value=False, label="Predict Stress")
     phonemes_output = gr.Textbox(label="Phonemes")
     submit_button = gr.Button("Create")
 
     submit_button.click(
-        fn=lambda text, debug: on_submit_debug(text) if debug else on_submit(text),
-        inputs=[text_input, checkbox],
+        fn=lambda text, debug, stress: on_submit_debug(text, stress)
+        if debug
+        else on_submit(text, stress),
+        inputs=[text_input, debug_checkbox, predict_stress_checkbox],
         outputs=[phonemes_output],
     )
 

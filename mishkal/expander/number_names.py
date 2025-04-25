@@ -2,6 +2,8 @@
 See https://github.com/savoirfairelinux/num2words/blob/master/num2words/lang_HE.py
 """
 
+# TODO: add nikud hints
+
 ZERO = {"אפס": "אֶפֶס"}
 
 
@@ -83,7 +85,7 @@ TENS = {
 
 
 TWENTIES = {
-    "עשרים": "עֶשְׂרִים",
+    "עשרים": "עֶשְׂרִ֫ים",
     "שלושים": "שְׁלוֹשִׁים",
     "ארבעים": "אַרְבָּעִים",
     "חמישים": "חֲמִשִּׁים",

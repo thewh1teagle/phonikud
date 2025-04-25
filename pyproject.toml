@@ -1,11 +1,18 @@
 [project]
 name = "mishkal-hebrew"
-version = "0.3.2"
+version = "0.3.6"
 description = "Convert Hebrew text into IPA for TTS systems and learning"
 readme = "README.md"
-authors = [{ name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" }]
+authors = [
+    { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" },
+]
 requires-python = ">=3.8, <3.13"
-dependencies = ["colorlog>=6.9.0", "num2words>=0.5.14"]
+dependencies = ["colorlog>=6.9.0", "num2words>=0.5.14", "regex>=2024.11.6"]
+
+[project.urls]
+Homepage = "https://github.com/thewh1teagle/mishkal"
+Repository = "https://github.com/thewh1teagle/mishkal"
+Issues = "https://github.com/thewh1teagle/mishkal/issues"
 
 [build-system]
 requires = ["hatchling"]
