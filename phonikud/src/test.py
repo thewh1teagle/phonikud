@@ -1,3 +1,7 @@
+"""
+uv run src/test.py
+"""
+
 def main():
     ...
 
