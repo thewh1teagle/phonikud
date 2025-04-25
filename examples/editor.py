@@ -41,7 +41,11 @@ with gr.Blocks(theme=theme) as demo:
         inputs=[text_input, debug_checkbox, predict_stress_checkbox],
         outputs=[phonemes_output],
     )
+    ## center markdown
 
+    gr.Markdown("""
+        <p style='text-align: center;'><a href='https://github.com/thewh1teagle/mishkal' target='_blank'>Mishkal on Github</a></p>
+    """)
 
 if __name__ == "__main__":
     demo.launch()
