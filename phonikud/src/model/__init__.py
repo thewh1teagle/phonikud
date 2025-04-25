@@ -9,8 +9,8 @@ from model.base_model import (
     is_matres_letter
 )
 
-STRESS_CHAR = chr(1451) # "ole" symbol marks stress
-MOBILE_SHVA_CHAR = chr(1469) # "meteg" symbol marks shva na (mobile shva)
+STRESS_CHAR = '\u05ab' # "ole" symbol marks stress
+MOBILE_SHVA_CHAR = '\u05bd' # "meteg" symbol marks shva na (mobile shva)
 
 @dataclass
 class MenakedLogitsOutput(ModelOutput):
