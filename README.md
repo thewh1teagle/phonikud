@@ -21,7 +21,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
   - `Milel` - 
       position of `Hat'ama` / `Stress`. 
       most of the time it's `Milra`
-  - `Shva Na`. most of the time it's `Shva Nax`
+  - `Shva Na`. most of the time it's regular `Shva`
 
 
 We cover these using predictions, and enhanced nakdan is planned.
