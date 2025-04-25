@@ -1,5 +1,8 @@
 """
-uv run src/train.py --device cuda --epochs 1
+Train from scratch:
+    uv run src/train.py --device cpu --epochs 1
+Train from checkpoint:
+    uv run src/train.py --device cpu --epochs 1 --model_checkpoint ckpt/step_6_loss_0.4250 --pre_training_step 6
 """
 
 from argparse import ArgumentParser
@@ -22,9 +25,10 @@ def get_opts():
     parser.add_argument('-dd', '--data_dir',
                         default='data/', type=str)
     parser.add_argument('-o', '--output_dir',
-                        default='output/phonikud_ckpt', type=str)
+                        default='ckpt', type=str)
     parser.add_argument('--batch_size', default=4, type=int)
     parser.add_argument('--epochs', default=10, type=int)
+    parser.add_argument('--pre_training_step', default=0, type=int)
     parser.add_argument('--learning_rate', default=1e-3, type=float)
     parser.add_argument('--num_workers', default=0, type=int)
 
@@ -130,6 +134,7 @@ def main():
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
 
+    step = 0 + args.pre_training_step
     for _ in trange(args.epochs, desc="Epoch"):
         pbar = tqdm(dl, desc="Train iter")
         for inputs, targets in pbar:
@@ -153,9 +158,10 @@ def main():
             optimizer.step()
 
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
+            step += 1
     
-    
-    save_dir = args.output_dir
+    epoch_loss = loss.item()
+    save_dir = f'{args.output_dir}/step_{step+1}_loss_{epoch_loss:.4f}'
     print("Saving trained model to:", save_dir)
     model.save_pretrained(save_dir)
     tokenizer.save_pretrained(save_dir)
