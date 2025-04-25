@@ -11,22 +11,13 @@ from tqdm import tqdm, trange
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-
-def is_hebrew_letter(char):
-   return 'א' <= char <= 'ת'
-
-MATRES_LETTERS = list('אוי')
-def is_matres_letter(char):
-    return char in MATRES_LETTERS
-
-import re
-nikud_pattern = re.compile(r'[\u05B0-\u05BD\u05C1\u05C2\u05C7]')
-def remove_nikkud(text):
-    return nikud_pattern.sub('', text)
-
-STRESS_CHAR = chr(1451) # "ole" symbol marks stress
-MOBILE_SHVA_CHAR = chr(1469) # "meteg" symbol marks shva na (mobile shva)
-
+from .hebrew import (
+    is_hebrew_letter, 
+    is_matres_letter, 
+    remove_nikud,
+    STRESS_CHAR,
+    MOBILE_SHVA_CHAR
+)
 
 def get_opts():
     parser = ArgumentParser()
@@ -131,7 +122,7 @@ class PhoNikudModel(nn.Module):
     def predict(self, sentences, tokenizer, mark_matres_lectionis=None, padding='longest'):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
 
-        sentences = [remove_nikkud(sentence) for sentence in sentences]
+        sentences = [remove_nikud(sentence) for sentence in sentences]
         # assert the lengths aren't out of range
         assert all(len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences), f'All sentences must be <= {tokenizer.model_max_length}, please segment and try again'
         
