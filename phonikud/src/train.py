@@ -11,7 +11,7 @@ from tqdm import tqdm, trange
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from .hebrew import (
+from hebrew import (
     is_hebrew_letter, 
     is_matres_letter, 
     remove_nikud,
