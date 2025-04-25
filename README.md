@@ -99,7 +99,6 @@ Consonants (24)
 
 - `b` - Bet
 - `v` - Vet, Vav
-- `g` - Gimel
 - `d` - Dalet
 - `h` - He
 - `z` - Zain
@@ -121,6 +120,7 @@ Consonants (24)
 - `ʒ` - Zain with geresh (בֵּז׳)
 - `ʔ` - Alef/Ayin
 - `w` - Example: `walla`
+- `ɡ` - Gimel, Visually looks like g, but its actually `\u0261`
 
 ### Mixed English
 
