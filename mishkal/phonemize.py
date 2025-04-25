@@ -96,6 +96,7 @@ class Phonemizer:
                 # We'll keep this feature simple for now
                 phonemes = re.sub("r", "ʁ", phonemes)
                 phonemes = re.sub("x", "χ", phonemes)
+                phonemes = re.sub("g", "ɡ", phonemes)
 
             return phonemes
 
