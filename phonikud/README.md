@@ -10,7 +10,7 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 
 ## Train
 
-Add text files with diacritics, including Atma'a and Shva Na, to data/train.
+Add text files with diacritics, including Atma'a and Shva Na, to `data/train`.
 
 Example input: `סֵ֫לֵרִי בְּֽמַעְבַּד מָזוֹן`
 
