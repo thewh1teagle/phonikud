@@ -94,10 +94,8 @@ class Phonemizer:
 
             if schema == "modern":
                 # We'll keep this feature simple for now
-                phonemes = re.sub("r", "ʁ", phonemes)
-                phonemes = re.sub("x", "χ", phonemes)
-                phonemes = re.sub("g", "ɡ", phonemes)
-
+                for k, v in lexicon.MODERN_SCHEMA.items():
+                    phonemes = re.sub(k, v, phonemes)
             return phonemes
 
         text = re.sub(

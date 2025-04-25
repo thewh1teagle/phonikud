@@ -14,7 +14,11 @@ HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
 PUNCTUATION = r".,!? "
 
 SPECIAL_PHONEMES = ['w']
-MODERN_SCHEMA_PHONEMES = ['χ', 'ʁ']
+MODERN_SCHEMA = {
+    'x': 'χ',  # Het
+    'r': 'ʁ',  # Resh
+    'g': 'ɡ',  # Gimel
+}
 
 GERESH_PHONEMES = {
     "ג": "dʒ",
@@ -90,6 +94,6 @@ SET_PHONEMES = set(sorted({
     *NIKUD_PHONEMES.values(),
     *LETTERS_PHONEMES.values(),
     *GERESH_PHONEMES.values(),
+    *MODERN_SCHEMA.values(),
     *SPECIAL_PHONEMES,
-    *MODERN_SCHEMA_PHONEMES
 }))
