@@ -1,9 +1,12 @@
 """
-uv run src/train.py
+Train from scratch:
+    uv run src/train.py --device cpu --epochs 1
+Train from checkpoint:
+    uv run src/train.py --device cpu --epochs 1 --model_checkpoint ckpt/step_6_loss_0.4250 --pre_training_step 6
 """
 
 from argparse import ArgumentParser
-from transformers import AutoModel, AutoTokenizer, BertModel
+from transformers import AutoTokenizer
 from glob import glob
 import os
 from torch.utils.data import Dataset, DataLoader
@@ -11,13 +14,7 @@ from tqdm import tqdm, trange
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from hebrew import (
-    is_hebrew_letter, 
-    is_matres_letter, 
-    remove_nikud,
-    STRESS_CHAR,
-    MOBILE_SHVA_CHAR
-)
+from model import PhoNikudModel, STRESS_CHAR, MOBILE_SHVA_CHAR
 
 def get_opts():
     parser = ArgumentParser()
@@ -28,9 +25,10 @@ def get_opts():
     parser.add_argument('-dd', '--data_dir',
                         default='data/', type=str)
     parser.add_argument('-o', '--output_dir',
-                        default='output/phonikud_ckpt', type=str)
+                        default='ckpt', type=str)
     parser.add_argument('--batch_size', default=4, type=int)
     parser.add_argument('--epochs', default=10, type=int)
+    parser.add_argument('--pre_training_step', default=0, type=int)
     parser.add_argument('--learning_rate', default=1e-3, type=float)
     parser.add_argument('--num_workers', default=0, type=int)
 
@@ -61,17 +59,28 @@ class AnnotatedLine:
 class TrainData(Dataset):
 
     def __init__(self, args):
-        fns = glob(os.path.join(args.data_dir, "train", "*.txt"))
-        print(len(fns), "text files found; using them for training data...")
+        
+        self.max_context_length = 2048
+        
 
-        raw_text = ""
-        for fn in fns:
-            with open(fn, "r", encoding='utf-8') as f:
-                raw_text += f.read() + "\n"
-        raw_text = raw_text.strip()
+        files = glob(os.path.join(args.data_dir, "train", "*.txt"))
+        print(len(files), "text files found; using them for training data...")
+        self.lines = self._load_lines(files)
 
-        self.lines = raw_text.splitlines()
-        # TODO: chunk into max length (2048) rather than assuming each line is shorter
+    def _load_lines(self, files: list[str]):
+        lines = []
+        for file in files:
+            with open(file, "r", encoding='utf-8') as fp:
+                for line in fp:
+                    # While the line is longer than max_context_length, split it into chunks
+                    while len(line) > self.max_context_length:
+                        lines.append(line[:self.max_context_length].strip())  # Add the first chunk
+                        line = line[self.max_context_length:]  # Keep the remainder of the line
+                    
+                    # Add the remaining part of the line if it fits within the max_context_length
+                    if line.strip():
+                        lines.append(line.strip())
+        return lines
 
     def __len__(self):
         return len(self.lines)
@@ -79,101 +88,6 @@ class TrainData(Dataset):
     def __getitem__(self, idx):
         text = self.lines[idx]
         return AnnotatedLine(text)
-
-
-class PhoNikudModel(nn.Module):
-    # TODO: make it a Transformers module, instead of wrapping existing module
-    def __init__(self, args):
-        super().__init__()
-        self.device = args.device
-        self.base_model: BertModel = AutoModel.from_pretrained(
-            args.model_checkpoint, trust_remote_code=True)
-
-        self.mlp = nn.Sequential(
-            nn.Linear(1024, 100),
-            nn.ReLU(),
-            nn.Linear(100, 2)
-        )
-        # ^ predicts stress and mobile shva; outputs are logits
-
-        self.base_config = self.base_model.config
-
-    def freeze_base_model(self):
-        self.base_model.eval()
-        for param in self.base_model.parameters():
-            param.requires_grad = False
-    
-    def forward(self, x):
-        # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
-        bert_outputs = self.base_model.bert(**x)
-        hidden_states = bert_outputs.last_hidden_state
-        # ^ shape: (batch_size, n_chars_padded, 1024)
-        hidden_states = self.base_model.dropout(hidden_states)
-
-        _, nikud_logits = self.base_model.menaked(hidden_states)
-        # ^ nikud_logits: MenakedLogitsOutput
-
-        additional_logits = self.mlp(hidden_states)
-        # ^ shape: (batch_size, n_chars_padded, 2) [2 for stress & mobile shva]
-
-        return nikud_logits, additional_logits
-
-    @torch.no_grad()
-    def predict(self, sentences, tokenizer, mark_matres_lectionis=None, padding='longest'):
-        # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
-
-        sentences = [remove_nikud(sentence) for sentence in sentences]
-        # assert the lengths aren't out of range
-        assert all(len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences), f'All sentences must be <= {tokenizer.model_max_length}, please segment and try again'
-        
-        # tokenize the inputs and convert them to relevant device
-        inputs = tokenizer(sentences, padding=padding, truncation=True, return_tensors='pt', return_offsets_mapping=True)
-        offset_mapping = inputs.pop('offset_mapping')
-        inputs = {k:v.to(self.device) for k,v in inputs.items()}
-        
-        # calculate the predictions
-        nikud_logits, additional_logits = self.forward(inputs)
-        nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
-        shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
-
-        stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
-
-        ret = []
-        for sent_idx,(sentence,sent_offsets) in enumerate(zip(sentences, offset_mapping)):
-            # assign the nikud to each letter!
-            output = []
-            prev_index = 0
-            for idx,offsets in enumerate(sent_offsets):
-                # add in anything we missed
-                if offsets[0] > prev_index:
-                    output.append(sentence[prev_index:offsets[0]])
-                if offsets[1] - offsets[0] != 1: continue
-                
-                # get our next char
-                char = sentence[offsets[0]:offsets[1]]
-                prev_index = offsets[1]
-                if not is_hebrew_letter(char):
-                    output.append(char)
-                    continue
-                
-                nikud = self.base_config.nikud_classes[nikud_predictions[sent_idx][idx]]
-                shin = '' if char != 'ש' else self.base_config.shin_classes[shin_predictions[sent_idx][idx]] 
-
-                # check for matres lectionis
-                if nikud == self.base_config.mat_lect_token:
-                    if not is_matres_letter(char): nikud = '' # don't allow matres on irrelevant letters
-                    elif mark_matres_lectionis is not None: nikud = mark_matres_lectionis
-                    else: continue
-                
-                stress = STRESS_CHAR if stress_predictions[sent_idx][idx] == 1 else ""
-                mobile_shva = MOBILE_SHVA_CHAR if mobile_shva_predictions[sent_idx][idx] == 1 else ""
-
-                output.append(char + shin + nikud + stress + mobile_shva)
-            output.append(sentence[prev_index:])
-            ret.append(''.join(output))
-        
-        return ret
 
 
 class Collator:
@@ -197,7 +111,7 @@ def main():
 
     print("Loading model...")
 
-    model = PhoNikudModel(args)
+    model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     model.to(args.device)
     model.freeze_base_model()
     # ^ we will only train extra layers
@@ -220,6 +134,7 @@ def main():
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
 
+    step = 0 + args.pre_training_step
     for _ in trange(args.epochs, desc="Epoch"):
         pbar = tqdm(dl, desc="Train iter")
         for inputs, targets in pbar:
@@ -229,8 +144,9 @@ def main():
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)
             # ^ shape: (batch_size, n_chars_padded, 2)
-            _, additional_logits = model(inputs)
+            output = model(inputs)
             # ^ shape: (batch_size, n_chars_padded, 2)
+            additional_logits = output.additional_logits
 
             loss = criterion(
                 additional_logits[:, 1:-1], # skip BOS and EOS symbols
@@ -242,11 +158,14 @@ def main():
             optimizer.step()
 
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
+            step += 1
     
-    # TODO: save checkpoint
-    # save_dir = args.output_dir
-    # print("Saving trained model to:", save_dir)
-    # model.save_model(save_dir)
+    epoch_loss = loss.item()
+    save_dir = f'{args.output_dir}/step_{step+1}_loss_{epoch_loss:.4f}'
+    print("Saving trained model to:", save_dir)
+    model.save_pretrained(save_dir)
+    tokenizer.save_pretrained(save_dir)
+    print("Model saved.")
 
     print("Testing...")
 
@@ -257,6 +176,8 @@ def main():
         test_text = f.read().strip()
 
     for line in test_text.splitlines():
+        if not line.strip():
+            continue
         print(line)
         print(model.predict([line], tokenizer, mark_matres_lectionis='*'))
         print()

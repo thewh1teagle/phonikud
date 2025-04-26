@@ -16,3 +16,4 @@ hebrew_diacritized/
 saspeech_gold_standard/
 *.json
 !mishkal/data/*.json
+ckpt/
