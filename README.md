@@ -130,6 +130,28 @@ See [examples/with_fallback.py](examples/with_fallback.py) for reference.
 Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
 Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin), Resh `ʁ` and `χ` (Het).
 
+## How It Works
+
+To train TTS models, it’s essential to represent speech accurately. Plain Hebrew text is ambiguous without diacritics, and even with them, Shva Na and Atma'a can cause confusion. For example, "אני אוהב אורז" (I like rice) and "אני אורז מזוודה" (I pack a suitcase) share the same diacritics for "אורז" but have different Atma'a.
+
+The workflow is as follows:
+
+1. Add diacritics using a standard Nakdan.
+
+
+2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Atma'a and Shva Na.
+
+
+3. Convert the text with diacritics to phonemes (alphabet characters that represent sounds) using this library, based on coding rules.
+
+
+4. Train the TTS model on phonemes, and at runtime, feed the model phonemes to generate speech.
+
+
+
+This ensures accurate and clear speech synthesis.
+
+
 ### Notes
 
 - The default schema is `modern`. you can use `plain` schema for simplicify (eg. `x` instead of `χ`). use `phonemize(..., schema='plain')`
