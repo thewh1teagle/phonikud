@@ -6,16 +6,17 @@ from model import PhoNikudModel
 from argparse import ArgumentParser
 from transformers import AutoTokenizer
 
+
 def get_opts():
     parser = ArgumentParser()
-    parser.add_argument('-m', '--model_checkpoint',
-                        default='./output/phonikud_ckpt', type=str)
-    parser.add_argument('-d', '--device',
-                        default='cuda', type=str)
+    parser.add_argument(
+        "-m", "--model_checkpoint", default="./output/phonikud_ckpt", type=str
+    )
+    parser.add_argument("-d", "--device", default="cuda", type=str)
     # test file path
-    parser.add_argument('-t', '--file',
-                        default='./data/test.txt', type=str)
+    parser.add_argument("-t", "--file", default="./data/test.txt", type=str)
     return parser
+
 
 def main():
     parser = get_opts()
@@ -25,12 +26,12 @@ def main():
     model.to(args.device)
     model.eval()
 
-    with open(args.file, 'r', encoding='utf-8') as fp:
+    with open(args.file, "r", encoding="utf-8") as fp:
         for line in fp:
             line = line.strip()
             if not line:
                 continue
-            print(model.predict([line], tokenizer, mark_matres_lectionis='*'))
+            print(model.predict([line], tokenizer, mark_matres_lectionis="*"))
 
 
 if __name__ == "__main__":

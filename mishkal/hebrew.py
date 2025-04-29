@@ -25,9 +25,9 @@ from mishkal.utils import sort_stress
 
 SHVA = "\u05b0"
 SIN = "\u05c2"
-PATAH = '\u05b7'
-KAMATZ = '\u05b8'
-HATAF_KAMATZ = '\u05b3'
+PATAH = "\u05b7"
+KAMATZ = "\u05b8"
+HATAF_KAMATZ = "\u05b3"
 DAGESH = "\u05bc"
 HOLAM = "\u05b9"
 HIRIK = "\u05b4"
@@ -35,9 +35,10 @@ PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
 KUBUTS = "\u05bb"
 TSERE = "\u05b5"
 HATMAHA = "\u05ab"
-VAV_HOLAM = '\u05ba'
+VAV_HOLAM = "\u05ba"
 DAGESH = "\u05bc"
 SEGOL = "\u05b6"
+
 
 def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
     phonemes = []
@@ -47,7 +48,9 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
         cur = letters[i]
         prev = letters[i - 1] if i > 0 else None
         next = letters[i + 1] if i < len(letters) - 1 else None
-        next_phonemes, skip_offset = letter_to_phonemes(cur, prev, next, predict_shva_na)
+        next_phonemes, skip_offset = letter_to_phonemes(
+            cur, prev, next, predict_shva_na
+        )
         # TODO: split into syllables
         # next_letters = next_phonemes, letters[i:i+skip_offset+1]
         phonemes.extend(next_phonemes)
@@ -56,7 +59,9 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
     return phonemes
 
 
-def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool) -> tuple[str, int]:
+def letter_to_phonemes(
+    cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool
+) -> tuple[str, int]:
     cur_phonemes = []
     skip_diacritics = False
     skip_consonants = False
@@ -79,11 +84,17 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
         cur_phonemes.append("wa")
 
     if cur.char == "א" and not cur.diac and prev:
-        if next and next.char != 'ו':
+        if next and next.char != "ו":
             skip_consonants = True
 
     # TODO ?
-    if cur.char == "י" and next and not cur.diac and prev and prev.char + prev.diac != 'אֵ':
+    if (
+        cur.char == "י"
+        and next
+        and not cur.diac
+        and prev
+        and prev.char + prev.diac != "אֵ"
+    ):
         skip_consonants = True
 
     if cur.char == "ש" and SIN in cur.diac:
@@ -111,27 +122,23 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
             cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
             skip_consonants = True
 
-    elif (
-        DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES
-    ):  # dagesh
+    elif DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES:  # dagesh
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
         skip_consonants = True
     elif cur.char == "ו":
         skip_consonants = True
-        if (
-            next and next.char == "ו"
-        ):
+        if next and next.char == "ו":
             # patah and next.diac empty
             if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
                 cur_phonemes.append("w")
                 skip_diacritics = True
                 skip_offset += 1
-            elif cur.diac.replace(HATMAHA, '') == next.diac.replace(HATMAHA, ''):
+            elif cur.diac.replace(HATMAHA, "") == next.diac.replace(HATMAHA, ""):
                 # double vav
                 if DAGESH in cur.diac:
-                    cur_phonemes.append("vu")                 
+                    cur_phonemes.append("vu")
                 else:
-                    cur_phonemes.append("wo")  
+                    cur_phonemes.append("wo")
                 skip_diacritics = True
                 skip_offset += 1
             else:
@@ -168,53 +175,58 @@ def letter_to_phonemes(cur: Letter, prev: Letter | None, next: Letter | None, pr
                 skip_diacritics = True
             else:
                 cur_phonemes.append("v")
-            
+
             skip_diacritics = True
 
     if not skip_consonants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
-    
-    if lexicon.SHVA_NA_DIACRITIC not in cur.diac and predict_shva_na and SHVA in cur.diac and not skip_diacritics:
+
+    if (
+        lexicon.SHVA_NA_DIACRITIC not in cur.diac
+        and predict_shva_na
+        and SHVA in cur.diac
+        and not skip_diacritics
+    ):
         # Shva Na prediction
         if not prev:
             # Lamanrey
-            if cur.char in 'למנרי':
+            if cur.char in "למנרי":
                 cur_phonemes.append("e")
-                skip_diacritics = True 
+                skip_diacritics = True
             # Itsurim groniyim in next one
-            elif next and next.char in 'אהע':
+            elif next and next.char in "אהע":
                 cur_phonemes.append("e")
-                skip_diacritics = True 
+                skip_diacritics = True
             # Otiot ashimush
-            elif cur.char in 'ול':
+            elif cur.char in "ול":
                 # TODO: Kaf and Bet?
                 cur_phonemes.append("e")
-                skip_diacritics = True 
+                skip_diacritics = True
             # TODO: txiliyot "yatan"?
 
         else:
             if next and next.char == cur.char:
                 cur_phonemes.append("e")
                 skip_diacritics = True
-            elif prev and SHVA in prev.diac and cur_phonemes[-1] != 'e':
+            elif prev and SHVA in prev.diac and cur_phonemes[-1] != "e":
                 cur_phonemes.append("e")
                 skip_diacritics = True
 
     if KAMATZ in cur.diac and next and HATAF_KAMATZ in next.diac:
-        cur_phonemes.append('o')
+        cur_phonemes.append("o")
         skip_diacritics = True
 
-
-    
     nikud_phonemes = (
         [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
         if not skip_diacritics
         else []
-    )            
+    )
     cur_phonemes.extend(nikud_phonemes)
     # Ensure the stress is at the beginning of the syllable
     cur_phonemes = sort_stress(cur_phonemes)
-    cur_phonemes = [p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)]
+    cur_phonemes = [
+        p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)
+    ]
     # Remove empty phonemes
     cur_phonemes = [p for p in cur_phonemes if p]
     return cur_phonemes, skip_offset

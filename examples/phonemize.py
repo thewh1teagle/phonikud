@@ -76,7 +76,6 @@ sentences = [
     # "יִשָּׂשכָ֫ר",
     # "יַאלְלָה",
     # "אִיָּ֫ר",
-    
     # "קוֹרֶה",
     # "אָח",
     # "שְׁמוּרִים",
@@ -105,19 +104,19 @@ sentences = [
     # "בָּךְ",
     "חֲתֻונָּה",
     "דִּוּ֫וּחַ",
-    "שֶׁמְּֽשַׁוֶּ֫קֶת"
+    "שֶׁמְּֽשַׁוֶּ֫קֶת",
 ]
 
 # TODO: wolter and add to tests
 
 for sentence in sentences:
     phonemes = phonemize(
-        sentence, 
-        preserve_punctuation=True, 
-        use_post_normalize=True, 
+        sentence,
+        preserve_punctuation=True,
+        use_post_normalize=True,
         use_expander=True,
         predict_stress=True,
         predict_shva_nah=False,
-        schema='modern'
+        schema="modern",
     )
     print(phonemes)

@@ -8,27 +8,19 @@ SHVA_NA_DIACRITIC = "\u05bd"
 HATAMA_DIACRITIC = "\u05ab"
 STRESS = "\u02c8"  # visually looks like '
 
-MILHEL_PATTERNS = ['יים', 'וע', 'טו', "דיה"]  # Used for stress prediction
+MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\'"]+'
 HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
 PUNCTUATION = r".,!? "
 
-SPECIAL_PHONEMES = ['w']
+SPECIAL_PHONEMES = ["w"]
 MODERN_SCHEMA = {
-    'x': 'χ',  # Het
-    'r': 'ʁ',  # Resh
-    'g': 'ɡ',  # Gimel
+    "x": "χ",  # Het
+    "r": "ʁ",  # Resh
+    "g": "ɡ",  # Gimel
 }
 
-GERESH_PHONEMES = {
-    "ג": "dʒ",
-    "ז":
-    "ʒ",
-    "ת": "ta",
-    "צ":
-    "tʃ",
-    "ץ": "tʃ"
-}
+GERESH_PHONEMES = {"ג": "dʒ", "ז": "ʒ", "ת": "ta", "צ": "tʃ", "ץ": "tʃ"}
 
 # Consonants
 LETTERS_PHONEMES = {
@@ -80,7 +72,7 @@ NIKUD_PHONEMES = {
     "\u05b9": "o",  # Holam
     "\u05ba": "o",  # Holam haser for vav
     "\u05bb": "u",  # Qubuts
-    "\u05b3": 'o',  # Hataf qamats
+    "\u05b3": "o",  # Hataf qamats
     "\u05b8": "a",  # Kamataz
     HATAMA_DIACRITIC: "ˈ",  # Stress (Atmaha)
     SHVA_NA_DIACRITIC: "e",  # Shva na
@@ -90,10 +82,14 @@ DEDUPLICATE = {
     "\u05f3": "'",  # Hebrew geresh to regular geresh
 }
 
-SET_PHONEMES = set(sorted({
-    *NIKUD_PHONEMES.values(),
-    *LETTERS_PHONEMES.values(),
-    *GERESH_PHONEMES.values(),
-    *MODERN_SCHEMA.values(),
-    *SPECIAL_PHONEMES,
-}))
+SET_PHONEMES = set(
+    sorted(
+        {
+            *NIKUD_PHONEMES.values(),
+            *LETTERS_PHONEMES.values(),
+            *GERESH_PHONEMES.values(),
+            *MODERN_SCHEMA.values(),
+            *SPECIAL_PHONEMES,
+        }
+    )
+)
