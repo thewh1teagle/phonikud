@@ -1,6 +1,6 @@
 [project]
 name = "mishkal-hebrew"
-version = "0.3.6"
+version = "0.3.7"
 description = "Convert Hebrew text into IPA for TTS systems and learning"
 readme = "README.md"
 authors = [
@@ -25,6 +25,4 @@ dev = ["pytest>=8.3.4", "ruff>=0.9.7", "tqdm>=4.67.1", "pandas>=2.0.3"]
 packages = ["mishkal"]
 
 [tool.uv.workspace]
-members = [
-    "phonikud",
-]
+members = ["phonikud"]
