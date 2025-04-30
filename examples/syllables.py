@@ -7,14 +7,15 @@ TODO: add to mishkal?
 import regex as re
 from mishkal.utils import get_letters
 
-VOWEL_DIACS = [chr(i) for i in range(0x05b1, 0x05bc)]
-VOWEL_DIACS_WITHOUT_HOLAM = [chr(d) for d in [0x05b9, 0x05ba]] + VOWEL_DIACS
+VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)]
+VOWEL_DIACS_WITHOUT_HOLAM = [chr(d) for d in [0x05B9, 0x05BA]] + VOWEL_DIACS
 
-STRESS = '\u05ab'
-SHVA = '\u05b0'
-DAGESH = '\u05bc'
+STRESS = "\u05ab"
+SHVA = "\u05b0"
+DAGESH = "\u05bc"
 
-third = [ # Malhil demalhil
+
+third = [  # Malhil demalhil
     "קוֹנְסֶ֫פְּצִיָּה",
     "פוֹרְמָ֫לִיִּים",
     "דְּרַ֫סְטִיִּים",
@@ -45,7 +46,7 @@ third = [ # Malhil demalhil
     "בּ֫וּמֵרַנְג",
     "אֵלֶקְטְר֫וֹנִיִּים",
     "טֶּ֫רְמִינָל",
-    "רֶטְרוֹאַקְטִ֫יבִיּוּת", 
+    "רֶטְרוֹאַקְטִ֫יבִיּוּת",
     "אָנַ֫רְכִיָּה",
     "קָדֶ֫נְצִיָּה",
     "מּ֫וּסִיקָה",
@@ -60,18 +61,46 @@ third = [ # Malhil demalhil
     "אַנְטִישֵׁ֫מִיּוֹת",
     "גִּ֫ימִיקִים",
     "רֵלֵוַ֫וֽנְטִיּוֹת",
+    "ה֫וֹמְלֵסִים",
+    "טֶכְנוֹל֫וֹגִיּוֹת",
+    "טוֹטָלִיטָ֫רִיִּים",
+    "אַטְרַקְטִ֫יבִיִּים",
+    "סְּטָטוּט֫וֹרִיִּים",
+    "סְטִ֫יקֵרִים",
+    "אוֹרְתּוֹד֫וֹקְסִיָּה",
+    "פָּ֫נִיקָה",
+    "ּקָדֶ֫נְצִיּוֹת",
+    "טְּרָ֫גִיּוֹת",
+    "מוֹדִיעִ֫ינִיּוֹת",
+    "לִּיבֵּרָ֫לִיִּים",
+    "דִּיפְּלוֹמָ֫טִיּוֹת",
+    "פֶּ֫נְסִיָּה",
+    "קוֹלֶקְטִ֫יבִיּוֹת",
+    "נוֹרְמָטִ֫יבִיִּים",
+    "אָקָדֵ֫מִיּוֹת",
+    "ּסְּטָטִ֫יסְטִיקוֹת",
+    "א֫וֹפְּצִיַּיֽת",
+    "פְּרַ֫קְטִיִּים",
+    "רֶטְרוֹאַקְטִ֫יבִיִּים",
+    "ּטְרָ֫אוּמָה",
+    "ּסַ֫נְקְצִיָּה",
+    "טְרָ֫אוֹמוֹת",
+    "קָּדֶ֫נְצִיּוֹת",
+    "פּוֹפּוּלָ֫רִיּוּת",
+    "ּמִּ֫ינִימוּם",
 ]
 
-second = [ # Malhil
+second = [  # Malhil
+    "נּוֹרְבֵ֫גִים",
     "אוֹקְיָ֫נוֹס",
     "יוֹשְׁבֶ֫יהָ",
     "ו֫וֹלְטֶר",
     "בְּמֶ֫שֶׁךְ",
     "כְּאִ֫יֽלּוּ",
     "בְּסֵ֫דֶר",
-    "לְמַ֫עַן",    
+    "לְמַ֫עַן",
     "אוֹפּוֹזִ֫יצְיָה",
-    "קּוֹאָלִ֫יצְיָה", 
+    "קּוֹאָלִ֫יצְיָה",
     "וִ֫יקְטוֹר",
     "מְסֻוֽיֶּ֫מֶת",
     "בָּט֫וּחַ",
@@ -121,94 +150,158 @@ second = [ # Malhil
     "אָמַ֫רְתָּ",
     "לָקַ֫חַת",
     "סֵ֫דֶר",
+    "כּ֫וֹחַ",
+    "פֶּ֫תַח",
+    "מָּנ֫וֹחַ",
+    "ּיֶ֫תֶר",
+    "מַשְׂכֹּ֫וֽרֶת",
+    "אֶ֫פֶס",
+    "לָמַ֫דְתִּי",
+    "שְׁלֹ֫וֽשֶׁת",
+    "ּמִלְחֶ֫מֶת",
+    "צַּ֫עַר",
+    "אֹ֫וֽפִי",
+    "הֶחְלַ֫טְתִּי",
+    "מְּשֻׁוֽתֶּ֫פֶת",
+    "מְעַנְיֶ֫יֽנֶת",
+    "מְתַקֶּ֫נֶת",
+    "ּמִפְלֶ֫גֶת",
+    "לֶ֫חֶם",
+    "מְיֻוֽתֶּ֫רֶת",
+    "קָ֫מָה",
+    "רוֹצֵ֫חַ",
+    "הִיסְט֫וֹרִי",
+    "אֶ֫לֶף",
+    "מָצָ֫אתִי",
+    "לֵגִיטִ֫ימִית",
+    "יוֹשֶׁ֫בֶת",
+    "סְטוּדֶ֫נְטִים",
+    "בִיֽקֹּ֫וֽרֶת",
+    "בֶּ֫זֶק",
+    "רֶ֫צַח",
+    "פֶּ֫לֶא",
+    "י֫וּלִי",
+    "יָבִ֫יאוּ",
+    "מוֹנֵ֫עַ",
+    "קֹ֫וֽשִׁי",
+    "סֶּ֫קְטוֹר",
+    "הֵחֵ֫לָּה",
+    "הִיסְט֫וֹרִית",
+    "רַ֫דְיוֹ",
+    "עֶ֫צֶם",
+    "דֶ֫רֶךְ",
+    "רָאִ֫יתָ",
+    "דִּיֽוּ֫וּחַ",
+    "מִּסְגֶּ֫רֶת",
+    "נוֹסֵ֫עַ",
+    "אִפְשַׁ֫רְתִּי",
+    "רָצִ֫יתָ",
+    "בְּגֶ֫דֶר",
+    "אוֹמֶ֫רֶת",
+    "בְּמֶ֫שֶׁךְ",
 ]
+
 
 def sort_diacritics(word: str):
     def sort_diacritics_callback(match):
         letter = match.group(1)
         diacritics = "".join(sorted(match.group(2)))  # Sort diacritics
         return letter + diacritics
+
     return re.sub(r"(\p{L})(\p{M}+)", sort_diacritics_callback, word)
+
 
 def has_vowel_diacs(s: str):
     return any(i in s for i in VOWEL_DIACS)
+
 
 def get_syllables(word: str) -> list[str]:
     syllables = []
     letters = get_letters(word)
     i = 0
-    cur = ''
+    cur = ""
     found_vowel = False
 
     while i < len(letters):
         letter = letters[i]
-        
+
         cur += letter.char + letter.diac
-        
+
         # Check if the letter has a vowel diacritic or shvain first letter (prediction)
         if has_vowel_diacs(letter.diac) or (SHVA in letters[i].diac and i == 0):
             if found_vowel:
                 # Found a second vowel diacritic, break the syllable here
-                syllables.append(cur[:-len(letter.char + letter.diac)])  # Remove the last added letter
-                cur = letter.char + letter.diac  # Start new syllable with the current letter
+                syllables.append(
+                    cur[: -len(letter.char + letter.diac)]
+                )  # Remove the last added letter
+                cur = (
+                    letter.char + letter.diac
+                )  # Start new syllable with the current letter
             else:
                 found_vowel = True
 
-
         # With diacritics -> Vav -> Mark end
-        if i + 2 < len(letters) and letters[i + 2].char == 'ו' and not letters[i + 1].diac:
+        if (
+            i + 2 < len(letters)
+            and letters[i + 2].char == "ו"
+            and not letters[i + 1].diac
+        ):
             syllables.append(cur)
-            cur = ''
+            cur = ""
             found_vowel = False
 
         # Next is Vav -> Mark end
-        
-        
-        elif i + 1 < len(letters) and letters[i + 1].char == 'ו' and not any(d in letters[i + 1].diac for d in VOWEL_DIACS_WITHOUT_HOLAM):
+
+        elif (
+            i + 1 < len(letters)
+            and letters[i + 1].char == "ו"
+            and not any(d in letters[i + 1].diac for d in VOWEL_DIACS_WITHOUT_HOLAM)
+        ):
             cur += letters[i + 1].char + letters[i + 1].diac
             i += 1
             syllables.append(cur)
-            cur = ''
+            cur = ""
             found_vowel = False  # Reset vowel flag
-  
+
         i += 1
 
     if cur:  # Append the last syllable
         syllables.append(cur)
 
-    if not has_vowel_diacs(syllables[-1]) and not syllables[-1].endswith('ו'):
+    if not has_vowel_diacs(syllables[-1]) and not syllables[-1].endswith("ו"):
         syllables[-2] += syllables[-1]
         syllables = syllables[:-1]
-
 
     return syllables
     # return ['סֵ', 'דֶר']
 
+
 def add_stress_to_syllable(s: str):
     letters = get_letters(s)
     letters[0].diac = STRESS + letters[0].diac
-    return ''.join(letter.char + letter.diac for letter in letters)
+    return "".join(letter.char + letter.diac for letter in letters)
+
 
 def add_stress(word: str, syllable_position: int):
     syllables: list[str] = get_syllables(word)
-    print(syllables)
     stressed_syllable = syllables[syllable_position]
     stressed_syllable = add_stress_to_syllable(stressed_syllable)
     syllables[syllable_position] = stressed_syllable
-    return ''.join(syllables)
+    return "".join(syllables)
+
 
 def check_data(data: list, stress_position: int):
     for src_with_stress in data:
-        src_with_stress = src_with_stress.replace(DAGESH, '')
-        without_stress = src_with_stress.replace(STRESS, '')
-        
+        src_with_stress = src_with_stress.replace(DAGESH, "")
+        without_stress = src_with_stress.replace(STRESS, "")
+
         with_stress = add_stress(without_stress, stress_position)
 
         # Sort diacritics
         with_stress = sort_diacritics(with_stress)
         src_with_stress = sort_diacritics(src_with_stress)
         if with_stress != src_with_stress:
-            print(f'❌ {with_stress} {src_with_stress}')
+            print(f"❌ {with_stress} src: {src_with_stress}")
 
 
 check_data(second, -2)
