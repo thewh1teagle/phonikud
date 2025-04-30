@@ -7,7 +7,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 ## Features
 
 - Lightweight nikud model
-- (WIP) phoneme prediction via nikud + phonetic features (stress, shva na, ...) see [phonikud](phonikud)
+- (WIP) Enhanced nikud model with phonetic features (stress, shva na, ...) see [phonikud](phonikud)
 - Convert text with nikud to modern spoken phonemes
 - Expand dates into text with nikud
 - Expand numbers into text with nikud
@@ -86,7 +86,7 @@ See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew
 
 Stress marks (1)
 
-- `ˈ` - stress (0x2c8) visually looks like single quote
+- `ˈ` - stress, visually looks like single quote, but it's `\u02c8`
 
 Vowels (5)
 
@@ -100,28 +100,28 @@ Consonants (24)
 
 - `b` - Bet
 - `v` - Vet, Vav
-- `d` - Dalet
-- `h` - He
+- `d` - Daled
+- `h` - Hey
 - `z` - Zain
 - `χ` - Het, Haf
 - `t` - Taf, Tet
-- `j` - Yod
+- `j` - Yud
 - `k` - Kuf, Kaf
 - `l` - Lamed
 - `m` - Mem
 - `n` - Nun
 - `s` - Sin, Samekh
-- `f` - Fei
-- `p` - Pei dgusha
-- `ʁ` - Resh
-- `ts` - tsadik
-- `ʃ` - Shin
-- `tʃ` - Tsadik with geresh
-- `dʒ` - Gimel with geresh (גִּ׳ירָפָה)
-- `ʒ` - Zain with geresh (בֵּז׳)
-- `ʔ` - Alef/Ayin
-- `w` - Example: `walla`
-- `ɡ` - Gimel, Visually looks like g, but its actually `\u0261`
+- `f` - Fey
+- `p` - Pey
+- `ts` - Tsadik
+- `tʃ` - Tsadik with Geresh (`צִ'יפְּס`)
+- `w` - Example: `וָואלָה`
+- `ʔ` - Alef/Ayin, visually looks like `?`, but it's `\u0294`
+- `ɡ` - Gimel, visually looks like `g`, but its actually `\u0261`
+- `ʁ` - Resh `\u0281`
+- `ʃ` - Shin `\u0283`
+- `ʒ` - Zain with Geresh (`בֵּז׳`) `\u0292`
+- `dʒ` - Gimel with Geresh (`גִּ׳ירָפָה`)
 
 ### Mixed English
 
