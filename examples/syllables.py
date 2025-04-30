@@ -8,17 +8,16 @@ import regex as re
 from mishkal.utils import get_letters
 
 VOWEL_DIACS = [chr(i) for i in range(0x05b1, 0x05bc)]
+VOWEL_DIACS_WITHOUT_HOLAM = [chr(d) for d in [0x05b9, 0x05ba]] + VOWEL_DIACS
+
 STRESS = '\u05ab'
 SHVA = '\u05b0'
 DAGESH = '\u05bc'
 
 third = [ # Malhil demalhil
-    # "רֵלֵוַ֫וֽנְטִיּוֹת",
-    
-
+    "קוֹנְסֶ֫פְּצִיָּה",
+    "פוֹרְמָ֫לִיִּים",
     "דְּרַ֫סְטִיִּים",
-    "פוֹרְ֫מָלִיִּים",
-    "קוֹנְ֫סֶפְּצִיָּה",
     "מַּ֫שֶּׁהוּ",
     "אֵנֶ֫רְגִּיָּה",
     "ּמִ֫ינִימוּם",
@@ -60,17 +59,19 @@ third = [ # Malhil demalhil
     "אוּנִיבֶ֫רְסִיטָה",
     "אַנְטִישֵׁ֫מִיּוֹת",
     "גִּ֫ימִיקִים",
+    "רֵלֵוַ֫וֽנְטִיּוֹת",
 ]
 
 second = [ # Malhil
+    "אוֹקְיָ֫נוֹס",
+    "יוֹשְׁבֶ֫יהָ",
+    "ו֫וֹלְטֶר",
     "בְּמֶ֫שֶׁךְ",
     "כְּאִ֫יֽלּוּ",
     "בְּסֵ֫דֶר",
     "לְמַ֫עַן",    
-    "יוֹשְׁ֫בֶיהָ",
     "אוֹפּוֹזִ֫יצְיָה",
     "קּוֹאָלִ֫יצְיָה", 
-    "אוֹקְ֫יָנוֹס",
     "וִ֫יקְטוֹר",
     "מְסֻוֽיֶּ֫מֶת",
     "בָּט֫וּחַ",
@@ -144,7 +145,6 @@ def get_syllables(word: str) -> list[str]:
         
         cur += letter.char + letter.diac
         
-        
         # Check if the letter has a vowel diacritic or shvain first letter (prediction)
         if has_vowel_diacs(letter.diac) or (SHVA in letters[i].diac and i == 0):
             if found_vowel:
@@ -154,6 +154,7 @@ def get_syllables(word: str) -> list[str]:
             else:
                 found_vowel = True
 
+
         # With diacritics -> Vav -> Mark end
         if i + 2 < len(letters) and letters[i + 2].char == 'ו' and not letters[i + 1].diac:
             syllables.append(cur)
@@ -161,19 +162,15 @@ def get_syllables(word: str) -> list[str]:
             found_vowel = False
 
         # Next is Vav -> Mark end
-        elif i + 1 < len(letters) and letters[i + 1].char == 'ו':
+        
+        
+        elif i + 1 < len(letters) and letters[i + 1].char == 'ו' and not any(d in letters[i + 1].diac for d in VOWEL_DIACS_WITHOUT_HOLAM):
             cur += letters[i + 1].char + letters[i + 1].diac
             i += 1
             syllables.append(cur)
             cur = ''
             found_vowel = False  # Reset vowel flag
-
-        #         # Next is Vav -> Mark end
-        # elif i + 1 < len(letters) and letters[i + 1].char == 'ו':
-        #     cur += letters[i + 1].char + letters[i + 1].diac
-        #     i += 1
-        #     found_vowel = True
-
+  
         i += 1
 
     if cur:  # Append the last syllable
