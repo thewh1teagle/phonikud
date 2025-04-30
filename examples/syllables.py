@@ -5,68 +5,68 @@ TODO: add to mishkal?
 """
 
 import regex as re
-
 from mishkal.utils import get_letters
 
 data = [
-    
-    # "בָּט֫וּחַ",
+    # TODO: Shva with next stress = Na
     # "בְּמֶ֫שֶׁךְ",
     # "כְּאִ֫יֽלּוּ",
     # "בְּסֵ֫דֶר",
-    
     # "לְמַ֫עַן",
+    
+    # "יוֹשְׁ֫בֶיהָ",
+    # "אוֹפּוֹזִ֫יצְיָה",
+    # "קּוֹאָלִ֫יצְיָה", 
+    # "אוֹקְ֫יָנוֹס",
+    # "וִ֫יקְטוֹר",
+    # "מְסֻוֽיֶּ֫מֶת",
+    # "בָּט֫וּחַ",
     # "הָיִ֫ינוּ",
     # "עָלֵ֫ינוּ",
-    # "ַקּוֹאָלִ֫יצְיָה",
-    # "עָלֶ֫יהָ",
-    # "קוֹבֵ֫עַ",
-    # "ָאוֹפּוֹזִ֫יצְיָה",
     # "מִמֶּ֫נּוּ",
     # "וִיֽכּ֫וּחַ",
-    # "שָׂמֵ֫חַ",
-    # "ַתִּקְשֹׁ֫וֽרֶת",
-    
+    # "כּ֫וֹחַ",
     # "מֵאִתָּ֫נוּ",
-    
-    "שׁוֹמֵ֫עַ",
-    "לִמְנֹ֫וֽעַ",
-    "ּבַּ֫יִת",
-    "מְבַקֶּ֫שֶׁת",
-    "לְהַצְבִּ֫יעַ",
-    "שָׁמַ֫עְתִּי",
-    "ּדֶ֫רֶךְ",
-    "מַעֲרֶ֫כֶת",
-    "לִשְׁמֹ֫וֽעַ",
-    "יַ֫חַד",
-    "לָדַ֫עַת",
-    "צֹ֫וֽרֶךְ",
-    "חוֹשֶׁ֫בֶת",
-    "קּוֹדֶ֫מֶת",
-    "לָשֶׁ֫בֶת",
-    "אֵינֶ֫נָּה",
-    "רֶ֫גַע",
-    "לָלֶ֫כֶת",
-    "מֵעֵ֫בֶר",
-    "הָיִ֫יתָ",
-    "מִפְלֶ֫גֶת",
-    "כֶּ֫סֶף",
-    "הִגִּ֫יעַ",
-    "דַּ֫עַת",
-    "לִפְגֹּ֫וֽעַ",
-    "מִסְגֶּ֫רֶת",
-    "לִקְבֹּ֫וֽעַ",
-    "מַגִּ֫יעַ",
-    "כּ֫וֹחַ",
-    "דַּ֫עַת",
-    "אֵלֶ֫יךָ",
-    "מְסֻוֽיֶּ֫מֶת",
-    "קֶ֫שֶׁר",
-    "בִּיֽקֹּ֫וֽרֶת",
-    "רָאִ֫יתִי",
-    "אָמַ֫רְתָּ",
-    "לָקַ֫חַת",
-    "סֵ֫דֶר",
+    # "עָלֶ֫יהָ",
+    # "קוֹבֵ֫עַ",
+    # "שָׂמֵ֫חַ",
+    # "תִּקְשֹׁ֫וֽרֶת",
+    # "שׁוֹמֵ֫עַ",
+    # "לִמְנֹ֫וֽעַ",
+    # "ּבַּ֫יִת",
+    # "מְבַקֶּ֫שֶׁת",
+    # "לְהַצְבִּ֫יעַ",
+    # "שָׁמַ֫עְתִּי",
+    # "ּדֶ֫רֶךְ",
+    # "מַעֲרֶ֫כֶת",
+    # "לִשְׁמֹ֫וֽעַ",
+    # "יַ֫חַד",
+    # "לָדַ֫עַת",
+    # "צֹ֫וֽרֶךְ",
+    # "חוֹשֶׁ֫בֶת",
+    # "קּוֹדֶ֫מֶת",
+    # "לָשֶׁ֫בֶת",
+    # "אֵינֶ֫נָּה",
+    # "רֶ֫גַע",
+    # "לָלֶ֫כֶת",
+    # "מֵעֵ֫בֶר",
+    # "הָיִ֫יתָ",
+    # "מִפְלֶ֫גֶת",
+    # "כֶּ֫סֶף",
+    # "הִגִּ֫יעַ",
+    # "דַּ֫עַת",
+    # "לִפְגֹּ֫וֽעַ",
+    # "מִסְגֶּ֫רֶת",
+    # "לִקְבֹּ֫וֽעַ",
+    # "מַגִּ֫יעַ",
+    # "דַּ֫עַת",
+    # "אֵלֶ֫יךָ",
+    # "קֶ֫שֶׁר",
+    # "בִּיֽקֹּ֫וֽרֶת",
+    # "רָאִ֫יתִי",
+    # "אָמַ֫רְתָּ",
+    # "לָקַ֫חַת",
+    # "סֵ֫דֶר",
 ]
 
 
@@ -92,9 +92,10 @@ def get_syllables(word: str) -> list[str]:
 
     while i < len(letters):
         letter = letters[i]
+        
         cur += letter.char + letter.diac
-        i += 1
-
+        
+        
         # Check if the letter has a vowel diacritic
         if has_vowel_diacs(letter.diac):
             if found_vowel:
@@ -104,14 +105,28 @@ def get_syllables(word: str) -> list[str]:
             else:
                 found_vowel = True
 
-        # Check if we encounter ו without diacritics and close the current syllable
-        if i + 1 < len(letters) and letters[i].char == 'ו' and not letters[i].diac:
+        # Vavs
+        if i + 2 < len(letters) and letters[i + 2].char == 'ו' and not letters[i + 1].diac:
+            syllables.append(cur)
+            cur = ''
+            found_vowel = False
+
+        elif i + 1 < len(letters) and letters[i + 1].char == 'ו':
+            cur += letters[i + 1].char + letters[i + 1].diac
+            i += 1
             syllables.append(cur)
             cur = ''
             found_vowel = False  # Reset vowel flag
 
+        i += 1
+
     if cur:  # Append the last syllable
         syllables.append(cur)
+
+    if not has_vowel_diacs(syllables[-1]) and not syllables[-1].endswith('ו'):
+        syllables[-2] += syllables[-1]
+        syllables = syllables[:-1]
+
 
     return syllables
     # return ['סֵ', 'דֶר']
