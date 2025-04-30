@@ -125,12 +125,23 @@ def get_syllables(phonemes: list[str]) -> list[str]:
     return syllables
 
 
-def sort_stress(phonemes: list[str]):
+def sort_stress(phonemes: list[str]) -> list[str]:
     if "ˈ" not in phonemes:
         return phonemes
+
+    # Remove stress marker
     phonemes = [p for p in phonemes if p != "ˈ"]
-    insert_pos = next(
-        (i for i, p in enumerate(phonemes) if p in "aeiou"), len(phonemes)
-    )
-    phonemes.insert(insert_pos, "ˈ")
+
+    # Define vowels
+    vowels = "aeiou"
+
+    # Find the first phoneme that contains a vowel, and inject the stress before the vowel
+    for i, phoneme in enumerate(phonemes):
+        for j, char in enumerate(phoneme):
+            if char in vowels:
+                # Insert stress before the vowel
+                phonemes[i] = phoneme[:j] + "ˈ" + phoneme[j:]
+                return phonemes
+
+    # If no vowels found, return unchanged
     return phonemes

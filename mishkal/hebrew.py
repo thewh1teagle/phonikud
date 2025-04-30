@@ -216,11 +216,11 @@ def letter_to_phonemes(
         cur_phonemes.append("o")
         skip_diacritics = True
 
-    nikud_phonemes = (
-        [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
-        if not skip_diacritics
-        else []
-    )
+    nikud_phonemes = []
+    if not skip_diacritics:
+        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
+    elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.diac:
+        nikud_phonemes = [lexicon.STRESS]
     cur_phonemes.extend(nikud_phonemes)
     # Ensure the stress is at the beginning of the syllable
     cur_phonemes = sort_stress(cur_phonemes)
