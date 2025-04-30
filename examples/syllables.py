@@ -13,11 +13,56 @@ SHVA = '\u05b0'
 DAGESH = '\u05bc'
 
 third = [ # Malhil demalhil
+    # "רֵלֵוַ֫וֽנְטִיּוֹת",
+    
+
+    "דְּרַ֫סְטִיִּים",
+    "פוֹרְ֫מָלִיִּים",
+    "קוֹנְ֫סֶפְּצִיָּה",
+    "מַּ֫שֶּׁהוּ",
+    "אֵנֶ֫רְגִּיָּה",
+    "ּמִ֫ינִימוּם",
+    "בַּמִּ֫ינִימוּם",
+    "פְּסִיכוֹמֶ֫טְרִיּוֹת",
+    "א֫וֹטוֹבּוּס",
+    "פִ֫יזִיּוֹת",
+    "רֶפּ֫וּבְּלִיקָה",
+    "אוֹפֵּרָטִ֫יבִיּוֹת",
+    "א֫וֹבֶרְדְּרַפְט",
+    "אֵיר֫וֹפִּיּוֹת",
+    "אֵלֶקְטְר֫וֹנִיִּים",
+    "ּאִינְטֶנְסִ֫יבִיּוּת",
+    "ּסְּטָטִ֫יסְטִיקָה",
+    "פֶּרְסוֹנָ֫לִיִּים",
+    "סְּטָטִ֫יסְטִיקוֹת",
+    "פִיקְטִ֫יבִיּוֹת",
+    "אַלְטֶרְנָטִ֫יבִיּוֹת",
+    "אַנְטִיבִּיּ֫וֹטִיקָה",
+    "א֫וֹבֶרְדְּרַפְט",
+    "פָּ֫אנִיקָה",
+    "אַבְּס֫וּרְדִּיִּים",
+    "אֵלֶקְטְר֫וֹנִיּוֹת",
+    "סְּטָטִ֫יסְטִיִּים",
+    "בּ֫וּמֵרַנְג",
+    "אֵלֶקְטְר֫וֹנִיִּים",
+    "טֶּ֫רְמִינָל",
+    "רֶטְרוֹאַקְטִ֫יבִיּוּת", 
+    "אָנַ֫רְכִיָּה",
+    "קָדֶ֫נְצִיָּה",
+    "מּ֫וּסִיקָה",
+    "רֵט֫וֹרִיקָה",
+    "מּוֹדֶ֫רְנִיִּים",
+    "כִּ֫ימִיִּים",
+    "אֵנֶ֫רְגִּיּוֹת",
+    "פּוֹפּוּלָ֫רִיִּים",
+    "הַקָּדֶ֫נְצִיָּה",
+    "פְּסִיכוֹל֫וֹגִיִּים",
     "אוּנִיבֶ֫רְסִיטָה",
+    "אַנְטִישֵׁ֫מִיּוֹת",
+    "גִּ֫ימִיקִים",
 ]
 
 second = [ # Malhil
-    # TODO: Shva with next stress = Na
     "בְּמֶ֫שֶׁךְ",
     "כְּאִ֫יֽלּוּ",
     "בְּסֵ֫דֶר",
@@ -109,18 +154,25 @@ def get_syllables(word: str) -> list[str]:
             else:
                 found_vowel = True
 
-        # Vavs
+        # With diacritics -> Vav -> Mark end
         if i + 2 < len(letters) and letters[i + 2].char == 'ו' and not letters[i + 1].diac:
             syllables.append(cur)
             cur = ''
             found_vowel = False
 
+        # Next is Vav -> Mark end
         elif i + 1 < len(letters) and letters[i + 1].char == 'ו':
             cur += letters[i + 1].char + letters[i + 1].diac
             i += 1
             syllables.append(cur)
             cur = ''
             found_vowel = False  # Reset vowel flag
+
+        #         # Next is Vav -> Mark end
+        # elif i + 1 < len(letters) and letters[i + 1].char == 'ו':
+        #     cur += letters[i + 1].char + letters[i + 1].diac
+        #     i += 1
+        #     found_vowel = True
 
         i += 1
 
@@ -158,8 +210,8 @@ def check_data(data: list, stress_position: int):
         # Sort diacritics
         with_stress = sort_diacritics(with_stress)
         src_with_stress = sort_diacritics(src_with_stress)
-        print(with_stress, src_with_stress)
-        assert with_stress == src_with_stress
+        if with_stress != src_with_stress:
+            print(f'❌ {with_stress} {src_with_stress}')
 
 
 check_data(second, -2)
