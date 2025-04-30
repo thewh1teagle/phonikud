@@ -10,13 +10,5 @@ text = """
 [אנציקלופדיה](/ʔantsikloˈpedja/)
 """
 
-phonemes = phonemize(
-    text,
-    preserve_punctuation=True,
-    preserve_stress=True,
-    use_expander=True,
-    use_post_normalize=True,  # For TTS
-    predict_stress=False,
-    predict_shva_nah=False,
-)
+phonemes = phonemize(text)
 print(phonemes)
