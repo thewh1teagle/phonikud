@@ -133,8 +133,12 @@ def letter_to_phonemes(
                 cur_phonemes.append("w")
                 skip_diacritics = True
                 skip_offset += 1
-            elif cur.diac.replace(HATMAHA, "") == next.diac.replace(HATMAHA, ""):
-                # double vav
+            # Check double Vav exclude Hatma'a and Holam
+            # TODO: Make the code nicer
+            elif re.sub(f"{HATMAHA}|[\u05b9-\u05ba]", "", cur.diac) == re.sub(
+                f"{HATMAHA}|[\u05b9-\u05ba]", "", next.diac
+            ):
+                # double Vav
                 if DAGESH in cur.diac:
                     cur_phonemes.append("vu")
                 else:
