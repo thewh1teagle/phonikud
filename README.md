@@ -17,7 +17,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 ## Limitiation
 
 - The library depends on text with nikud
-- the following hard to predict even from text with nikud
+- the following are hard to predict even from text with nikud
   - `Milel` - 
       position of `Hat'ama` / `Stress`. 
       most of the time it's `Milra`
@@ -28,7 +28,7 @@ We cover these using predictions, and enhanced nakdan is planned.
 
 ## Install
 
-Due to ongoing development, it's recommend to install from git directly.
+Due to ongoing development, it is recommend to install from git directly.
 
 ```console
 pip install git+https://github.com/thewh1teagle/mishkal
@@ -56,10 +56,10 @@ See [examples](examples)
 
 ## Docs
 
-- It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
+- It is recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
-- It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
+- It is highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
 ### Enhance vocabulary
 
@@ -73,10 +73,10 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 - Chars from `\u05b0` to `\u05ea` (Letters and nikud)
 - `'"` (Gershaim),
-- `\u05ab` (Hatma'a)
+- `\u05ab` (Hat'ama)
 - `\u05bd` (Shva Na)
 
-`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hatma'a` and `Shva Na` clearly.
+`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Shva Na` clearly.
 
 
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
@@ -117,7 +117,7 @@ Consonants (24)
 - `tʃ` - Tsadik with Geresh (`צִ'יפְּס`)
 - `w` - Example: `וָואלָה`
 - `ʔ` - Alef/Ayin, visually looks like `?`, but it's `\u0294`
-- `ɡ` - Gimel, visually looks like `g`, but its actually `\u0261`
+- `ɡ` - Gimel, visually looks like `g`, but it's actually `\u0261`
 - `ʁ` - Resh `\u0281`
 - `ʃ` - Shin `\u0283`
 - `ʒ` - Zain with Geresh (`בֵּז׳`) `\u0292`
