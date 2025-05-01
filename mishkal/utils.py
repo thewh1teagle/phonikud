@@ -127,6 +127,10 @@ def get_syllables(phonemes: list[str]) -> list[str]:
 
 def sort_stress(phonemes: list[str]) -> list[str]:
     if "ˈ" not in phonemes:
+        # ^ Does not contains stress
+        return phonemes
+    if not any(i in phonemes for i in "aeiou"):
+        # ^ Does not contains vowel
         return phonemes
 
     # Remove stress marker

@@ -105,6 +105,7 @@ sentences = [
     "חֲתֻונָּה",
     "דִּוּ֫וּחַ",
     "שֶׁמְּֽשַׁוֶּ֫קֶת",
+    "וּמֽק֫וֹם",
 ]
 
 # TODO: wolter and add to tests
@@ -115,7 +116,7 @@ for sentence in sentences:
         preserve_punctuation=True,
         use_post_normalize=True,
         use_expander=True,
-        predict_stress=True,
+        predict_stress=False,
         predict_shva_nah=False,
         schema="modern",
     )
