@@ -91,9 +91,14 @@ def letter_to_phonemes(
     if (
         cur.char == "י"
         and next
+        # Yud without diacritics
         and not cur.diac
+        # In middle
         and prev
+        # Prev Hirik
         and prev.char + prev.diac != "אֵ"
+        # Next Vav has meaning
+        and not (next.char == "ו" and next.diac)
     ):
         skip_consonants = True
 
@@ -130,7 +135,7 @@ def letter_to_phonemes(
         if next and next.char == "ו":
             # patah and next.diac empty
             if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
-                cur_phonemes.append("w")
+                cur_phonemes.append("wa")
                 skip_diacritics = True
                 skip_offset += 1
             # Check double Vav exclude Hatma'a and Holam

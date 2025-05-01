@@ -104,8 +104,10 @@ sentences = [
     # "דִּוּ֫וּחַ",
     # "שֶׁמְּֽשַׁוֶּ֫קֶת",
     # "וּמֽק֫וֹם",
-    "ו֫וֹלְטֶר",  # double vav start
-    "הֲו֫וֹלְטֶר",  # double vav middle
+    # "ו֫וֹלְטֶר",  # double vav start
+    # "הֲו֫וֹלְטֶר",  # double vav middle
+    # "וַואטְסְאַפּ"
+    "גּ֫וּנְיוֹר"
 ]
 
 for sentence in sentences:
