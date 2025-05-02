@@ -34,7 +34,7 @@ HIRIK = "\u05b4"
 PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
 KUBUTS = "\u05bb"
 TSERE = "\u05b5"
-HATMAHA = "\u05ab"
+HATAMA = "\u05ab"
 VAV_HOLAM = "\u05ba"
 DAGESH = "\u05bc"
 SEGOL = "\u05b6"
@@ -128,7 +128,8 @@ def letter_to_phonemes(
             skip_consonants = True
 
     elif DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES:  # dagesh
-        cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
+        cur_phonemes.append(
+            lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
         skip_consonants = True
     elif cur.char == "ו":
         skip_consonants = True
@@ -138,10 +139,10 @@ def letter_to_phonemes(
                 cur_phonemes.append("wa")
                 skip_diacritics = True
                 skip_offset += 1
-            # Check double Vav exclude Hatma'a and Holam
+            # Check double Vav exclude Hat'ama and Holam
             # TODO: Make the code nicer
-            elif re.sub(f"{HATMAHA}|[\u05b9-\u05ba]", "", cur.diac) == re.sub(
-                f"{HATMAHA}|[\u05b9-\u05ba]", "", next.diac
+            elif re.sub(f"{HATAMA}|[\u05b9-\u05ba]", "", cur.diac) == re.sub(
+                f"{HATAMA}|[\u05b9-\u05ba]", "", next.diac
             ):
                 # double Vav
                 if DAGESH in cur.diac:
@@ -227,7 +228,8 @@ def letter_to_phonemes(
 
     nikud_phonemes = []
     if not skip_diacritics:
-        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
+        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(
+            nikud, "") for nikud in cur.diac]
     elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.diac:
         nikud_phonemes = [lexicon.STRESS]
     cur_phonemes.extend(nikud_phonemes)

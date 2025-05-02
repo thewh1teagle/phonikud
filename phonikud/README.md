@@ -1,16 +1,16 @@
 # Phonikud
 
-Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added phonetic symbols for Shva Na and Atma'a (Stress).
+Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added phonetic symbols for Shva Na and Hat'ama (Stress).
 
 ## Added Symbols
 
-- Stress (Atma'a): `\u05ab` also called `ole`
+- Stress (Hat'ama): `\u05ab` also called `ole`
 
 - Mobile Shva (Shva Na): `\u05bd` also called `meteg`
 
 ## Train
 
-Add text files with diacritics, including Atma'a and Shva Na, to `data/train`.
+Add text files with diacritics, including Hat'ama and Shva Na, to `data/train`.
 
 Example input: `סֵ֫לֵרִי בְּֽמַעְבַּד מָזוֹן`
 
