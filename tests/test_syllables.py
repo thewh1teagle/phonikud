@@ -19,7 +19,7 @@ def check_syllables(filename):
 
     for row in df.itertuples():
         src_word = sort_diacritics(row.word)
-        src_word = src_word.replace(DAGESH, "")
+        # src_word = src_word.replace(DAGESH, "")
         src_without_stress = src_word.replace(STRESS, "")
         dst_with_stress = add_stress(src_without_stress, int(row.stress_index))
 

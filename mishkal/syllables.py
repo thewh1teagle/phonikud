@@ -7,8 +7,7 @@ TODO: add to mishkal?
 import regex as re
 from mishkal.utils import get_letters
 
-VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)]
-VOWEL_DIACS_WITHOUT_HOLAM = [chr(d) for d in [0x05B9, 0x05BA]] + VOWEL_DIACS
+VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)] + [chr(0x05C7)]
 
 STRESS = "\u05ab"
 SHVA = "\u05b0"
@@ -25,56 +24,55 @@ def sort_diacritics(word: str):
 
 
 def has_vowel_diacs(s: str):
+    if s == "וּ":
+        return True
     return any(i in s for i in VOWEL_DIACS)
 
 
 def get_syllables(word: str) -> list[str]:
     letters = get_letters(word)
-    syllables, cur = [], []
-    found_vowel = False
+    syllables, cur = [], ""
+    vowel_state = False
 
     i = 0
     while i < len(letters):
         letter = letters[i]
-        cur.append(letter)
-        has_vowel = has_vowel_diacs(letter.diac) or (i == 0 and SHVA in letter.diac)
+        has_vowel = has_vowel_diacs(str(letter)) or (i == 0 and SHVA in letter.diac)
+        # Look ahead
+        vav1 = i + 2 < len(letters) and letters[i + 2].char == "ו"
+        vav2 = i + 3 < len(letters) and letters[i + 3].char == "ו"
 
         if has_vowel:
-            if found_vowel:
-                syllables.append("".join(c.char + c.diac for c in cur[:-1]))
-                cur = [cur[-1]]
+            if vowel_state:
+                syllables.append(cur)
+                cur = str(letter)
             else:
-                found_vowel = True
-
-        # Two-ahead vav logic
-        if (
-            i + 2 < len(letters)
-            and letters[i + 2].char == "ו"
-            and not letters[i + 1].diac
-        ):
-            syllables.append("".join(c.char + c.diac for c in cur))
-            cur, found_vowel = [], False
-
-        # Next letter is plain vav
-        elif (
-            i + 1 < len(letters)
-            and letters[i + 1].char == "ו"
-            and not any(d in letters[i + 1].diac for d in VOWEL_DIACS_WITHOUT_HOLAM)
-        ):
-            cur.append(letters[i + 1])
-            i += 1
-            syllables.append("".join(c.char + c.diac for c in cur))
-            cur, found_vowel = [], False
+                cur += str(letter)
+            vowel_state = True
+        else:
+            cur += str(letter)
 
         i += 1
 
+        # If two וs are coming: force current syllable to end, and join both וs as next syllable
+        if vav1 and vav2:
+            if cur:
+                syllables.append(cur + str(letters[i]))
+                cur = ""
+            syllables.append(str(letters[i + 1]) + str(letters[i + 2]))
+            i += 3  # skip past the double-vav
+            vowel_state = False
+
+        # If one ו is coming, end the syllable now
+        elif vav1:
+            if cur:
+                syllables.append(cur)
+                cur = ""
+            vowel_state = False
+
     if cur:
-        syllables.append("".join(x.char + x.diac for x in cur))
-
-    if not has_vowel_diacs(syllables[-1]) and not syllables[-1].endswith("ו"):
-        syllables[-2] += syllables[-1]
-        syllables.pop()
-
+        syllables.append(cur)
+    # print(syllables)
     return syllables
 
 
@@ -86,7 +84,19 @@ def add_stress_to_syllable(s: str):
 
 def add_stress(word: str, syllable_position: int):
     syllables: list[str] = get_syllables(word)
+
+    if not syllables:
+        return word  # no syllables, return original word
+
+    # Normalize negative indices
+    if syllable_position < 0:
+        syllable_position += len(syllables)
+
+    # Clamp to valid range
+    syllable_position = max(0, min(syllable_position, len(syllables) - 1))
+
     stressed_syllable = syllables[syllable_position]
     stressed_syllable = add_stress_to_syllable(stressed_syllable)
     syllables[syllable_position] = stressed_syllable
+
     return "".join(syllables)
