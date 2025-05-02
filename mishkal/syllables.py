@@ -29,64 +29,53 @@ def has_vowel_diacs(s: str):
 
 
 def get_syllables(word: str) -> list[str]:
-    syllables = []
     letters = get_letters(word)
-    i = 0
-    cur = ""
+    syllables, cur = [], []
     found_vowel = False
 
+    i = 0
     while i < len(letters):
         letter = letters[i]
+        cur.append(letter)
+        has_vowel = has_vowel_diacs(letter.diac) or (i == 0 and SHVA in letter.diac)
 
-        cur += letter.char + letter.diac
-
-        # Check if the letter has a vowel diacritic or shvain first letter (prediction)
-        if has_vowel_diacs(letter.diac) or (SHVA in letters[i].diac and i == 0):
+        if has_vowel:
             if found_vowel:
-                # Found a second vowel diacritic, break the syllable here
-                syllables.append(
-                    cur[: -len(letter.char + letter.diac)]
-                )  # Remove the last added letter
-                cur = (
-                    letter.char + letter.diac
-                )  # Start new syllable with the current letter
+                syllables.append("".join(c.char + c.diac for c in cur[:-1]))
+                cur = [cur[-1]]
             else:
                 found_vowel = True
 
-        # With diacritics -> Vav -> Mark end
+        # Two-ahead vav logic
         if (
             i + 2 < len(letters)
             and letters[i + 2].char == "ו"
             and not letters[i + 1].diac
         ):
-            syllables.append(cur)
-            cur = ""
-            found_vowel = False
+            syllables.append("".join(c.char + c.diac for c in cur))
+            cur, found_vowel = [], False
 
-        # Next is Vav -> Mark end
-
+        # Next letter is plain vav
         elif (
             i + 1 < len(letters)
             and letters[i + 1].char == "ו"
             and not any(d in letters[i + 1].diac for d in VOWEL_DIACS_WITHOUT_HOLAM)
         ):
-            cur += letters[i + 1].char + letters[i + 1].diac
+            cur.append(letters[i + 1])
             i += 1
-            syllables.append(cur)
-            cur = ""
-            found_vowel = False  # Reset vowel flag
+            syllables.append("".join(c.char + c.diac for c in cur))
+            cur, found_vowel = [], False
 
         i += 1
 
-    if cur:  # Append the last syllable
-        syllables.append(cur)
+    if cur:
+        syllables.append("".join(x.char + x.diac for x in cur))
 
     if not has_vowel_diacs(syllables[-1]) and not syllables[-1].endswith("ו"):
         syllables[-2] += syllables[-1]
-        syllables = syllables[:-1]
+        syllables.pop()
 
     return syllables
-    # return ['סֵ', 'דֶר']
 
 
 def add_stress_to_syllable(s: str):

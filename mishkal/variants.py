@@ -11,3 +11,6 @@ class Letter:
 
     def __eq__(self, value: "Letter"):
         return value.diac == self.diac and value.char == self.char
+
+    def __str__(self):
+        return self.char + self.diac
