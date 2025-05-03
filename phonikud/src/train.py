@@ -3,9 +3,10 @@ Train from scratch:
     uv run src/train.py --device cpu --epochs 1
 Train from checkpoint:
     uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
-        --model_checkpoint ckpt/step_6_loss_0.4250 --pre_training_step 6
+        --model_checkpoint ./ckpt/step_21441_loss_0.0081/
 """
 
+import re
 from argparse import ArgumentParser
 from transformers import AutoTokenizer
 from glob import glob
@@ -119,6 +120,12 @@ class Collator:
 
 def main():
     args = get_opts()
+
+    if args.pre_training_step == 0 and "ckpt/" in args.model_checkpoint:
+        # Try to get pre_training_step from the name
+        match = re.search(r"step_(\d+)", args.model_checkpoint)
+        if match:
+            args.pre_training_step = int(match.group(1))
 
     print("Loading model...")
 
