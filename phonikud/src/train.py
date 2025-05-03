@@ -127,7 +127,7 @@ def main():
         if match:
             args.pre_training_step = int(match.group(1))
 
-    print("Loading model...")
+    print(f"Loading model from {args.model_checkpoint}...")
 
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     model.to(args.device)
