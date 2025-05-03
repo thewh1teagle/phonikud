@@ -32,7 +32,7 @@ def main():
             if not line:
                 continue
             lines = model.predict([line], tokenizer, mark_matres_lectionis="")
-            for line in lines.split():
+            for line in lines:
                 print(line)
 
 
