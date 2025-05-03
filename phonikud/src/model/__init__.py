@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
-from model.base_model import (
+from .base_model import (
     BertForDiacritization,
     remove_nikkud,
     is_hebrew_letter,
