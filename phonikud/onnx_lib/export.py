@@ -1,6 +1,6 @@
 """
 uv sync --extra onnx
-uv run python -m phonikud_onnx.export --model ckpt/last.ckpt
+uv run python -m onnx_lib.export --model ckpt/last.ckpt
 """
 
 import torch

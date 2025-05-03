@@ -1,6 +1,6 @@
 """
 uv sync --extra onnx
-uv run python -m phonikud_onnx.run
+uv run python -m onnx_lib.run
 """
 
 from .base import OnnxDiacritizationModel

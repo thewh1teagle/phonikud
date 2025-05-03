@@ -55,10 +55,7 @@ git clone https://huggingface.co/user/phonikud
 
 ## Export onnx
 
-```console
-uv sync --extra onnx
-uv run onnx/export.py --model ckpt/last.ckpt
-```
+See [onnx_lib](onnx_lib)
 
 ## Gotchas
 
