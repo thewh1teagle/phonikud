@@ -31,7 +31,9 @@ def main():
             line = line.strip()
             if not line:
                 continue
-            print(model.predict([line], tokenizer, mark_matres_lectionis=""))
+            lines = model.predict([line], tokenizer, mark_matres_lectionis="")
+            for line in lines.split():
+                print(line)
 
 
 if __name__ == "__main__":
