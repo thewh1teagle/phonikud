@@ -74,7 +74,7 @@ NIKUD_PHONEMES = {
     "\u05bb": "u",  # Qubuts
     "\u05b3": "o",  # Hataf qamats
     "\u05b8": "a",  # Kamataz
-    HATAMA_DIACRITIC: "ˈ",  # Stress (Atmaha)
+    HATAMA_DIACRITIC: "ˈ",  # Stress (Hat'ama)
     SHVA_NA_DIACRITIC: "e",  # Shva na
 }
 
