@@ -12,7 +12,8 @@ from pathlib import Path
 import sys
 
 module_path = Path(__file__).parent / "../src"
-sys.path.append(module_path)
+module_path = module_path.resolve()
+sys.path.insert(0, module_path)
 from model import PhoNikudModel
 
 

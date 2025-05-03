@@ -3,7 +3,7 @@ uv sync --extra onnx
 uv run onnx/run.py
 """
 
-from .model import OnnxDiacritizationModel
+from .base import OnnxDiacritizationModel
 import re
 
 
