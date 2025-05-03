@@ -46,6 +46,10 @@ uv run src/test.py
 uv pip install huggingface_hub
 huggingface-cli login --token "token" # https://huggingface.co/settings/tokens 
 uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last.ckpt ./ckpt/last.ckpt
+
+# Fetch the model by
+git lfs install
+git clone https://huggingface.co/user/phonikud
 ```
 
 TODO:
