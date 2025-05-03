@@ -70,7 +70,9 @@ class TrainData(Dataset):
     def __init__(self, args):
         self.max_context_length = 2048
 
-        files = glob(os.path.join(args.data_dir, "train", "*.txt"))
+        files = glob(
+            os.path.join(args.data_dir, "train", "**", "*.txt"), recursive=True
+        )
         print(len(files), "text files found; using them for training data...")
         self.lines = self._load_lines(files)
 
