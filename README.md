@@ -152,6 +152,10 @@ The workflow is as follows:
 
 This ensures accurate and clear speech synthesis.
 
+## Datasets for TTS
+
+- [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (mit)
+- [Saspeech](https://www.openslr.org/134) (Non commercial)
 
 ### Notes
 
