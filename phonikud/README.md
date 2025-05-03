@@ -40,6 +40,14 @@ Run the model for testing:
 uv run src/test.py
 ```
 
+## Upload to HuggingFace
+
+```console
+uv pip install huggingface_hub
+huggingface-cli login --token "token" # https://huggingface.co/settings/tokens 
+uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last.ckpt ./ckpt/last.ckpt
+```
+
 TODO:
 * Organize train/val/test splits -- track val performance over time, log to tensorboard/wandb, ...
 * Clean up flags in scripts
