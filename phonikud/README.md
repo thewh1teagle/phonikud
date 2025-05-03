@@ -14,11 +14,19 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 uv sync
 ```
 
-## Train
+#  Prepare data
 
 Add text files with diacritics, including Hat'ama and Shva Na, to `data/train`.
 
 Example input: `סֵ֫לֵרִי בְּֽמַעְבַּד מָזוֹן`
+
+```console
+wget https://github.com/thewh1teagle/mishkal/releases/download/model-files-v1.0/phonikud_data_v1.7z
+7z x phonikud_data_v1.7z
+mv phonikud_data_v1/* data/train/
+```
+
+## Train
 
 ```console
 uv run src/train.py
