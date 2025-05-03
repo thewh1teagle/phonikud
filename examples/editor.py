@@ -15,7 +15,9 @@ theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
 
 
 def on_submit(text: str, predict_stress, schema: str) -> str:
-    return phonemize(text, predict_stress=predict_stress, schema=schema)
+    return phonemize(
+        text, predict_stress=predict_stress, schema=schema, predict_shva_nah=False
+    )
 
 
 with gr.Blocks(theme=theme) as demo:
