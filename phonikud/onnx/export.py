@@ -1,5 +1,5 @@
 """
-uv pip install .[onnx]
+uv sync --extra onnx
 uv run onnx/export.py --model ckpt/last.ckpt
 """
 
