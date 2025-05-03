@@ -11,7 +11,6 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 ## Setup
 
 ```console
-pip install uv
 uv sync
 ```
 
@@ -45,12 +44,20 @@ uv run src/test.py
 
 ```console
 uv pip install huggingface_hub
-huggingface-cli login --token "token" # https://huggingface.co/settings/tokens 
+git config --global credential.helper store # Allow clone private repo from HF
+huggingface-cli login --token "token" --add-to-git-credential # https://huggingface.co/settings/tokens 
 uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last.ckpt ./ckpt/last.ckpt
 
 # Fetch the model by
 git lfs install
 git clone https://huggingface.co/user/phonikud
+```
+
+## Export onnx
+
+```console
+uv sync --extra onnx
+uv run onnx/export.py --model ckpt/last.ckpt
 ```
 
 TODO:
