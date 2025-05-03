@@ -60,6 +60,21 @@ uv sync --extra onnx
 uv run onnx/export.py --model ckpt/last.ckpt
 ```
 
+## Gotchas
+
+1. Hebrew not printed in terminal when using SSH
+
+Run
+
+```console
+sudo locale-gen en_US.UTF-8
+sudo update-locale LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+```
+
+Then, close the terminal and reconnect.
+
 TODO:
 * Organize train/val/test splits -- track val performance over time, log to tensorboard/wandb, ...
 * Clean up flags in scripts
