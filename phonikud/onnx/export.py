@@ -8,9 +8,12 @@ import onnx
 from pathlib import Path
 from onnxruntime.quantization import quantize_dynamic, QuantType
 from argparse import ArgumentParser
-import sys
 from pathlib import Path
-from src.model import PhoNikudModel
+import sys
+
+module_path = Path(__file__).parent / "../src"
+sys.path.append(module_path)
+from model import PhoNikudModel
 
 
 def parse_args():
