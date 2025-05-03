@@ -2,7 +2,8 @@
 Train from scratch:
     uv run src/train.py --device cpu --epochs 1
 Train from checkpoint:
-    uv run src/train.py --device cpu --epochs 1 --model_checkpoint ckpt/step_6_loss_0.4250 --pre_training_step 6
+    uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
+        --model_checkpoint ckpt/step_6_loss_0.4250 --pre_training_step 6
 """
 
 from argparse import ArgumentParser
@@ -33,6 +34,12 @@ def get_opts():
     parser.add_argument("--pre_training_step", default=0, type=int)
     parser.add_argument("--learning_rate", default=1e-3, type=float)
     parser.add_argument("--num_workers", default=0, type=int)
+    parser.add_argument(
+        "--checkpoint_interval",
+        default=1000,
+        type=int,
+        help="Number of steps between checkpoints",
+    )
 
     return parser.parse_args()
 
@@ -162,6 +169,12 @@ def main():
 
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
+
+            if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
+                save_dir = f"{args.output_dir}/last.ckpt"
+                print(f"Saving checkpoint at step {step} to:", save_dir)
+                model.save_pretrained(save_dir)
+                tokenizer.save_pretrained(save_dir)
 
     epoch_loss = loss.item()
     save_dir = f"{args.output_dir}/step_{step + 1}_loss_{epoch_loss:.4f}"

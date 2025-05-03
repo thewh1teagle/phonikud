@@ -1,5 +1,5 @@
 """
-uv run src/test.py --device cpu --file data/test.txt
+uv run src/test.py --device cuda --file data/test.txt
 """
 
 from model import PhoNikudModel
