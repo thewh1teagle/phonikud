@@ -1,5 +1,5 @@
 """
-uv run src/test.py --device cuda --file data/test.txt
+uv run src/test.py --device cuda
 """
 
 from model import PhoNikudModel
@@ -10,11 +10,11 @@ from transformers import AutoTokenizer
 def get_opts():
     parser = ArgumentParser()
     parser.add_argument(
-        "-m", "--model_checkpoint", default="./output/phonikud_ckpt", type=str
+        "-m", "--model_checkpoint", default="./ckpt/last.ckpt", type=str
     )
     parser.add_argument("-d", "--device", default="cuda", type=str)
     # test file path
-    parser.add_argument("-t", "--file", default="./data/test.txt", type=str)
+    parser.add_argument("-f", "--file", default="./data/test.txt", type=str)
     return parser
 
 
