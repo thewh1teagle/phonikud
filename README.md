@@ -8,6 +8,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 - Lightweight nikud model
 - (WIP) Enhanced nikud model with phonetic features (stress, shva na, ...) see [phonikud](phonikud)
+- Run models with onnx with realtime support
 - Convert text with nikud to modern spoken phonemes
 - Expand dates into text with nikud
 - Expand numbers into text with nikud
