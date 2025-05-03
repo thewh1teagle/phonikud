@@ -10,7 +10,7 @@ from onnxruntime.quantization import quantize_dynamic, QuantType
 from argparse import ArgumentParser
 import sys
 from pathlib import Path
-from src.model import PhoNikudModel
+from phonikud.src.model import PhoNikudModel
 
 
 def parse_args():
