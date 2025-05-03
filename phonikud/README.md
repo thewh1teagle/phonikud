@@ -11,6 +11,7 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 ## Setup
 
 ```console
+pip install uv
 uv sync
 ```
 
