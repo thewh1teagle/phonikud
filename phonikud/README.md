@@ -8,6 +8,12 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 
 - Mobile Shva (Shva Na): `\u05bd` also called `meteg`
 
+## Setup
+
+```console
+uv sync
+```
+
 ## Train
 
 Add text files with diacritics, including Hat'ama and Shva Na, to `data/train`.
