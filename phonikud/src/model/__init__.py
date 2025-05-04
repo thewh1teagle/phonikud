@@ -32,8 +32,6 @@ class PhoNikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config
-
-        # Modified to output 3 values instead of 2 (stress, mobile shva, and prefix)
         self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
         # ^ predicts stress, mobile shva, and prefix; outputs are logits
 
@@ -57,7 +55,7 @@ class PhoNikudModel(BertForDiacritization):
         # ^ nikud_logits: MenakedLogitsOutput
 
         additional_logits = self.mlp(hidden_states)
-        # ^ shape: (batch_size, n_chars_padded, 3) [3 for stress, mobile shva, and prefix]
+        # ^ shape: (batch_size, n_chars_padded, 3) [stress, mobile shva, and prefix]
 
         return MenakedLogitsOutput(
             nikud_logits.nikud_logits, nikud_logits.shin_logits, additional_logits
@@ -97,9 +95,7 @@ class PhoNikudModel(BertForDiacritization):
 
         stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
         mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
-        prefix_predictions = (
-            (additional_logits[..., 2] > 0).int().tolist()
-        )  # New prediction for prefix
+        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -148,7 +144,6 @@ class PhoNikudModel(BertForDiacritization):
                     PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
                 )  # Add prefix if predicted
 
-                # Include prefix in the output construction
                 output.append(char + shin + nikud + prefix + stress + mobile_shva)
             output.append(sentence[prev_index:])
             ret.append("".join(output))

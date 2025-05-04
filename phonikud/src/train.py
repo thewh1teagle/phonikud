@@ -83,7 +83,6 @@ class AnnotatedLine:
                 mobile_shva[-1] = 1
             elif char == PREFIX_CHAR:
                 prefix[-1] = 1
-                # If PREFIX_CHAR appears at the beginning of text, we'd ignore it
             else:
                 self.text += char
                 stress += [0]
