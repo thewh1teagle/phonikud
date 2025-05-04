@@ -140,9 +140,7 @@ class PhoNikudModel(BertForDiacritization):
                     if mobile_shva_predictions[sent_idx][idx] == 1
                     else ""
                 )
-                prefix = (
-                    PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
-                )  # Add prefix if predicted
+                prefix = PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
 
                 output.append(char + shin + nikud + prefix + stress + mobile_shva)
             output.append(sentence[prev_index:])
