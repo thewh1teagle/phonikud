@@ -11,6 +11,7 @@ resolution-markers = [
 members = [
     "mishkal-hebrew",
     "phonikud",
+    "phonikud-onnx",
 ]
 
 [[package]]
@@ -587,6 +588,23 @@ requires-dist = [
     { name = "transformers", specifier = ">=4.51.3" },
 ]
 provides-extras = ["onnx"]
+
+[[package]]
+name = "phonikud-onnx"
+version = "0.1.0"
+source = { editable = "phonikud_onnx" }
+dependencies = [
+    { name = "onnx" },
+    { name = "onnxruntime" },
+    { name = "tokenizers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "onnx", specifier = ">=1.17.0" },
+    { name = "onnxruntime", specifier = ">=1.21.1" },
+    { name = "tokenizers", specifier = ">=0.21.1" },
+]
 
 [[package]]
 name = "pluggy"

@@ -1,13 +1,8 @@
-"""
-uv sync --extra onnx
-uv run python -m onnx_lib.run
-"""
-
-from .base import OnnxDiacritizationModel
+from .model import OnnxDiacritizationModel
 import re
 
 
-class Dicta:
+class Phonikud:
     def __init__(self, model_path: str):
         self.model = OnnxDiacritizationModel(model_path)
 
@@ -44,14 +39,3 @@ class Dicta:
         Based on given mark_matres_lectionis remove the nikud nikud male character along with the mark character
         """
         return re.sub(r".\|", "", text)  # Remove {char}{matres_lectionis}
-
-
-def main():
-    dicta = Dicta("./dicta-1.0.int8.onnx")
-    sentence = "בשנת 1948 השלים אפרים קישון את לימודיו בפיסול מתכת ובתולדות האמנות והחל לפרסם מאמרים הומוריסטיים"
-    with_diacritics = dicta.add_diacritics(sentence)
-    print(with_diacritics)
-
-
-if __name__ == "__main__":
-    main()
