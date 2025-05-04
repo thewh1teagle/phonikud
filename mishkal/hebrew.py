@@ -117,6 +117,18 @@ def letter_to_phonemes(
         skip_diacritics = True
         skip_consonants = True
 
+    if not next and cur.char == "ה" and PATAH in cur.diac:
+        # Final He gnuva
+        cur_phonemes.append("ah")
+        skip_diacritics = True
+        skip_consonants = True
+
+    if not next and cur.char == "ע" and PATAH in cur.diac:
+        # Final Ayin gnuva
+        cur_phonemes.append("a")
+        skip_diacritics = True
+        skip_consonants = True
+
     if cur and "'" in cur.diac and cur.char in lexicon.GERESH_PHONEMES:
         if cur.char == "ת":
             cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
