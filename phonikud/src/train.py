@@ -4,6 +4,9 @@ Train from scratch:
 Train from checkpoint:
     uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
         --model_checkpoint ./ckpt/step_21441_loss_0.0081/
+Train with specific components:
+    uv run src/train.py --device cuda --epochs 3 --components stress,prefix \
+        --model_checkpoint dicta-il/dictabert-large-char-menaked
 """
 
 import re
@@ -41,12 +44,33 @@ def get_opts():
         type=int,
         help="Number of steps between checkpoints",
     )
+    parser.add_argument(
+        "--components",
+        default="stress,shva,prefix",
+        type=str,
+        help="Comma-separated list of components to train on (stress,shva,prefix)",
+    )
 
     return parser.parse_args()
 
 
 class AnnotatedLine:
-    def __init__(self, raw_text):
+    def __init__(self, raw_text, components):
+        self.components = components
+        component_indices = {"stress": 0, "shva": 1, "prefix": 2}
+
+        # Get indices for active components
+        self.active_indices = [component_indices[comp] for comp in components]
+
+        # filter based on components
+        raw_text = "".join(
+            char
+            for char in raw_text
+            if not (char == STRESS_CHAR and "stress" not in components)
+            and not (char == MOBILE_SHVA_CHAR and "shva" not in components)
+            and not (char == PREFIX_CHAR and "prefix" not in components)
+        )
+
         self.text = ""  # will contain plain hebrew text
         stress = []  # will contain 0/1 for each character (1=stressed)
         mobile_shva = []  # will contain 0/1 for each character (1=mobile shva)
@@ -67,17 +91,24 @@ class AnnotatedLine:
                 prefix += [0]  # No prefix for this character by default
 
         assert len(self.text) == len(stress) == len(mobile_shva) == len(prefix)
-        stress_tensor = torch.tensor(stress)
-        mobile_shva_tensor = torch.tensor(mobile_shva)
-        prefix_tensor = torch.tensor(prefix)
 
-        self.target = torch.stack((stress_tensor, mobile_shva_tensor, prefix_tensor))
-        # ^ shape: (3, n_chars)
+        # Create tensor for all features
+        all_features = [
+            torch.tensor(stress),
+            torch.tensor(mobile_shva),
+            torch.tensor(prefix),
+        ]
+
+        # Only use the features for active components
+        self.target = torch.stack([all_features[i] for i in self.active_indices])
+        # ^ shape: (n_active_components, n_chars)
 
 
 class TrainData(Dataset):
     def __init__(self, args):
         self.max_context_length = 2048
+        self.components = args.components.split(",")
+        print(f"🔤 Training with components: {', '.join(self.components)}")
 
         files = glob(
             os.path.join(args.data_dir, "train", "**", "*.txt"), recursive=True
@@ -109,19 +140,20 @@ class TrainData(Dataset):
 
     def __getitem__(self, idx):
         text = self.lines[idx]
-        return AnnotatedLine(text)
+        return AnnotatedLine(text, components=self.components)
 
 
 class Collator:
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer, components):
         self.tokenizer = tokenizer
+        self.components = components
 
     def collate_fn(self, items):
         inputs = self.tokenizer(
             [x.text for x in items], padding=True, truncation=True, return_tensors="pt"
         )
         targets = pad_sequence([x.target.T for x in items], batch_first=True)
-        # ^ shape: (batch_size, n_chars_padded, 3)
+        # ^ shape: (batch_size, n_chars_padded, n_active_components)
 
         return inputs, targets
 
@@ -135,7 +167,8 @@ def main():
         if match:
             args.pre_training_step = int(match.group(1))
 
-    print(f"Loading model from {args.model_checkpoint}...")
+    components = args.components.split(",")
+    print(f"🧠 Loading model from {args.model_checkpoint}...")
 
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     model.to(args.device)
@@ -143,7 +176,7 @@ def main():
     # ^ we will only train extra layers
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
-    collator = Collator(tokenizer)
+    collator = Collator(tokenizer, components=components)
 
     print("Loading data...")
     data = TrainData(args)
@@ -169,13 +202,20 @@ def main():
 
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)
-            # ^ shape: (batch_size, n_chars_padded, 3) - now has 3 features
+            # ^ shape: (batch_size, n_chars_padded, n_active_components)
             output = model(inputs)
             # ^ shape: (batch_size, n_chars_padded, 3)
             additional_logits = output.additional_logits
 
+            # Get only the logits for the components we're training on
+            component_indices = {"stress": 0, "shva": 1, "prefix": 2}
+            active_indices = [component_indices[comp] for comp in components]
+            active_logits = additional_logits[
+                :, 1:-1, active_indices
+            ]  # skip BOS and EOS symbols
+
             loss = criterion(
-                additional_logits[:, 1:-1],  # skip BOS and EOS symbols
+                active_logits,
                 targets.float(),
             )
 
