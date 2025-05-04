@@ -7,6 +7,7 @@ from mishkal.utils import (
     post_normalize,
     has_vowel,
     has_constant,
+    post_clean,
     remove_nikud,
     get_syllables,
     sort_stress,
@@ -14,8 +15,6 @@ from mishkal.utils import (
 from typing import Callable, Literal
 import regex as re
 from mishkal.hebrew import phonemize_hebrew
-
-ADDITIONAL_PHONEMES = set()  # When using fallback
 
 
 class Phonemizer:
@@ -50,7 +49,7 @@ class Phonemizer:
             phonemes = fallback(word).strip()
             # TODO: check that it has only IPA?!
             for c in phonemes:
-                ADDITIONAL_PHONEMES.add(c)
+                lexicon.ADDITIONAL_PHONEMES.add(c)
             return phonemes
 
         if fallback is not None:
@@ -109,7 +108,7 @@ class Phonemizer:
             """
             matched_phonemes = match.group(2)
             for c in matched_phonemes:
-                ADDITIONAL_PHONEMES.add(c)
+                lexicon.ADDITIONAL_PHONEMES.add(c)
             return matched_phonemes  # The phoneme is in the second group
 
         text = re.sub(r"\[(.+?)\]\(\/(.+?)\/\)", hyper_phonemes_callback, text)
@@ -119,12 +118,6 @@ class Phonemizer:
         if not preserve_stress:
             text = "".join(i for i in text if i not in [lexicon.STRESS])
         if use_post_normalize:
-            text = "".join(
-                i
-                for i in text
-                if i in lexicon.SET_PHONEMES
-                or i in ADDITIONAL_PHONEMES
-                or i == " "
-                or i in lexicon.PUNCTUATION
-            )
+            # We don't keep hypens in the output, but we should replace it with space
+            text = post_clean(text)
         return text

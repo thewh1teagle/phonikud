@@ -11,7 +11,7 @@ STRESS = "\u02c8"  # visually looks like '
 MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\'"]+'
 HE_NIKUD_PATTERN = r"[\u05B0-\u05C7]"
-PUNCTUATION = r".,!? "
+PUNCTUATION = set(r".,!? ")
 
 SPECIAL_PHONEMES = ["w"]
 MODERN_SCHEMA = {
@@ -81,6 +81,8 @@ NIKUD_PHONEMES = {
 DEDUPLICATE = {
     "\u05f3": "'",  # Hebrew geresh to regular geresh
 }
+
+ADDITIONAL_PHONEMES = set()  # When using fallback
 
 SET_PHONEMES = set(
     sorted(

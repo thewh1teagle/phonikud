@@ -2,7 +2,6 @@ from mishkal import lexicon
 import unicodedata
 import regex as re
 from mishkal.variants import Letter
-import mishkal
 
 
 def sort_diacritics(match):
@@ -56,6 +55,21 @@ def post_normalize(phonemes: str):
         new_phonemes.append(word)
     phonemes = " ".join(new_phonemes)
     return phonemes
+
+
+def post_clean(phonemes: str):
+    clean = []
+    for i in phonemes:
+        if i == "-":
+            clean.append(" ")
+        elif (
+            i in lexicon.SET_PHONEMES
+            or i in lexicon.ADDITIONAL_PHONEMES
+            or i == " "
+            or i in lexicon.PUNCTUATION
+        ):
+            clean.append(i)
+    return "".join(clean)
 
 
 letters_pattern = re.compile(r"(\p{L})([\p{M}']*)")

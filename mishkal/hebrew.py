@@ -128,8 +128,7 @@ def letter_to_phonemes(
             skip_consonants = True
 
     elif DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES:  # dagesh
-        cur_phonemes.append(
-            lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
+        cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
         skip_consonants = True
     elif cur.char == "ו":
         skip_consonants = True
@@ -228,8 +227,7 @@ def letter_to_phonemes(
 
     nikud_phonemes = []
     if not skip_diacritics:
-        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(
-            nikud, "") for nikud in cur.diac]
+        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
     elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.diac:
         nikud_phonemes = [lexicon.STRESS]
     cur_phonemes.extend(nikud_phonemes)
