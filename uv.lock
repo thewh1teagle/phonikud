@@ -574,20 +574,11 @@ dependencies = [
     { name = "transformers" },
 ]
 
-[package.optional-dependencies]
-onnx = [
-    { name = "onnx" },
-    { name = "onnxruntime" },
-]
-
 [package.metadata]
 requires-dist = [
-    { name = "onnx", marker = "extra == 'onnx'", specifier = ">=1.17.0" },
-    { name = "onnxruntime", marker = "extra == 'onnx'", specifier = ">=1.21.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "transformers", specifier = ">=4.51.3" },
 ]
-provides-extras = ["onnx"]
 
 [[package]]
 name = "phonikud-onnx"
@@ -599,12 +590,20 @@ dependencies = [
     { name = "tokenizers" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "onnx" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "onnx", specifier = ">=1.17.0" },
     { name = "onnxruntime", specifier = ">=1.21.1" },
     { name = "tokenizers", specifier = ">=0.21.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "onnx", specifier = ">=1.17.0" }]
 
 [[package]]
 name = "pluggy"

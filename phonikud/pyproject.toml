@@ -5,7 +5,3 @@ description = "Hebrew nakdan with Shva Na and Atama'a"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["torch>=2.6.0", "transformers>=4.51.3"]
-
-
-[project.optional-dependencies]
-onnx = ["onnxruntime>=1.21.0", "onnx>=1.17.0"]
