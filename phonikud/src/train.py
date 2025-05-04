@@ -16,7 +16,7 @@ from tqdm import tqdm, trange
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from model import PhoNikudModel, STRESS_CHAR, MOBILE_SHVA_CHAR
+from model import PhoNikudModel, STRESS_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR
 
 
 def get_opts():
@@ -49,22 +49,30 @@ class AnnotatedLine:
     def __init__(self, raw_text):
         self.text = ""  # will contain plain hebrew text
         stress = []  # will contain 0/1 for each character (1=stressed)
-        mobile_shva = []  # will contain 0/1 for each caracter (1=mobile shva)
-        for char in raw_text:
+        mobile_shva = []  # will contain 0/1 for each character (1=mobile shva)
+        prefix = []  # will contain 0/1 for each character (1=prefix)
+
+        for i, char in enumerate(raw_text):
             if char == STRESS_CHAR:
                 stress[-1] = 1
             elif char == MOBILE_SHVA_CHAR:
                 mobile_shva[-1] = 1
+            elif char == PREFIX_CHAR:
+                prefix[-1] = 1
+                # If PREFIX_CHAR appears at the beginning of text, we'd ignore it
             else:
                 self.text += char
                 stress += [0]
                 mobile_shva += [0]
-        assert len(self.text) == len(stress) == len(mobile_shva)
+                prefix += [0]  # No prefix for this character by default
+
+        assert len(self.text) == len(stress) == len(mobile_shva) == len(prefix)
         stress_tensor = torch.tensor(stress)
         mobile_shva_tensor = torch.tensor(mobile_shva)
+        prefix_tensor = torch.tensor(prefix)
 
-        self.target = torch.stack((stress_tensor, mobile_shva_tensor))
-        # ^ shape: (n_chars, 2)
+        self.target = torch.stack((stress_tensor, mobile_shva_tensor, prefix_tensor))
+        # ^ shape: (3, n_chars)
 
 
 class TrainData(Dataset):
@@ -113,7 +121,7 @@ class Collator:
             [x.text for x in items], padding=True, truncation=True, return_tensors="pt"
         )
         targets = pad_sequence([x.target.T for x in items], batch_first=True)
-        # ^ shape: (batch_size, n_chars_padded, 2)
+        # ^ shape: (batch_size, n_chars_padded, 3)
 
         return inputs, targets
 
@@ -161,17 +169,15 @@ def main():
 
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)
-            # ^ shape: (batch_size, n_chars_padded, 2)
+            # ^ shape: (batch_size, n_chars_padded, 3) - now has 3 features
             output = model(inputs)
-            # ^ shape: (batch_size, n_chars_padded, 2)
+            # ^ shape: (batch_size, n_chars_padded, 3)
             additional_logits = output.additional_logits
 
             loss = criterion(
                 additional_logits[:, 1:-1],  # skip BOS and EOS symbols
                 targets.float(),
             )
-            # ^ NOTE: loss is only on new labels (stress, mobile shva)
-            # rest of network is frozen so nikkud predictions should not change
 
             loss.backward()
             optimizer.step()
