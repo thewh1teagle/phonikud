@@ -7,6 +7,7 @@ import json
 import re
 from mishkal.utils import remove_nikud
 from mishkal.utils import normalize
+from mishkal import lexicon
 import unicodedata
 
 files = Path(__file__).parent.joinpath("../data").glob("*.json")
@@ -65,7 +66,7 @@ class Dictionary:
             return raw_lookup
         # search by only ', space, regular nikud, alphabet
         raw_source = re.sub(
-            r"[\u05B0-\u05EB ']+", self.replace_hebrew_only_callback, raw_source
+            lexicon.HE_PATTERN, self.replace_hebrew_only_callback, raw_source
         )
         return raw_source
 

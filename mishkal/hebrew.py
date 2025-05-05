@@ -68,21 +68,6 @@ def letter_to_phonemes(
     skip_offset = 0
     # revised rules
 
-    # יַאלְלָה
-    if cur.char == "ל" and cur.diac == SHVA and next and next.char == "ל":
-        skip_diacritics = True
-        skip_consonants = True
-
-    if (
-        cur.char == "ו"
-        and not prev
-        and next
-        and not next.diac
-        and cur.char + cur.diac == "וַא"
-    ):
-        skip_offset += 1
-        cur_phonemes.append("wa")
-
     if cur.char == "א" and not cur.diac and prev:
         if next and next.char != "ו":
             skip_consonants = True
@@ -103,8 +88,20 @@ def letter_to_phonemes(
         skip_consonants = True
 
     if cur.char == "ש" and SIN in cur.diac:
-        cur_phonemes.append("s")
-        skip_consonants = True
+        if (
+            next
+            and next.char == "ש"
+            and not next.diac
+            and re.search("[\u05b7\u05b8]", cur.diac)
+        ):
+            # ^ יששכר
+            cur_phonemes.append("sa")
+            skip_consonants = True
+            skip_diacritics = True
+            skip_offset += 1
+        else:
+            cur_phonemes.append("s")
+            skip_consonants = True
 
     # shin without nikud after sin = sin
     if cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
@@ -144,22 +141,30 @@ def letter_to_phonemes(
         skip_consonants = True
     elif cur.char == "ו":
         skip_consonants = True
-        if next and next.char == "ו":
-            # patah and next.diac empty
-            if re.search(PATAH_LIKE_PATTERN, cur.diac) and not next.diac:
-                cur_phonemes.append("wa")
+
+        if prev and "\u05b0" in prev.diac and re.findall("[\u05b9-\u05ba]", cur.diac):
+            # ^ לִגְוֹעַ
+            cur_phonemes.append("vo")
+            skip_diacritics = True
+            skip_consonants = True
+
+        elif next and next.char == "ו":
+            # One of them has holam
+            holams = re.findall("[\u05b9-\u05ba]", cur.diac + next.diac)
+            if len(holams) == 2:
+                cur_phonemes.append("wo")
                 skip_diacritics = True
                 skip_offset += 1
-            # Check double Vav exclude Hat'ama and Holam
-            # TODO: Make the code nicer
+            if len(holams) == 1:
+                cur_phonemes.append("vo")
+                skip_diacritics = True
+                skip_offset += 1
+            # patah and next.diac empty
             elif re.sub(f"{HATAMA}|[\u05b9-\u05ba]", "", cur.diac) == re.sub(
                 f"{HATAMA}|[\u05b9-\u05ba]", "", next.diac
             ):
                 # double Vav
-                if DAGESH in cur.diac:
-                    cur_phonemes.append("vu")
-                else:
-                    cur_phonemes.append("wo")
+                cur_phonemes.append("vu")
                 skip_diacritics = True
                 skip_offset += 1
             else:
@@ -173,11 +178,14 @@ def letter_to_phonemes(
             if re.search(PATAH_LIKE_PATTERN, cur.diac):
                 cur_phonemes.append("va")
 
+            # Tsere
+            elif TSERE in cur.diac:
+                cur_phonemes.append("ve")
+            elif SEGOL in cur.diac:
+                cur_phonemes.append("ve")
             # Holam haser
             elif HOLAM in cur.diac:
                 cur_phonemes.append("o")
-            elif SEGOL in cur.diac:
-                cur_phonemes.append("ve")
             # Shuruk / Kubutz
             elif KUBUTS in cur.diac or DAGESH in cur.diac:
                 cur_phonemes.append("u")
@@ -187,9 +195,6 @@ def letter_to_phonemes(
             # Hirik
             elif HIRIK in cur.diac:
                 cur_phonemes.append("vi")
-            # Tsere
-            elif TSERE in cur.diac:
-                cur_phonemes.append("ve")
             elif next and not cur.diac:
                 # It is fine for now since we use Dicta
                 skip_consonants = True
