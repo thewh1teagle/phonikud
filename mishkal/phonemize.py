@@ -5,12 +5,11 @@ from mishkal.utils import (
     get_letters,
     normalize,
     post_normalize,
-    has_vowel,
-    has_constant,
     post_clean,
     remove_nikud,
     get_syllables,
     sort_stress,
+    mark_shva_na,
 )
 from typing import Callable, Literal
 import regex as re
@@ -27,14 +26,14 @@ class Phonemizer:
     def phonemize(
         self,
         text: str,
-        preserve_punctuation=True,
-        preserve_stress=True,
-        use_expander=False,
-        use_post_normalize=False,  # For TTS
-        predict_stress=False,
-        predict_shva_nah=False,
-        stress_placement: Literal["syllable", "vowel"] = "vowel",
-        schema: Literal["plain", "modern"] = "modern",
+        preserve_punctuation: bool,
+        preserve_stress: bool,
+        use_expander: bool,
+        use_post_normalize: bool,  # For TTS
+        predict_stress: bool,
+        predict_shva_nah: bool,
+        stress_placement: Literal["syllable", "vowel"],
+        schema: Literal["plain", "modern"],
         fallback: Callable[[str], str] = None,
     ) -> str | list[str]:
         # normalize
@@ -67,9 +66,10 @@ class Phonemizer:
                 return word
 
             letters: list[Letter] = get_letters(word)
+            if predict_shva_nah:
+                mark_shva_na(word)
             phonemes: list[str] = phonemize_hebrew(
                 letters,
-                predict_shva_na=predict_shva_nah,
                 stress_placement=stress_placement,
             )
             syllables = get_syllables(phonemes)

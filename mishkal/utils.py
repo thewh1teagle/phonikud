@@ -73,7 +73,7 @@ def post_clean(phonemes: str):
     return "".join(clean)
 
 
-letters_pattern = re.compile(r"(\p{L})([\p{M}']*)")
+letters_pattern = re.compile(r"(\p{L})([\p{M}'|]*)")
 
 
 def get_letters(word: str):
@@ -175,3 +175,34 @@ def sort_stress(
 
     # If no vowels found, return unchanged
     return phonemes
+
+
+def mark_shva_na(word: str):
+    """
+    Shva Na is context-independent and can be predicted with just the word or a dictionary.
+    See https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
+    Note: we predict only if Shva in the first letter in the word
+    Note: we assume that the word comes with | to mark 'Txiliyot'
+    Note: Shva Na rules mid-word are unreliable, so we don’t code them.
+
+    Meteg (\u05bd) will be added in the letter with Shva Na
+
+    What we don't predict:
+    (1) some shva in beginning in future form (we don't know)
+    (2) shva in the middle of the word
+    """
+    letters = get_letters(word)
+    if not letters:
+        return word
+    if letters[0].char in "למנרי":
+        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
+    elif len(letters) > 1 and letters[1].char in "אעה":
+        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
+    elif letters[0].char in "וכלב" and lexicon.PREFIX_DIACRITIC in letters[0].diac:
+        # ^ The nakdan should add |
+        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
+    # Ensure that prefix character will be last
+    for letter in letters:
+        if "|" in letter.diac:
+            letter.diac = letter.diac.replace("|", "") + "|"
+    return "".join(str(i) for i in letters)

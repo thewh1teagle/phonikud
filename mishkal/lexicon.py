@@ -6,6 +6,7 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 
 SHVA_NA_DIACRITIC = "\u05bd"
 HATAMA_DIACRITIC = "\u05ab"
+PREFIX_DIACRITIC = "|"
 STRESS = "\u02c8"  # visually looks like '
 
 MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction

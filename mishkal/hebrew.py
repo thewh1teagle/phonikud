@@ -43,7 +43,6 @@ SEGOL = "\u05b6"
 
 def phonemize_hebrew(
     letters: list[Letter],
-    predict_shva_na: bool,
     stress_placement: Literal["syllable", "vowel"],
 ) -> list[str]:
     phonemes = []
@@ -54,7 +53,7 @@ def phonemize_hebrew(
         prev = letters[i - 1] if i > 0 else None
         next = letters[i + 1] if i < len(letters) - 1 else None
         next_phonemes, skip_offset = letter_to_phonemes(
-            cur, prev, next, predict_shva_na, stress_placement=stress_placement
+            cur, prev, next, stress_placement=stress_placement
         )
         # TODO: split into syllables
         # next_letters = next_phonemes, letters[i:i+skip_offset+1]
@@ -68,7 +67,6 @@ def letter_to_phonemes(
     cur: Letter,
     prev: Letter | None,
     next: Letter | None,
-    predict_shva_na: bool,
     stress_placement: Literal["syllable", "vowel"],
 ) -> tuple[str, int]:
     cur_phonemes = []
@@ -215,37 +213,6 @@ def letter_to_phonemes(
 
     if not skip_consonants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
-
-    if (
-        lexicon.SHVA_NA_DIACRITIC not in cur.diac
-        and predict_shva_na
-        and SHVA in cur.diac
-        and not skip_diacritics
-    ):
-        # Shva Na prediction
-        if not prev:
-            # Lamanrey
-            if cur.char in "למנרי":
-                cur_phonemes.append("e")
-                skip_diacritics = True
-            # Itsurim groniyim in next one
-            elif next and next.char in "אהע":
-                cur_phonemes.append("e")
-                skip_diacritics = True
-            # Otiot ashimush
-            elif cur.char in "ול":
-                # TODO: Kaf and Bet?
-                cur_phonemes.append("e")
-                skip_diacritics = True
-            # TODO: txiliyot "yatan"?
-
-        else:
-            if next and next.char == cur.char:
-                cur_phonemes.append("e")
-                skip_diacritics = True
-            elif prev and SHVA in prev.diac and cur_phonemes[-1] != "e":
-                cur_phonemes.append("e")
-                skip_diacritics = True
 
     if KAMATZ in cur.diac and next and HATAF_KAMATZ in next.diac:
         cur_phonemes.append("o")
