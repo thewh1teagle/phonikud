@@ -18,6 +18,7 @@ Reference:
 - https://hebrew-academy.org.il/2022/03/03/מלעיל-ומלרע-על-ההטעמה-בעברית
 """
 
+from typing import Literal
 from mishkal.variants import Letter
 from mishkal import lexicon
 import re
@@ -40,7 +41,11 @@ DAGESH = "\u05bc"
 SEGOL = "\u05b6"
 
 
-def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
+def phonemize_hebrew(
+    letters: list[Letter],
+    predict_shva_na: bool,
+    stress_placement: Literal["syllable", "vowel"],
+) -> list[str]:
     phonemes = []
     i = 0
 
@@ -49,7 +54,7 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
         prev = letters[i - 1] if i > 0 else None
         next = letters[i + 1] if i < len(letters) - 1 else None
         next_phonemes, skip_offset = letter_to_phonemes(
-            cur, prev, next, predict_shva_na
+            cur, prev, next, predict_shva_na, stress_placement=stress_placement
         )
         # TODO: split into syllables
         # next_letters = next_phonemes, letters[i:i+skip_offset+1]
@@ -60,7 +65,11 @@ def phonemize_hebrew(letters: list[Letter], predict_shva_na: bool) -> list[str]:
 
 
 def letter_to_phonemes(
-    cur: Letter, prev: Letter | None, next: Letter | None, predict_shva_na: bool
+    cur: Letter,
+    prev: Letter | None,
+    next: Letter | None,
+    predict_shva_na: bool,
+    stress_placement: Literal["syllable", "vowel"],
 ) -> tuple[str, int]:
     cur_phonemes = []
     skip_diacritics = False
@@ -249,7 +258,7 @@ def letter_to_phonemes(
         nikud_phonemes = [lexicon.STRESS]
     cur_phonemes.extend(nikud_phonemes)
     # Ensure the stress is at the beginning of the syllable
-    cur_phonemes = sort_stress(cur_phonemes)
+    cur_phonemes = sort_stress(cur_phonemes, stress_placement)
     cur_phonemes = [
         p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)
     ]

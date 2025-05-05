@@ -17,9 +17,13 @@ def phonemize(
     use_post_normalize=True,  # For TTS
     predict_stress=True,
     predict_shva_nah=True,
+    stress_placement: Literal["syllable", "vowel"] = "vowel",
     schema: Literal["plain", "modern"] = "modern",
     fallback: Callable[[str], str] = None,
 ) -> str:
+    """
+    Set stress_at_start=True to place stress at syllable start.
+    """
     phonemes = phonemizer.phonemize(
         text,
         preserve_punctuation=preserve_punctuation,
@@ -30,5 +34,6 @@ def phonemize(
         predict_stress=predict_stress,
         schema=schema,
         predict_shva_nah=predict_shva_nah,
+        stress_placement=stress_placement,
     )
     return phonemes

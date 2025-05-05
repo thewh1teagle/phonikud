@@ -1,3 +1,4 @@
+from typing import Literal
 from mishkal import lexicon
 import unicodedata
 import regex as re
@@ -139,7 +140,14 @@ def get_syllables(phonemes: list[str]) -> list[str]:
     return syllables
 
 
-def sort_stress(phonemes: list[str]) -> list[str]:
+def sort_stress(
+    phonemes: list[str], placement: Literal["syllable", "vowel"] = "vowel"
+) -> list[str]:
+    """
+    TTS systems expect that the stress will be BEFORE vowel
+    Linguistics expect in the START of the syllable
+    at_start=True for place it in the beginning
+    """
     if "ˈ" not in "".join(phonemes):
         # ^ Does not contains stress
         return phonemes
@@ -149,6 +157,9 @@ def sort_stress(phonemes: list[str]) -> list[str]:
 
     # Remove stress marker
     phonemes = [p for p in phonemes if p != "ˈ"]
+
+    if placement == "syllable":
+        return ["ˈ"] + phonemes
 
     # Define vowels
     vowels = "aeiou"

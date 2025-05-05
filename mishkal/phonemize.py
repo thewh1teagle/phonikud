@@ -33,6 +33,7 @@ class Phonemizer:
         use_post_normalize=False,  # For TTS
         predict_stress=False,
         predict_shva_nah=False,
+        stress_placement: Literal["syllable", "vowel"] = "vowel",
         schema: Literal["plain", "modern"] = "modern",
         fallback: Callable[[str], str] = None,
     ) -> str | list[str]:
@@ -67,7 +68,9 @@ class Phonemizer:
 
             letters: list[Letter] = get_letters(word)
             phonemes: list[str] = phonemize_hebrew(
-                letters, predict_shva_na=predict_shva_nah
+                letters,
+                predict_shva_na=predict_shva_nah,
+                stress_placement=stress_placement,
             )
             syllables = get_syllables(phonemes)
 
