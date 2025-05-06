@@ -131,12 +131,12 @@ def get_phoneme_syllables(phonemes: list[str]) -> list[str]:
 
     # Iterate over syllables and move any syllable ending with lexicon.STRESS to the next one
     for i in range(len(syllables) - 1):  # Ensure we're not at the last syllable
-        if syllables[i].endswith(lexicon.STRESS):
+        if syllables[i].endswith(lexicon.STRESS_PHONEME):
             syllables[i + 1] = (
-                lexicon.STRESS + syllables[i + 1]
+                lexicon.STRESS_PHONEME + syllables[i + 1]
             )  # Move stress to next syllable
             syllables[i] = syllables[i][
-                : -len(lexicon.STRESS)
+                : -len(lexicon.STRESS_PHONEME)
             ]  # Remove stress from current syllable
 
     return syllables
@@ -197,16 +197,16 @@ def mark_shva_na(word: str):
     if not letters:
         return word
     if letters[0].char in "למנרי":
-        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
+        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
     elif len(letters) > 1 and letters[1].char in "אעה":
-        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
-    elif letters[0].char in "וכלב" and lexicon.PREFIX_DIACRITIC in letters[0].diac:
+        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
+    elif letters[0].char in "וכלב" and lexicon.PREFIX_DIACRITIC in letters[0].all_diac:
         # ^ The nakdan should add |
-        letters[0].diac += lexicon.SHVA_NA_DIACRITIC
+        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
     # Ensure that prefix character will be last
     for letter in letters:
-        if "|" in letter.diac:
-            letter.diac = letter.diac.replace("|", "") + "|"
+        if "|" in letter.all_diac:
+            letter.all_diac = letter.all_diac.replace("|", "") + "|"
     return "".join(str(i) for i in letters)
 
 
@@ -225,7 +225,7 @@ def add_milra_hatama(word: str):
     # Get letters
     letters = get_letters(milra)
     # Add Hatama
-    letters[0].diac += lexicon.HATAMA_DIACRITIC
+    letters[0].all_diac += lexicon.HATAMA_DIACRITIC
 
     # Replace latest syllable
     syllables[stress_index] = "".join(str(i) for i in letters)

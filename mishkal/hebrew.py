@@ -79,7 +79,6 @@ def letter_to_phonemes(
         if next and next.char != "ו":
             skip_consonants = True
 
-    # TODO ?
     if (
         cur.char == "י"
         and next
@@ -90,7 +89,7 @@ def letter_to_phonemes(
         # Prev Hirik
         and prev.char + prev.diac != "אֵ"
         # Next Vav has meaning
-        and not (next.char == "ו" and next.diac)
+        and not (next.char == "ו" and next.diac and "\u05b0" not in next.diac)
     ):
         skip_consonants = True
 
@@ -167,9 +166,7 @@ def letter_to_phonemes(
                 skip_diacritics = True
                 skip_offset += 1
             # patah and next.diac empty
-            elif re.sub(f"{HATAMA}|[\u05b9-\u05ba]", "", cur.diac) == re.sub(
-                f"{HATAMA}|[\u05b9-\u05ba]", "", next.diac
-            ):
+            elif cur.diac == next.diac:
                 # double Vav
                 cur_phonemes.append("vu")
                 skip_diacritics = True
@@ -220,9 +217,11 @@ def letter_to_phonemes(
 
     nikud_phonemes = []
     if not skip_diacritics:
-        nikud_phonemes = [lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.diac]
-    elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.diac:
-        nikud_phonemes = [lexicon.STRESS]
+        nikud_phonemes = [
+            lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.all_diac
+        ]
+    elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.all_diac:
+        nikud_phonemes = [lexicon.STRESS_PHONEME]
     cur_phonemes.extend(nikud_phonemes)
     # Ensure the stress is at the beginning of the syllable
     cur_phonemes = sort_stress(cur_phonemes, stress_placement)

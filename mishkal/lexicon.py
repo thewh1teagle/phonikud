@@ -7,7 +7,8 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 SHVA_NA_DIACRITIC = "\u05bd"
 HATAMA_DIACRITIC = "\u05ab"
 PREFIX_DIACRITIC = "|"
-STRESS = "\u02c8"  # visually looks like '
+
+STRESS_PHONEME = "ˈ"  # \u02c8 visually looks like single quote
 
 MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\u05af|\'"]+'
@@ -76,7 +77,7 @@ NIKUD_PHONEMES = {
     "\u05bb": "u",  # Qubuts
     "\u05b3": "o",  # Hataf qamats
     "\u05b8": "a",  # Kamataz
-    HATAMA_DIACRITIC: "ˈ",  # Stress (Hat'ama)
+    HATAMA_DIACRITIC: STRESS_PHONEME,  # Stress (Hat'ama)
     SHVA_NA_DIACRITIC: "e",  # Shva na
 }
 
@@ -86,6 +87,8 @@ DEDUPLICATE = {
 }
 
 ADDITIONAL_PHONEMES = set()  # When using fallback
+
+SET_PHONETIC_DIACRITICS = set([HATAMA_DIACRITIC, PREFIX_DIACRITIC, SHVA_NA_DIACRITIC])
 
 SET_PHONEMES = set(
     sorted(

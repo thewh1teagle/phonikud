@@ -7,7 +7,7 @@ TODO: add to mishkal?
 import regex as re
 import mishkal
 
-VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)] + [chr(0x05C7)]
+VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)] + [chr(0x05C7)] + [chr(0x5BD)]
 
 STRESS = "\u05ab"
 SHVA = "\u05b0"
@@ -37,7 +37,7 @@ def get_syllables(word: str) -> list[str]:
     i = 0
     while i < len(letters):
         letter = letters[i]
-        has_vowel = has_vowel_diacs(str(letter)) or (i == 0 and SHVA in letter.diac)
+        has_vowel = has_vowel_diacs(str(letter)) or (i == 0 and SHVA in letter.all_diac)
         # Look ahead
         vav1 = i + 2 < len(letters) and letters[i + 2].char == "ו"
         vav2 = i + 3 < len(letters) and letters[i + 3].char == "ו"
@@ -64,7 +64,7 @@ def get_syllables(word: str) -> list[str]:
             vowel_state = False
 
         # If one ו is coming, end the syllable now
-        elif vav1:
+        elif vav1 and letters[i + 1].diac:
             if cur:
                 syllables.append(cur)
                 cur = ""
@@ -78,8 +78,8 @@ def get_syllables(word: str) -> list[str]:
 
 def add_stress_to_syllable(s: str):
     letters = mishkal.utils.get_letters(s)
-    letters[0].diac = STRESS + letters[0].diac
-    return "".join(letter.char + letter.diac for letter in letters)
+    letters[0].all_diac = STRESS + letters[0].all_diac
+    return "".join(letter.char + letter.all_diac for letter in letters)
 
 
 def add_stress(word: str, syllable_position: int):

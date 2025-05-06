@@ -2,7 +2,7 @@ from mishkal import lexicon, phonemize
 from pathlib import Path
 import pandas as pd
 import warnings
-from mishkal.lexicon import STRESS
+from mishkal.lexicon import STRESS_PHONEME
 
 TEST_STRESS = True
 
@@ -10,7 +10,7 @@ TEST_STRESS = True
 def test_phonemize_hebrew_sanity():
     with_stress = phonemize("שָׁ֫לוֹם", preserve_stress=True, schema="plain")
     without_stress = phonemize("שָׁ֫לוֹם", preserve_stress=False, schema="plain")
-    assert without_stress == "ʃalom" and lexicon.STRESS in with_stress
+    assert without_stress == "ʃalom" and lexicon.STRESS_PHONEME in with_stress
 
 
 def run_phoneme_check(
@@ -26,8 +26,8 @@ def run_phoneme_check(
     )
     ref = expected_ipa
     if not using_stress:
-        ref = ref.replace(STRESS, "")
-        output = output.replace(STRESS, "")
+        ref = ref.replace(STRESS_PHONEME, "")
+        output = output.replace(STRESS_PHONEME, "")
 
     msg = f"Incorrect phonemization: {ref} != {output} ({nikkud}; {'with' if using_stress else 'no'} stress) FILE {filename} LINE {line_number}"
 
@@ -55,7 +55,7 @@ def check_file(filename: str, warn_only=False):
             run_phoneme_check(
                 nikkud,
                 row.ipa,
-                using_stress=TEST_STRESS and STRESS in row.ipa,
+                using_stress=TEST_STRESS and STRESS_PHONEME in row.ipa,
                 filename=filename,
                 line_number=line_number,
                 warn_only=warn_only,

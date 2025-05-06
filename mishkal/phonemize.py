@@ -121,7 +121,7 @@ class Phonemizer:
         if not preserve_punctuation:
             text = "".join(i for i in text if i not in lexicon.PUNCTUATION or i == " ")
         if not preserve_stress:
-            text = "".join(i for i in text if i not in [lexicon.STRESS])
+            text = "".join(i for i in text if i not in [lexicon.STRESS_PHONEME])
         if use_post_normalize:
             # We don't keep hypens in the output, but we should replace it with space
             text = post_clean(text)
