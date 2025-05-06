@@ -258,7 +258,7 @@ def main():
 
     model.eval()
 
-    test_fn = os.path.join(args.data_dir, "test.txt")
+    test_fn = os.path.join(args.data_dir, "eval/dummy.txt")
     with open(test_fn, "r", encoding="utf-8") as f:
         test_text = f.read().strip()
 

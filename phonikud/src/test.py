@@ -14,7 +14,7 @@ def get_opts():
     )
     parser.add_argument("-d", "--device", default="cuda", type=str)
     # test file path
-    parser.add_argument("-f", "--file", default="./data/test.txt", type=str)
+    parser.add_argument("-f", "--file", default="./data/eval/dummy.txt", type=str)
     return parser
 
 
