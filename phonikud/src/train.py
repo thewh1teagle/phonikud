@@ -21,6 +21,8 @@ from torch import nn
 from torch.nn.utils.rnn import pad_sequence
 from model import PhoNikudModel, STRESS_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR
 
+COMPONENT_INDICES = {"stress": 0, "shva": 1, "prefix": 2}
+
 
 def get_opts():
     parser = ArgumentParser()
@@ -57,10 +59,9 @@ def get_opts():
 class AnnotatedLine:
     def __init__(self, raw_text, components):
         self.components = components
-        component_indices = {"stress": 0, "shva": 1, "prefix": 2}
 
         # Get indices for active components
-        self.active_indices = [component_indices[comp] for comp in components]
+        self.active_indices = [COMPONENT_INDICES[comp] for comp in components]
 
         # filter based on components
         raw_text = "".join(
@@ -175,14 +176,13 @@ def main():
     # ^ we will only train extra layers
 
     # Freeze components
-    component_indices = {"stress": 0, "shva": 1, "prefix": 2}
     frozen_components = [
-        name for name in component_indices.keys() if name not in components
+        name for name in COMPONENT_INDICES.keys() if name not in components
     ]
     if frozen_components:
         print(f"❄️🧊 Frozen components: {', '.join(frozen_components)}")
         model.freeze_mlp_components(
-            [component_indices[name] for name in frozen_components]
+            [COMPONENT_INDICES[name] for name in frozen_components]
         )
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
@@ -218,8 +218,7 @@ def main():
             additional_logits = output.additional_logits
 
             # Get only the logits for the components we're training on
-            component_indices = {"stress": 0, "shva": 1, "prefix": 2}
-            active_indices = [component_indices[comp] for comp in components]
+            active_indices = [COMPONENT_INDICES[comp] for comp in components]
             active_logits = additional_logits[
                 :, 1:-1, active_indices
             ]  # skip BOS and EOS symbols
