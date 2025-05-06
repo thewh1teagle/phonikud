@@ -2,7 +2,7 @@
 uv run src/test.py --device cuda
 """
 
-from model import PhoNikudModel
+from model import PhoNikudModel, NIKUD_HASER
 from argparse import ArgumentParser
 from transformers import AutoTokenizer
 
@@ -31,7 +31,7 @@ def main():
             line = line.strip()
             if not line:
                 continue
-            lines = model.predict([line], tokenizer, mark_matres_lectionis="")
+            lines = model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)
             for line in lines:
                 print(line)
 

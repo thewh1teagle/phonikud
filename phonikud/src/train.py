@@ -31,6 +31,23 @@ from model import (
 COMPONENT_INDICES = {"stress": 0, "shva": 1, "prefix": 2}
 
 
+def get_diac_to_remove(components: str):
+    """
+    We train on specific phonetic diacritics
+    """
+    phonetic_diac_to_remove = NIKUD_HASER
+    if "shva" not in components:
+        # Won't train on shva
+        phonetic_diac_to_remove += MOBILE_SHVA_CHAR
+    if "stress" not in components:
+        # Won't train on stress
+        phonetic_diac_to_remove += STRESS_CHAR
+    if "prefix" not in components:
+        # Won't train on prefix
+        phonetic_diac_to_remove += PREFIX_CHAR
+    return phonetic_diac_to_remove
+
+
 def get_opts():
     parser = ArgumentParser()
     parser.add_argument(
@@ -114,7 +131,7 @@ class AnnotatedLine:
 class TrainData(Dataset):
     def __init__(self, args):
         self.max_context_length = 2048
-        self.components = args.components.split(",")
+        self.components: list[str] = args.components.split(",")
         print(f"🔤 Training with components: {', '.join(self.components)}")
 
         files = glob(
@@ -128,17 +145,6 @@ class TrainData(Dataset):
             print("   ", line)
 
     def _load_lines(self, files: list[str]):
-        phonetic_diac_to_remove = NIKUD_HASER
-        if "shva" not in self.components:
-            # Won't train on shva
-            phonetic_diac_to_remove += MOBILE_SHVA_CHAR
-        if "stress" not in self.components:
-            # Won't train on stress
-            phonetic_diac_to_remove += STRESS_CHAR
-        if "prefix" not in self.components:
-            # Won't train on prefix
-            phonetic_diac_to_remove += PREFIX_CHAR
-
         lines = []
         for file in files:
             with open(file, "r", encoding="utf-8") as fp:
@@ -155,7 +161,10 @@ class TrainData(Dataset):
                     # Add the remaining part of the line if it fits within the max_context_length
                     if line.strip():
                         lines.append(line.strip())
-        lines = [remove_nikud(i, additional=phonetic_diac_to_remove) for i in lines]
+        lines = [
+            remove_nikud(i, additional=get_diac_to_remove(components=self.components))
+            for i in lines
+        ]
         return lines
 
     def __len__(self):
@@ -190,7 +199,7 @@ def main():
         if match:
             args.pre_training_step = int(match.group(1))
 
-    components = args.components.split(",")
+    components: list[str] = args.components.split(",")
     print(f"🟢 Active components: {components}")
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
@@ -259,18 +268,18 @@ def main():
 
             if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
                 save_dir = f"{args.output_dir}/last.ckpt"
-                print(f"Saving checkpoint at step {step} to:", save_dir)
+                print(f"💾 Saving checkpoint at step {step} to: {save_dir}")
                 model.save_pretrained(save_dir)
                 tokenizer.save_pretrained(save_dir)
 
     epoch_loss = loss.item()
     save_dir = f"{args.output_dir}/step_{step + 1}_loss_{epoch_loss:.4f}"
-    print("Saving trained model to:", save_dir)
+    print(f"🚀 Saving trained model to: {save_dir}")
     model.save_pretrained(save_dir)
     tokenizer.save_pretrained(save_dir)
     print("Model saved.")
 
-    print("Testing...")
+    print("⚙️ Testing...")
 
     model.eval()
 
@@ -281,10 +290,12 @@ def main():
     for line in test_text.splitlines():
         if not line.strip():
             continue
-        line = remove_nikud(line)
-        print(line)
-        print(model.predict([line], tokenizer, mark_matres_lectionis="\u05af"))
-        print()
+        line = remove_nikud(line, additional=get_diac_to_remove(components))
+        print(f"{line}")
+        prediction = "".join(
+            model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)
+        )
+        print(f"{prediction}\n")
 
 
 if __name__ == "__main__":
