@@ -21,12 +21,14 @@ NORMALIZE_PATTERNS = {
 }
 
 
-def remove_nikud(text: str):
-    return re.sub(lexicon.HE_NIKUD_PATTERN, "", text)
-
-
-def has_nikud(text: str):
-    return re.search(lexicon.HE_NIKUD_PATTERN, text) is not None
+def remove_nikud(text: str, include_phonetetic_diacritics=True):
+    return re.sub(
+        lexicon.HE_NIKUD_PATTERN_WITH_PHONETIC_DIACRITICS
+        if include_phonetetic_diacritics
+        else lexicon.HE_NIKUD_PATTERN,
+        "",
+        text,
+    )
 
 
 def normalize(text: str) -> str:

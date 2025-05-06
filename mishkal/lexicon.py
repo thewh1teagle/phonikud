@@ -4,18 +4,21 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 
+# Non standard diacritics
 SHVA_NA_DIACRITIC = "\u05bd"
 HATAMA_DIACRITIC = "\u05ab"
 PREFIX_DIACRITIC = "|"
 
-STRESS_PHONEME = "ˈ"  # \u02c8 visually looks like single quote
-
-MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction
 HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\u05af|\'"]+'
 # ^ Standard nikud and letters, ole, meteg, masora, vertical bar, en geresh
-HE_NIKUD_PATTERN = rf"[\u05B0-\u05C7|{HATAMA_DIACRITIC}{SHVA_NA_DIACRITIC}]"
+HE_NIKUD_PATTERN = r"[\u05b0-\u05c7']"
+# ^ Letters, diacritics, en geresh
+HE_NIKUD_PATTERN_WITH_PHONETIC_DIACRITICS = (
+    rf"[\u05B0-\u05C7|'{HATAMA_DIACRITIC}{SHVA_NA_DIACRITIC}]"
+)
 PUNCTUATION = set(r".,!? ")
 
+STRESS_PHONEME = "ˈ"  # \u02c8 visually looks like single quote
 SPECIAL_PHONEMES = ["w"]
 MODERN_SCHEMA = {
     "x": "χ",  # Het
@@ -23,6 +26,7 @@ MODERN_SCHEMA = {
     "g": "ɡ",  # Gimel
 }
 
+# Geresh
 GERESH_PHONEMES = {"ג": "dʒ", "ז": "ʒ", "ת": "ta", "צ": "tʃ", "ץ": "tʃ"}
 
 # Consonants
@@ -86,10 +90,10 @@ DEDUPLICATE = {
     "־": "-",  # Hebrew Makaf to hypen
 }
 
-ADDITIONAL_PHONEMES = set()  # When using fallback
-
+# Sets
 SET_PHONETIC_DIACRITICS = set([HATAMA_DIACRITIC, PREFIX_DIACRITIC, SHVA_NA_DIACRITIC])
 
+ADDITIONAL_PHONEMES = set()  # When using fallback
 SET_PHONEMES = set(
     sorted(
         {

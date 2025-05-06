@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from transformers.utils import ModelOutput
 from .base_model import (
     BertForDiacritization,
-    remove_nikkud,
     is_hebrew_letter,
     is_matres_letter,
 )
+from mishkal.utils import remove_nikud
 
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
@@ -74,7 +74,10 @@ class PhoNikudModel(BertForDiacritization):
     ):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
 
-        sentences = [remove_nikkud(sentence) for sentence in sentences]
+        sentences = [
+            remove_nikud(sentence, include_phonetetic_diacritics=True)
+            for sentence in sentences
+        ]
         # assert the lengths aren't out of range
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
