@@ -2,7 +2,9 @@ from typing import Literal
 from mishkal import lexicon
 import unicodedata
 import regex as re
+import mishkal.syllables
 from mishkal.variants import Letter
+import mishkal
 
 
 def sort_diacritics(match):
@@ -94,7 +96,7 @@ def has_constant(s: iter):
     return any(i not in "aeiou" for i in s)
 
 
-def get_syllables(phonemes: list[str]) -> list[str]:
+def get_phoneme_syllables(phonemes: list[str]) -> list[str]:
     syllables = []
     cur_syllable = ""
 
@@ -206,3 +208,20 @@ def mark_shva_na(word: str):
         if "|" in letter.diac:
             letter.diac = letter.diac.replace("|", "") + "|"
     return "".join(str(i) for i in letters)
+
+
+def add_milra_hatama(word: str):
+    syllables = mishkal.syllables.get_syllables(word)
+    if len(syllables) < 2:
+        return word
+
+    # Get latest syllable
+    milra = syllables[-2]
+    # Get letters
+    letters = get_letters(milra)
+    # Add Hatama
+    letters[0].diac += lexicon.HATAMA_DIACRITIC
+
+    # Replace latest syllable
+    syllables[-2] = "".join(str(i) for i in letters)
+    return "".join(syllables)

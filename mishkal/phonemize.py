@@ -6,9 +6,7 @@ from mishkal.utils import (
     normalize,
     post_normalize,
     post_clean,
-    remove_nikud,
-    get_syllables,
-    sort_stress,
+    add_milra_hatama,
     mark_shva_na,
 )
 from typing import Callable, Literal
@@ -65,32 +63,36 @@ class Phonemizer:
                 # Skip if it starts with [ as it's used for hyper phonemes
                 return word
 
-            letters: list[Letter] = get_letters(word)
             if predict_shva_nah:
                 mark_shva_na(word)
+            if lexicon.HATAMA_DIACRITIC not in word and predict_stress:
+                word = add_milra_hatama(word)
+            letters: list[Letter] = get_letters(word)
+
             phonemes: list[str] = phonemize_hebrew(
                 letters,
                 stress_placement=stress_placement,
             )
-            syllables = get_syllables(phonemes)
+            phonemes = "".join(phonemes)
+            # syllables = get_syllables(phonemes)
 
-            phonemes_text = "".join(phonemes)
-            if predict_stress and lexicon.STRESS not in phonemes_text and syllables:
-                if len(syllables) == 1:
-                    syllables[-1] = lexicon.STRESS + syllables[-1]
-                    syllables[-1] = "".join(sort_stress(syllables[-1]))
-                elif any(
-                    remove_nikud(word).endswith(i) for i in lexicon.MILHEL_PATTERNS
-                ) or phonemes_text.endswith("ax"):
-                    # insert lexicon.STRESS in the first character of syllables[-2]
-                    syllables[-2] = lexicon.STRESS + syllables[-2]
-                    syllables[-2] = "".join(sort_stress(syllables[-2]))
-                else:
-                    # insert in syllables[-1]
-                    syllables[-1] = lexicon.STRESS + syllables[-1]
-                    syllables[-1] = "".join(sort_stress(syllables[-1]))
+            # phonemes_text = "".join(phonemes)
+            # # if predict_stress and lexicon.STRESS not in phonemes_text and syllables:
+            # #     if len(syllables) == 1:
+            # #         syllables[-1] = lexicon.STRESS + syllables[-1]
+            # #         syllables[-1] = "".join(sort_stress(syllables[-1]))
+            # #     elif any(
+            # #         remove_nikud(word).endswith(i) for i in lexicon.MILHEL_PATTERNS
+            # #     ) or phonemes_text.endswith("ax"):
+            # #         # insert lexicon.STRESS in the first character of syllables[-2]
+            # #         syllables[-2] = lexicon.STRESS + syllables[-2]
+            # #         syllables[-2] = "".join(sort_stress(syllables[-2]))
+            # #     else:
+            # #         # insert in syllables[-1]
+            # #         syllables[-1] = lexicon.STRESS + syllables[-1]
+            # #         syllables[-1] = "".join(sort_stress(syllables[-1]))
 
-            phonemes = "".join(syllables)
+            # phonemes = "".join(syllables)
             if use_post_normalize:
                 phonemes = post_normalize(phonemes)
 

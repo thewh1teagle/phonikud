@@ -5,7 +5,7 @@ TODO: add to mishkal?
 """
 
 import regex as re
-from mishkal.utils import get_letters
+import mishkal
 
 VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)] + [chr(0x05C7)]
 
@@ -30,7 +30,7 @@ def has_vowel_diacs(s: str):
 
 
 def get_syllables(word: str) -> list[str]:
-    letters = get_letters(word)
+    letters = mishkal.utils.get_letters(word)
     syllables, cur = [], ""
     vowel_state = False
 
@@ -77,7 +77,7 @@ def get_syllables(word: str) -> list[str]:
 
 
 def add_stress_to_syllable(s: str):
-    letters = get_letters(s)
+    letters = mishkal.utils.get_letters(s)
     letters[0].diac = STRESS + letters[0].diac
     return "".join(letter.char + letter.diac for letter in letters)
 
