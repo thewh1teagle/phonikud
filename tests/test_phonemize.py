@@ -4,7 +4,7 @@ import pandas as pd
 import warnings
 from mishkal.lexicon import STRESS
 
-TEST_STRESS = False
+TEST_STRESS = True
 
 
 def test_phonemize_hebrew_sanity():

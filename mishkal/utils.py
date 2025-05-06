@@ -212,13 +212,13 @@ def mark_shva_na(word: str):
 
 def add_milra_hatama(word: str):
     syllables = mishkal.syllables.get_syllables(word)
-    stress_index = -2
+    stress_index = -1
 
     if not syllables:
         return word
 
     if len(syllables) == 1:
-        stress_index = -1
+        stress_index = 0
 
     # Get latest syllable
     milra = syllables[stress_index]
