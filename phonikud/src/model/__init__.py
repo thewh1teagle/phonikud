@@ -11,19 +11,20 @@ from .base_model import (
 
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+PREFIX_CHAR = "|"  # vertical bar
 
 
 @dataclass
 class MenakedLogitsOutput(ModelOutput):
     nikud_logits: torch.FloatTensor = None
     shin_logits: torch.FloatTensor = None
-    additional_logits: torch.FloatTensor = None  # Added this field
+    additional_logits: torch.FloatTensor = None  # For stress, mobile shva, and prefix
 
     def detach(self):
         return MenakedLogitsOutput(
             self.nikud_logits.detach(),
             self.shin_logits.detach(),
-            self.additional_logits.detach(),  # Detach additional_logits too
+            self.additional_logits.detach(),
         )
 
 
@@ -31,9 +32,15 @@ class PhoNikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config
+        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
+        # ^ predicts stress, mobile shva, and prefix; outputs are logits
 
-        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 2))
-        # ^ predicts stress and mobile shva; outputs are logits
+    def freeze_mlp_components(self, indices: list[int]):
+        final_layer = self.mlp[2]
+        with torch.no_grad():
+            for idx in indices:
+                final_layer.weight[idx].requires_grad = False
+                final_layer.bias[idx].requires_grad = False
 
     def freeze_base_model(self):
         self.bert.eval()
@@ -55,11 +62,11 @@ class PhoNikudModel(BertForDiacritization):
         # ^ nikud_logits: MenakedLogitsOutput
 
         additional_logits = self.mlp(hidden_states)
-        # ^ shape: (batch_size, n_chars_padded, 2) [2 for stress & mobile shva]
+        # ^ shape: (batch_size, n_chars_padded, 3) [stress, mobile shva, and prefix]
 
         return MenakedLogitsOutput(
             nikud_logits.nikud_logits, nikud_logits.shin_logits, additional_logits
-        )  # Return additional_logits too
+        )
 
     @torch.no_grad()
     def predict(
@@ -95,6 +102,7 @@ class PhoNikudModel(BertForDiacritization):
 
         stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
         mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
+        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -139,8 +147,9 @@ class PhoNikudModel(BertForDiacritization):
                     if mobile_shva_predictions[sent_idx][idx] == 1
                     else ""
                 )
+                prefix = PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
 
-                output.append(char + shin + nikud + stress + mobile_shva)
+                output.append(char + shin + nikud + prefix + stress + mobile_shva)
             output.append(sentence[prev_index:])
             ret.append("".join(output))
 
