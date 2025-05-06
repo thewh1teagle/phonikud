@@ -24,6 +24,7 @@ from model import (
     STRESS_CHAR,
     MOBILE_SHVA_CHAR,
     PREFIX_CHAR,
+    NIKUD_HASER,
     remove_nikud,
 )
 
@@ -119,10 +120,25 @@ class TrainData(Dataset):
         files = glob(
             os.path.join(args.data_dir, "train", "**", "*.txt"), recursive=True
         )
-        print(len(files), "text files found; using them for training data...")
+        print(f"📝 Found {len(files)} text files for training.")
         self.lines = self._load_lines(files)
+        print(f"📄 Loaded {len(self.lines)} lines.")
+        print("🔍 Sample lines:")
+        for line in self.lines[:3]:
+            print("   ", line)
 
     def _load_lines(self, files: list[str]):
+        phonetic_diac_to_remove = NIKUD_HASER
+        if "shva" not in self.components:
+            # Won't train on shva
+            phonetic_diac_to_remove += MOBILE_SHVA_CHAR
+        if "stress" not in self.components:
+            # Won't train on stress
+            phonetic_diac_to_remove += STRESS_CHAR
+        if "prefix" not in self.components:
+            # Won't train on prefix
+            phonetic_diac_to_remove += PREFIX_CHAR
+
         lines = []
         for file in files:
             with open(file, "r", encoding="utf-8") as fp:
@@ -139,7 +155,7 @@ class TrainData(Dataset):
                     # Add the remaining part of the line if it fits within the max_context_length
                     if line.strip():
                         lines.append(line.strip())
-        lines = [remove_nikud(i) for i in lines]
+        lines = [remove_nikud(i, additional=phonetic_diac_to_remove) for i in lines]
         return lines
 
     def __len__(self):
@@ -175,6 +191,7 @@ def main():
             args.pre_training_step = int(match.group(1))
 
     components = args.components.split(",")
+    print(f"🟢 Active components: {components}")
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
@@ -187,7 +204,6 @@ def main():
         name for name in COMPONENT_INDICES.keys() if name not in components
     ]
     if frozen_components:
-        print(f"❄️🧊 Frozen components: {', '.join(frozen_components)}")
         model.freeze_mlp_components(
             [COMPONENT_INDICES[name] for name in frozen_components]
         )
@@ -267,7 +283,7 @@ def main():
             continue
         line = remove_nikud(line)
         print(line)
-        print(model.predict([line], tokenizer, mark_matres_lectionis="*"))
+        print(model.predict([line], tokenizer, mark_matres_lectionis="\u05af"))
         print()
 
 

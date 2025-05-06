@@ -8,11 +8,11 @@ from .base_model import (
     is_hebrew_letter,
     is_matres_letter,
 )
-from mishkal.utils import remove_nikud
 
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
 PREFIX_CHAR = "|"  # vertical bar
+NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
 
 def remove_nikud(text: str, additional=""):
