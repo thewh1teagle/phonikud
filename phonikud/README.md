@@ -51,7 +51,13 @@ uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last.ckpt ./ckpt
 # Fetch the model by
 git lfs install
 git clone https://huggingface.co/user/phonikud
+
+# Fetch file by
+huggingface-cli download --repo-type dataset user/some-dataset some_file.7z
+7z x some_file.7z
 ```
+
+
 
 ## Export onnx
 
