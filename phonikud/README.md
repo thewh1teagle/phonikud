@@ -54,6 +54,7 @@ git clone https://huggingface.co/user/phonikud
 
 # Fetch file by
 huggingface-cli download --repo-type dataset user/some-dataset some_file.7z --local-dir .
+sudo apt install p7zip-full
 7z x some_file.7z
 ```
 
