@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
+import re
 from .base_model import (
     BertForDiacritization,
     is_hebrew_letter,
@@ -12,6 +13,13 @@ from mishkal.utils import remove_nikud
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
 PREFIX_CHAR = "|"  # vertical bar
+
+
+def remove_nikud(text: str, additional=""):
+    """
+    Remove nikud except meteg as we use it for Shva Na
+    """
+    return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
 
 
 @dataclass
@@ -74,10 +82,7 @@ class PhoNikudModel(BertForDiacritization):
     ):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
 
-        sentences = [
-            remove_nikud(sentence, include_phonetetic_diacritics=True)
-            for sentence in sentences
-        ]
+        sentences = [remove_nikud(sentence) for sentence in sentences]
         # assert the lengths aren't out of range
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences

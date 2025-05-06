@@ -5,17 +5,25 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 
 # Non standard diacritics
-SHVA_NA_DIACRITIC = "\u05bd"
-HATAMA_DIACRITIC = "\u05ab"
-PREFIX_DIACRITIC = "|"
-
-HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\u05af|\'"]+'
-# ^ Standard nikud and letters, ole, meteg, masora, vertical bar, en geresh
-HE_NIKUD_PATTERN = r"[\u05b0-\u05c7']"
-# ^ Letters, diacritics, en geresh
-HE_NIKUD_PATTERN_WITH_PHONETIC_DIACRITICS = (
-    rf"[\u05B0-\u05C7|'{HATAMA_DIACRITIC}{SHVA_NA_DIACRITIC}]"
+SHVA_NA_DIACRITIC = "\u05bd"  # Meteg
+HATAMA_DIACRITIC = "\u05ab"  # Ole
+PREFIX_DIACRITIC = "|"  # Vertical bar
+NIKUD_HASER_DIACRITIC = "\u05af"  # Masora, not in use
+EN_GERESH = "'"
+NON_STANDARD_DIAC = "".join(
+    [
+        SHVA_NA_DIACRITIC,
+        HATAMA_DIACRITIC,
+        PREFIX_DIACRITIC,
+        NIKUD_HASER_DIACRITIC,
+        EN_GERESH,
+    ]
 )
+
+HE_PATTERN = rf'[\u05b0-\u05ea{NON_STANDARD_DIAC}"]+'
+# ^ Standard nikud and letters, ole, meteg, masora, vertical bar, en geresh
+HE_NIKUD_PATTERN = rf"[\u05b0-\u05c7{NON_STANDARD_DIAC}]"
+# ^ Letters, diacritics, en geresh
 PUNCTUATION = set(r".,!? ")
 
 STRESS_PHONEME = "ˈ"  # \u02c8 visually looks like single quote

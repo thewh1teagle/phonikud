@@ -19,7 +19,13 @@ from tqdm import tqdm, trange
 import torch
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from model import PhoNikudModel, STRESS_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR
+from model import (
+    PhoNikudModel,
+    STRESS_CHAR,
+    MOBILE_SHVA_CHAR,
+    PREFIX_CHAR,
+    remove_nikud,
+)
 
 COMPONENT_INDICES = {"stress": 0, "shva": 1, "prefix": 2}
 
@@ -133,6 +139,7 @@ class TrainData(Dataset):
                     # Add the remaining part of the line if it fits within the max_context_length
                     if line.strip():
                         lines.append(line.strip())
+        lines = [remove_nikud(i) for i in lines]
         return lines
 
     def __len__(self):
@@ -258,6 +265,7 @@ def main():
     for line in test_text.splitlines():
         if not line.strip():
             continue
+        line = remove_nikud(line)
         print(line)
         print(model.predict([line], tokenizer, mark_matres_lectionis="*"))
         print()
