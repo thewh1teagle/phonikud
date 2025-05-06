@@ -10,7 +10,8 @@ PREFIX_DIACRITIC = "|"
 STRESS = "\u02c8"  # visually looks like '
 
 MILHEL_PATTERNS = ["יים", "וע", "טו", "דיה"]  # Used for stress prediction
-HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\'"]+'
+HE_PATTERN = r'[\u05b0-\u05ea\u05ab\u05bd\u05af\'"]+'
+# ^ Standard nikud and letters, ole, meteg, masora, en geresh
 HE_NIKUD_PATTERN = rf"[\u05B0-\u05C7|{HATAMA_DIACRITIC}{SHVA_NA_DIACRITIC}]"
 PUNCTUATION = set(r".,!? ")
 
