@@ -7,6 +7,9 @@ Train from checkpoint:
 Train with specific components:
     uv run src/train.py --device cuda --epochs 3 --components stress,prefix \
         --model_checkpoint dicta-il/dictabert-large-char-menaked
+On V100:
+    uv run src/train.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
+    TODO: we may be able to train on very large epoch, with LR tunning
 """
 
 import re
