@@ -212,16 +212,21 @@ def mark_shva_na(word: str):
 
 def add_milra_hatama(word: str):
     syllables = mishkal.syllables.get_syllables(word)
-    if len(syllables) < 2:
+    stress_index = -2
+
+    if not syllables:
         return word
 
+    if len(syllables) == 1:
+        stress_index = -1
+
     # Get latest syllable
-    milra = syllables[-2]
+    milra = syllables[stress_index]
     # Get letters
     letters = get_letters(milra)
     # Add Hatama
     letters[0].diac += lexicon.HATAMA_DIACRITIC
 
     # Replace latest syllable
-    syllables[-2] = "".join(str(i) for i in letters)
+    syllables[stress_index] = "".join(str(i) for i in letters)
     return "".join(syllables)

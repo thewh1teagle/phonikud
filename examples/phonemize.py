@@ -110,6 +110,7 @@ sentences = [
     # "עַל-כֵּן",
     # "לְהַגְבִּיהַּ",
     "לִשְׁקֹעַ",
+    "כׇּל",
 ]
 
 for sentence in sentences:
