@@ -174,6 +174,17 @@ def main():
     model.freeze_base_model()
     # ^ we will only train extra layers
 
+    # Freeze components
+    component_indices = {"stress": 0, "shva": 1, "prefix": 2}
+    frozen_components = [
+        name for name in component_indices.keys() if name not in components
+    ]
+    if frozen_components:
+        print(f"❄️🧊 Frozen components: {', '.join(frozen_components)}")
+        model.freeze_mlp_components(
+            [component_indices[name] for name in frozen_components]
+        )
+
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     collator = Collator(tokenizer, components=components)
 
