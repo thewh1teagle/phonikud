@@ -39,20 +39,19 @@ def main():
     collator = Collator(tokenizer, components)
 
     # Data split
-    train_lines, eval_lines = read_lines(args.data_dir, components)
+    train_lines, val_lines = read_lines(args.data_dir, components)
 
     # Data loader
     train_dataloader = get_dataloader(train_lines, args, components, collator)
+    val_dataloader = get_dataloader(val_lines, args, components, collator)
 
     # Log
-
     writer = SummaryWriter(log_dir=args.output_dir)
 
     # Train
-    train_model(model, tokenizer, train_dataloader, args, components, writer)
-
-    # Eval
-    evaluate_model(model, tokenizer, eval_lines)
+    train_model(
+        model, tokenizer, train_dataloader, val_dataloader, args, components, writer
+    )
 
 
 if __name__ == "__main__":
