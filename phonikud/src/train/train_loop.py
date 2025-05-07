@@ -33,7 +33,7 @@ def train_model(model, tokenizer, dataloader, args, components):
             step += 1
 
             if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
-                save_dir = f"{args.output_dir}/last.ckpt"
+                save_dir = f"{args.output_dir}/last"
                 print(f"💾 Saving checkpoint at step {step} to: {save_dir}")
                 model.save_pretrained(save_dir)
                 tokenizer.save_pretrained(save_dir)

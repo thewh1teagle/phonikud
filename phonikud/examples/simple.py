@@ -2,25 +2,25 @@
 uv run src/test.py --device cuda
 """
 
-from model import PhoNikudModel, NIKUD_HASER
-from argparse import ArgumentParser
+from phonikud.src.model import PhoNikudModel, NIKUD_HASER
 from transformers import AutoTokenizer
+from tap import Tap
+from typing import Literal
 
 
-def get_opts():
-    parser = ArgumentParser()
-    parser.add_argument(
-        "-m", "--model_checkpoint", default="./ckpt/last.ckpt", type=str
-    )
-    parser.add_argument("-d", "--device", default="cuda", type=str)
-    # test file path
-    parser.add_argument("-f", "--file", default="./data/eval/dummy.txt", type=str)
-    return parser
+class RunArgs(Tap):
+    model_checkpoint: str = "./ckpt/last"
+    """Path to the model checkpoint"""
+
+    device: Literal["cuda", "cpu"] = "cuda"
+    """Device to run on"""
+
+    file: str = "./data/eval/dummy.txt"
+    """Path to the input test file"""
 
 
 def main():
-    parser = get_opts()
-    args = parser.parse_args()
+    args = RunArgs().parse_args()
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     model.to(args.device)

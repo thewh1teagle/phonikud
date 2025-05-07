@@ -46,7 +46,7 @@ uv run examples/simple.py
 uv pip install huggingface_hub
 git config --global credential.helper store # Allow clone private repo from HF
 huggingface-cli login --token "token" --add-to-git-credential # https://huggingface.co/settings/tokens 
-uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last.ckpt ./ckpt/last.ckpt
+uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last ./ckpt/last
 
 # Fetch the model by
 git lfs install

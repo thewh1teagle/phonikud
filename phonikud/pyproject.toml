@@ -4,4 +4,8 @@ version = "0.1.0"
 description = "Hebrew nakdan with Shva Na and Atama'a"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["torch>=2.6.0", "transformers>=4.51.3"]
+dependencies = [
+    "torch>=2.6.0",
+    "transformers>=4.51.3",
+    "typed-argument-parser>=1.10.1",
+]
