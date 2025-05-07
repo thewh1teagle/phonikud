@@ -1,6 +1,6 @@
 """
 uv sync --extra onnx
-uv run python -m onnx_lib.export --model ckpt/last.ckpt
+uv run export.py --model ../phonikud/ckpt/last
 """
 
 import torch
@@ -8,8 +8,10 @@ import onnx
 from pathlib import Path
 from onnxruntime.quantization import quantize_dynamic, QuantType
 from argparse import ArgumentParser
-from pathlib import Path
-from src.model import PhoNikudModel
+import sys
+
+sys.path.append(str(Path(__file__).parent / "../phonikud/src"))
+from model import PhoNikudModel  # TODO: add it as package for autocomplete
 
 
 def parse_args():
@@ -92,7 +94,7 @@ def main():
     # Create model folder
     Path(fp32_model_path).parent.mkdir(exist_ok=True)
 
-    print(f"Exporting ONNX model to: {fp32_model_path}...")
+    print(f"Exporting onnx model to: {fp32_model_path}...")
     # Export with the wrapped model
     torch.onnx.export(
         wrapped_model,

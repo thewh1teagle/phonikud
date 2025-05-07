@@ -42,6 +42,7 @@ ALEF_ORD = ord("א")
 TAF_ORD = ord("ת")
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+PREFIX_CHAR = "|"
 
 
 def is_hebrew_letter(char):
@@ -59,7 +60,7 @@ def remove_nikkud(text):
     return nikud_pattern.sub("", text)
 
 
-class OnnxDiacritizationModel:
+class OnnxModel:
     def __init__(
         self, model_path, tokenizer_name="dicta-il/dictabert-large-char-menaked"
     ):
@@ -131,6 +132,7 @@ class OnnxDiacritizationModel:
         shin_predictions = np.argmax(shin_logits, axis=-1)
         stress_predictions = (additional_logits[..., 0] > 0).astype(np.int32)
         mobile_shva_predictions = (additional_logits[..., 1] > 0).astype(np.int32)
+        prefix_predictions = (additional_logits[..., 2] > 0).astype(np.int32)
 
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -181,7 +183,14 @@ class OnnxDiacritizationModel:
                     else ""
                 )
 
-                output.append(char + shin + nikud + stress + mobile_shva)
+                prefix = (
+                    PREFIX_CHAR
+                    if prefix_predictions is not None
+                    and prefix_predictions[sent_idx][idx] == 1
+                    else ""
+                )
+
+                output.append(char + shin + nikud + stress + mobile_shva + prefix)
             output.append(sentence[prev_index:])
             ret.append("".join(output))
 

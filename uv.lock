@@ -592,6 +592,8 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "onnx" },
+    { name = "phonikud" },
+    { name = "torch" },
 ]
 
 [package.metadata]
@@ -601,7 +603,11 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "onnx", specifier = ">=1.17.0" }]
+dev = [
+    { name = "onnx", specifier = ">=1.17.0" },
+    { name = "phonikud", virtual = "phonikud" },
+    { name = "torch", specifier = ">=2.6.0" },
+]
 
 [[package]]
 name = "pluggy"

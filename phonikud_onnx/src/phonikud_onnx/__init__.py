@@ -1,10 +1,10 @@
-from .model import OnnxDiacritizationModel
+from .model import OnnxModel
 import re
 
 
 class Phonikud:
     def __init__(self, model_path: str):
-        self.model = OnnxDiacritizationModel(model_path)
+        self.model = OnnxModel(model_path)
 
     def add_diacritics(
         self, sentences: list | str, mark_matres_lectionis: str | None = None
