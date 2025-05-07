@@ -2,11 +2,12 @@
 import torch
 from torch import nn
 from tqdm import tqdm, trange
+from torch.utils.tensorboard import SummaryWriter
 
 from data import COMPONENT_INDICES
 
 
-def train_model(model, tokenizer, dataloader, args, components):
+def train_model(model, tokenizer, dataloader, args, components, writer: SummaryWriter):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
     step = args.pre_training_step
@@ -31,6 +32,7 @@ def train_model(model, tokenizer, dataloader, args, components):
             optimizer.step()
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
+            writer.add_scalar("Loss/train", loss.item(), step)
 
             if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
                 save_dir = f"{args.output_dir}/last"

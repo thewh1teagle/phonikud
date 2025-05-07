@@ -11,6 +11,7 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 ## Setup
 
 ```console
+pip install uv
 uv sync
 ```
 
@@ -30,6 +31,12 @@ mv phonikud_data_v1/* data/train/
 
 ```console
 uv run src/train/main.py
+```
+
+## Monitor loss
+
+```console
+uv run tensorboard  --logdir ./ckpt
 ```
 
 ## Run
@@ -81,5 +88,4 @@ Then, close the terminal and reconnect.
 
 TODO:
 * Organize train/val/test splits -- track val performance over time, log to tensorboard/wandb, ...
-* Clean up flags in scripts
 * Check that stress/shva targets are guaranteed to be aligned with tokenized characters (use `return_offsets_mapping=True`? cf. dictabert code)

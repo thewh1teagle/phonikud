@@ -18,6 +18,7 @@ from train_loop import train_model
 from evaluate import evaluate_model
 from transformers import AutoTokenizer
 from phonikud.src.model import PhoNikudModel
+from torch.utils.tensorboard import SummaryWriter
 
 
 def main():
@@ -43,8 +44,12 @@ def main():
     # Data loader
     train_dataloader = get_dataloader(train_lines, args, components, collator)
 
+    # Log
+
+    writer = SummaryWriter(log_dir=args.output_dir)
+
     # Train
-    train_model(model, tokenizer, train_dataloader, args, components)
+    train_model(model, tokenizer, train_dataloader, args, components, writer)
 
     # Eval
     evaluate_model(model, tokenizer, eval_lines)
