@@ -33,8 +33,8 @@ class TrainArgs(Tap):
     checkpoint_interval: int = 1000
     """Number of steps between saving checkpoints"""
 
-    components: str = "stress,shva,prefix"
-    """Comma-separated list of components to train on (stress,shva,prefix)"""
+    components: str = "hatama,shva,prefix"
+    """Comma-separated list of components to train on (hatama,shva,prefix)"""
 
     val_split: float = 0.1
     """Fraction of training data to use as validation (0 to disable)"""

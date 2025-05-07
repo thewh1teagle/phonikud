@@ -15,6 +15,12 @@ def train_model(model, tokenizer, dataloader, args, components, writer: SummaryW
         pbar = tqdm(dataloader, desc="Train iter")
         for inputs, targets in pbar:
             optimizer.zero_grad()
+
+            # Log learning rate
+            for param_group in optimizer.param_groups:
+                lr = param_group["lr"]
+                writer.add_scalar("LR", lr, step)
+
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)
             # ^ shape: (batch_size, n_chars_padded, n_active_components)
@@ -29,10 +35,19 @@ def train_model(model, tokenizer, dataloader, args, components, writer: SummaryW
 
             loss = criterion(active_logits, targets.float())
             loss.backward()
+
             optimizer.step()
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
+
+            # Log total loss
             writer.add_scalar("Loss/train", loss.item(), step)
+            # Loss per component
+            for i, comp in enumerate(components):
+                comp_loss = criterion(
+                    active_logits[:, :, i], targets[:, :, i].float()
+                ).item()
+                writer.add_scalar(f"Loss/{comp}", comp_loss, step)
 
             if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
                 save_dir = f"{args.output_dir}/last"

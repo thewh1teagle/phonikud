@@ -4,7 +4,7 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 
 ## Added Symbols
 
-- Stress (Hat'ama): `\u05ab` also called `ole`
+- Hat'ama (Stress): `\u05ab` also called `ole`
 
 - Mobile Shva (Shva Na): `\u05bd` also called `meteg`
 
@@ -88,4 +88,4 @@ Then, close the terminal and reconnect.
 
 TODO:
 * Organize train/val/test splits -- track val performance over time, log to tensorboard/wandb, ...
-* Check that stress/shva targets are guaranteed to be aligned with tokenized characters (use `return_offsets_mapping=True`? cf. dictabert code)
+* Check that hatama/shva targets are guaranteed to be aligned with tokenized characters (use `return_offsets_mapping=True`? cf. dictabert code)

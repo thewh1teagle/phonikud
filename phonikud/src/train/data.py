@@ -6,14 +6,14 @@ from phonikud.src.model import (
     MOBILE_SHVA_CHAR,
     NIKUD_HASER,
     PREFIX_CHAR,
-    STRESS_CHAR,
+    HATAMA_CHAR,
     remove_nikud,
 )
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-COMPONENT_INDICES = {"stress": 0, "shva": 1, "prefix": 2}
+COMPONENT_INDICES = {"hatama": 0, "shva": 1, "prefix": 2}
 
 
 def get_dataloader(lines, args, components, collator: "Collator"):
@@ -74,9 +74,9 @@ def get_diac_to_remove(components: str):
     if "shva" not in components:
         # Won't train on shva
         phonetic_diac_to_remove += MOBILE_SHVA_CHAR
-    if "stress" not in components:
-        # Won't train on stress
-        phonetic_diac_to_remove += STRESS_CHAR
+    if "hatama" not in components:
+        # Won't train on hatama
+        phonetic_diac_to_remove += HATAMA_CHAR
     if "prefix" not in components:
         # Won't train on prefix
         phonetic_diac_to_remove += PREFIX_CHAR
@@ -94,34 +94,34 @@ class AnnotatedLine:
         raw_text = "".join(
             char
             for char in raw_text
-            if not (char == STRESS_CHAR and "stress" not in components)
+            if not (char == HATAMA_CHAR and "hatama" not in components)
             and not (char == MOBILE_SHVA_CHAR and "shva" not in components)
             and not (char == PREFIX_CHAR and "prefix" not in components)
         )
 
         self.text = ""  # will contain plain hebrew text
-        stress = []  # will contain 0/1 for each character (1=stressed)
+        hatama = []  # will contain 0/1 for each character (1=active hatama)
         mobile_shva = []  # will contain 0/1 for each character (1=mobile shva)
         prefix = []  # will contain 0/1 for each character (1=prefix)
 
         for i, char in enumerate(raw_text):
-            if char == STRESS_CHAR:
-                stress[-1] = 1
+            if char == HATAMA_CHAR:
+                hatama[-1] = 1
             elif char == MOBILE_SHVA_CHAR:
                 mobile_shva[-1] = 1
             elif char == PREFIX_CHAR:
                 prefix[-1] = 1
             else:
                 self.text += char
-                stress += [0]
+                hatama += [0]
                 mobile_shva += [0]
                 prefix += [0]  # No prefix for this character by default
 
-        assert len(self.text) == len(stress) == len(mobile_shva) == len(prefix)
+        assert len(self.text) == len(hatama) == len(mobile_shva) == len(prefix)
 
         # Create tensor for all features
         all_features = [
-            torch.tensor(stress),
+            torch.tensor(hatama),
             torch.tensor(mobile_shva),
             torch.tensor(prefix),
         ]

@@ -9,7 +9,7 @@ from .base_model import (
     is_matres_letter,
 )
 
-STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
+HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
 PREFIX_CHAR = "|"  # vertical bar
 NIKUD_HASER = "\u05af"  # not in use but dicta has it
@@ -26,7 +26,7 @@ def remove_nikud(text: str, additional=""):
 class MenakedLogitsOutput(ModelOutput):
     nikud_logits: torch.FloatTensor = None
     shin_logits: torch.FloatTensor = None
-    additional_logits: torch.FloatTensor = None  # For stress, mobile shva, and prefix
+    additional_logits: torch.FloatTensor = None  # For hatama, mobile shva, and prefix
 
     def detach(self):
         return MenakedLogitsOutput(
@@ -41,7 +41,7 @@ class PhoNikudModel(BertForDiacritization):
         super().__init__(config)
         self.config = config
         self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
-        # ^ predicts stress, mobile shva, and prefix; outputs are logits
+        # ^ predicts hatama, mobile shva, and prefix; outputs are logits
 
     def freeze_mlp_components(self, indices: list[int]):
         final_layer = self.mlp[2]
@@ -70,7 +70,7 @@ class PhoNikudModel(BertForDiacritization):
         # ^ nikud_logits: MenakedLogitsOutput
 
         additional_logits = self.mlp(hidden_states)
-        # ^ shape: (batch_size, n_chars_padded, 3) [stress, mobile shva, and prefix]
+        # ^ shape: (batch_size, n_chars_padded, 3) [hatama, mobile shva, and prefix]
 
         return MenakedLogitsOutput(
             nikud_logits.nikud_logits, nikud_logits.shin_logits, additional_logits
@@ -105,7 +105,7 @@ class PhoNikudModel(BertForDiacritization):
         offset_mapping,
         nikud_predictions,
         shin_predictions,
-        stress_predictions,
+        hatama_predictions,
         mobile_shva_predictions,
         prefix_predictions,
         mark_matres_lectionis=None,
@@ -148,8 +148,8 @@ class PhoNikudModel(BertForDiacritization):
                     else:
                         continue
 
-                # Apply stress, mobile shva, and prefix predictions
-                stress = STRESS_CHAR if stress_predictions[sent_idx][idx] == 1 else ""
+                # Apply hatama, mobile shva, and prefix predictions
+                hatama = HATAMA_CHAR if hatama_predictions[sent_idx][idx] == 1 else ""
                 mobile_shva = (
                     MOBILE_SHVA_CHAR
                     if mobile_shva_predictions[sent_idx][idx] == 1
@@ -157,7 +157,7 @@ class PhoNikudModel(BertForDiacritization):
                 )
                 prefix = PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
 
-                output.append(char + shin + nikud + stress + mobile_shva + prefix)
+                output.append(char + shin + nikud + hatama + mobile_shva + prefix)
 
             output.append(sentence[prev_index:])
             ret.append("".join(output))
@@ -175,14 +175,14 @@ class PhoNikudModel(BertForDiacritization):
         nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
-        stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
+        hatama_predictions = (additional_logits[..., 0] > 0).int().tolist()
         mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
         prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
         return (
             nikud_predictions,
             shin_predictions,
-            stress_predictions,
+            hatama_predictions,
             mobile_shva_predictions,
             prefix_predictions,
         )
@@ -198,7 +198,7 @@ class PhoNikudModel(BertForDiacritization):
         (
             nikud_predictions,
             shin_predictions,
-            stress_predictions,
+            hatama_predictions,
             mobile_shva_predictions,
             prefix_predictions,
         ) = self.create_predictions(inputs)
@@ -209,7 +209,7 @@ class PhoNikudModel(BertForDiacritization):
             offset_mapping,
             nikud_predictions,
             shin_predictions,
-            stress_predictions,
+            hatama_predictions,
             mobile_shva_predictions,
             prefix_predictions,
             mark_matres_lectionis,
