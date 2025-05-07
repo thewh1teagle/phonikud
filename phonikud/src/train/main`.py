@@ -13,12 +13,11 @@ On V100:
 """
 
 from config import get_opts
-from data import TrainData, Collator, COMPONENT_INDICES
+from data import Collator, COMPONENT_INDICES, read_lines, get_dataloader
 from train_loop import train_model
 from evaluate import evaluate_model
 from transformers import AutoTokenizer
 from phonikud.src.model import PhoNikudModel
-from torch.utils.data import DataLoader
 
 
 def main():
@@ -37,18 +36,18 @@ def main():
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     collator = Collator(tokenizer, components)
-    dataset = TrainData(args)
 
-    dataloader = DataLoader(
-        dataset,
-        batch_size=args.batch_size,
-        shuffle=True,
-        collate_fn=collator.collate_fn,
-        num_workers=args.num_workers,
-    )
+    # Data split
+    train_lines, eval_lines = read_lines(args.data_dir, components)
 
-    train_model(model, tokenizer, dataloader, args, components)
-    evaluate_model(model, tokenizer, args, components)
+    # Data loader
+    train_dataloader = get_dataloader(train_lines, args, components, collator)
+
+    # Train
+    train_model(model, tokenizer, train_dataloader, args, components)
+
+    # Eval
+    evaluate_model(model, tokenizer, eval_lines)
 
 
 if __name__ == "__main__":

@@ -76,21 +76,17 @@ class PhoNikudModel(BertForDiacritization):
             nikud_logits.nikud_logits, nikud_logits.shin_logits, additional_logits
         )
 
-    @torch.no_grad()
-    def predict(
-        self, sentences, tokenizer, mark_matres_lectionis=None, padding="longest"
-    ):
-        # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
-
+    def encode(self, sentences, tokenizer, padding="longest"):
         sentences = [remove_nikud(sentence) for sentence in sentences]
-        # assert the lengths aren't out of range
+
+        # Assert the lengths are within the tokenizer's max limit
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
         ), (
             f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
         )
 
-        # tokenize the inputs and convert them to relevant device
+        # Tokenize the inputs and return the tensor format
         inputs = tokenizer(
             sentences,
             padding=padding,
@@ -101,38 +97,41 @@ class PhoNikudModel(BertForDiacritization):
         offset_mapping = inputs.pop("offset_mapping")
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
-        # calculate the predictions
-        output = self.forward(inputs)
-        nikud_logits = output.detach()
-        additional_logits = output.additional_logits.detach()
-        nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
-        shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
+        return inputs, offset_mapping
 
-        stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
-        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
-
+    def decode(
+        self,
+        sentences,
+        offset_mapping,
+        nikud_predictions,
+        shin_predictions,
+        stress_predictions,
+        mobile_shva_predictions,
+        prefix_predictions,
+        mark_matres_lectionis=None,
+    ):
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
             zip(sentences, offset_mapping)
         ):
-            # assign the nikud to each letter!
             output = []
             prev_index = 0
             for idx, offsets in enumerate(sent_offsets):
-                # add in anything we missed
+                # Add anything missed
                 if offsets[0] > prev_index:
                     output.append(sentence[prev_index : offsets[0]])
                 if offsets[1] - offsets[0] != 1:
                     continue
 
-                # get our next char
+                # Get the next character
                 char = sentence[offsets[0] : offsets[1]]
                 prev_index = offsets[1]
+
                 if not is_hebrew_letter(char):
                     output.append(char)
                     continue
 
+                # Apply the predictions to the character
                 nikud = self.config.nikud_classes[nikud_predictions[sent_idx][idx]]
                 shin = (
                     ""
@@ -140,15 +139,16 @@ class PhoNikudModel(BertForDiacritization):
                     else self.config.shin_classes[shin_predictions[sent_idx][idx]]
                 )
 
-                # check for matres lectionis
+                # Check for matres lectionis
                 if nikud == self.config.mat_lect_token:
                     if not is_matres_letter(char):
-                        nikud = ""  # don't allow matres on irrelevant letters
+                        nikud = ""  # Don't allow matres on irrelevant letters
                     elif mark_matres_lectionis is not None:
                         nikud = mark_matres_lectionis
                     else:
                         continue
 
+                # Apply stress, mobile shva, and prefix predictions
                 stress = STRESS_CHAR if stress_predictions[sent_idx][idx] == 1 else ""
                 mobile_shva = (
                     MOBILE_SHVA_CHAR
@@ -157,8 +157,62 @@ class PhoNikudModel(BertForDiacritization):
                 )
                 prefix = PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
 
-                output.append(char + shin + nikud + prefix + stress + mobile_shva)
+                output.append(char + shin + nikud + stress + mobile_shva + prefix)
+
             output.append(sentence[prev_index:])
             ret.append("".join(output))
 
         return ret
+
+    def create_predictions(self, inputs):
+        output = self.forward(inputs)
+
+        # Extract the logits from the model output
+        nikud_logits = output.detach()
+        additional_logits = output.additional_logits.detach()
+
+        # Get predictions from logits
+        nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
+        shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
+
+        stress_predictions = (additional_logits[..., 0] > 0).int().tolist()
+        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
+        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
+
+        return (
+            nikud_predictions,
+            shin_predictions,
+            stress_predictions,
+            mobile_shva_predictions,
+            prefix_predictions,
+        )
+
+    @torch.no_grad()
+    def predict(
+        self, sentences, tokenizer, mark_matres_lectionis=None, padding="longest"
+    ):
+        # Step 1: Encoding (tokenizing sentences)
+        inputs, offset_mapping = self.encode(sentences, tokenizer, padding)
+
+        # Step 2: Making predictions
+        (
+            nikud_predictions,
+            shin_predictions,
+            stress_predictions,
+            mobile_shva_predictions,
+            prefix_predictions,
+        ) = self.create_predictions(inputs)
+
+        # Step 3: Decoding (reconstructing the sentences with predictions)
+        result = self.decode(
+            sentences,
+            offset_mapping,
+            nikud_predictions,
+            shin_predictions,
+            stress_predictions,
+            mobile_shva_predictions,
+            prefix_predictions,
+            mark_matres_lectionis,
+        )
+
+        return result

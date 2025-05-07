@@ -1,5 +1,5 @@
-import os
-from glob import glob
+from pathlib import Path
+from typing import List, Tuple
 
 import torch
 from phonikud.src.model import (
@@ -11,8 +11,59 @@ from phonikud.src.model import (
 )
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
 
 COMPONENT_INDICES = {"stress": 0, "shva": 1, "prefix": 2}
+
+
+def get_dataloader(lines, args, components, collator: "Collator"):
+    train_data = TrainData(lines, components)
+
+    loader = DataLoader(
+        train_data,
+        batch_size=args.batch_size,
+        shuffle=True,
+        collate_fn=collator.collate_fn,
+        num_workers=args.num_workers,
+    )
+    return loader
+
+
+def read_lines(
+    data_path: str,
+    components: List[str],
+    max_context_length: int = 2048,
+    val_split: float = 0.1,
+    split_seed: int = 42,
+) -> Tuple[List[str], List[str]]:
+    files = list(Path(data_path).glob("**/*.txt"))
+
+    lines = []
+    for file in files:
+        with open(file, "r", encoding="utf-8") as fp:
+            for line in fp:
+                # Split lines into chunks if they are too long
+                while len(line) > max_context_length:
+                    lines.append(line[:max_context_length].strip())
+                    line = line[max_context_length:]
+
+                if line.strip():
+                    lines.append(line.strip())
+
+    # Preprocess lines (remove nikud and other components)
+    lines = [
+        remove_nikud(i, additional=get_diac_to_remove(components=components))
+        for i in lines
+    ]
+
+    # Split into train and validation sets
+    split_idx = int(len(lines) * (1 - val_split))
+    torch.manual_seed(split_seed)
+    idx = torch.randperm(len(lines))
+    train_lines = [lines[i] for i in idx[:split_idx]]
+    val_lines = [lines[i] for i in idx[split_idx:]]
+
+    return train_lines, val_lines
 
 
 def get_diac_to_remove(components: str):
@@ -81,43 +132,9 @@ class AnnotatedLine:
 
 
 class TrainData(Dataset):
-    def __init__(self, args):
-        self.max_context_length = 2048
-        self.components: list[str] = args.components.split(",")
-        print(f"🔤 Training with components: {', '.join(self.components)}")
-
-        files = glob(
-            os.path.join(args.data_dir, "train", "**", "*.txt"), recursive=True
-        )
-        print(f"📝 Found {len(files)} text files for training.")
-        self.lines = self._load_lines(files)
-        print(f"📄 Loaded {len(self.lines)} lines.")
-        print("🔍 Sample lines:")
-        for line in self.lines[:3]:
-            print("   ", line)
-
-    def _load_lines(self, files: list[str]):
-        lines = []
-        for file in files:
-            with open(file, "r", encoding="utf-8") as fp:
-                for line in fp:
-                    # While the line is longer than max_context_length, split it into chunks
-                    while len(line) > self.max_context_length:
-                        lines.append(
-                            line[: self.max_context_length].strip()
-                        )  # Add the first chunk
-                        line = line[
-                            self.max_context_length :
-                        ]  # Keep the remainder of the line
-
-                    # Add the remaining part of the line if it fits within the max_context_length
-                    if line.strip():
-                        lines.append(line.strip())
-        lines = [
-            remove_nikud(i, additional=get_diac_to_remove(components=self.components))
-            for i in lines
-        ]
-        return lines
+    def __init__(self, lines: List[str], components: List[str]):
+        self.lines = lines
+        self.components = components
 
     def __len__(self):
         return len(self.lines)

@@ -21,9 +21,9 @@ def get_opts():
     parser.add_argument(
         "-dd",
         "--data_dir",
-        default="data/",
+        default="data/train",
         type=str,
-        help="Directory containing training/eval data",
+        help="Directory containing data",
     )
     parser.add_argument(
         "-o",
@@ -62,6 +62,23 @@ def get_opts():
         default="stress,shva,prefix",
         type=str,
         help="Comma-separated list of components to train on (stress,shva,prefix)",
+    )
+
+    parser.add_argument(
+        "--val_split",
+        default=0.1,
+        type=float,
+        help="Fraction of training data to use as validation (0 to disable)",
+    )
+
+    parser.add_argument(
+        "--split_seed", default=42, type=int, help="Random seed for train/val split"
+    )
+
+    parser.add_argument(
+        "--use_eval_file",
+        action="store_true",
+        help="Use data/eval/*.txt as validation set instead of splitting train",
     )
 
     return parser.parse_args()
