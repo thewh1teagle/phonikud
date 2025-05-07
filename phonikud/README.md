@@ -29,15 +29,15 @@ mv phonikud_data_v1/* data/train/
 ## Train
 
 ```console
-uv run src/train.py
+uv run src/train/main.py
 ```
 
-## Inference
+## Run
 
-Run the model for testing:
+Run the model with:
 
 ```console
-uv run src/test.py
+uv run examples/simple.py
 ```
 
 ## Upload to HuggingFace
