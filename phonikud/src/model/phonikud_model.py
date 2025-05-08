@@ -3,7 +3,7 @@ from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
 import re
-from .base_model import (
+from .dicta_model import (
     BertForDiacritization,
     is_hebrew_letter,
     is_matres_letter,

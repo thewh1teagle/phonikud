@@ -39,12 +39,19 @@ uv run src/train/main.py
 uv run tensorboard  --logdir ./ckpt
 ```
 
+## Monitor GPU
+
+```console
+uv pip install nvitop
+nvitop
+```
+
 ## Run
 
 Run the model with:
 
 ```console
-uv run examples/simple.py
+uv run src/run/main.py -m path/to/checkpoint/
 ```
 
 ## Upload to HuggingFace

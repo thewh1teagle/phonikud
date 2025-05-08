@@ -1,8 +1,7 @@
 from pathlib import Path
 from typing import List, Tuple
-
 import torch
-from phonikud.src.model import (
+from src.model.phonikud_model import (
     MOBILE_SHVA_CHAR,
     NIKUD_HASER,
     PREFIX_CHAR,

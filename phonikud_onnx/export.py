@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 import sys
 
 sys.path.append(str(Path(__file__).parent / "../phonikud/src"))
-from model import PhoNikudModel  # TODO: add it as package for autocomplete
+from model.phonikud_model import PhoNikudModel  # TODO: add it as package for autocomplete
 
 
 def parse_args():

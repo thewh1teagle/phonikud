@@ -17,8 +17,9 @@ from data import Collator, COMPONENT_INDICES, read_lines, get_dataloader
 from train_loop import train_model
 from evaluate import evaluate_model
 from transformers import AutoTokenizer
-from phonikud.src.model import PhoNikudModel
+from src.model.phonikud_model import PhoNikudModel
 from torch.utils.tensorboard import SummaryWriter
+from utils import print_model_size
 
 
 def main():
@@ -27,9 +28,14 @@ def main():
     print(f"🟢 Active components: {components}")
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
+    
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
+    print_model_size(model)
+    
     model.to(args.device)
     model.freeze_base_model()
+    
+    
 
     frozen = [name for name in COMPONENT_INDICES if name not in components]
     if frozen:

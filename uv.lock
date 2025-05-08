@@ -233,6 +233,15 @@ wheels = [
 ]
 
 [[package]]
+name = "humanize"
+version = "4.12.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/22/d1/bbc4d251187a43f69844f7fd8941426549bbe4723e8ff0a7441796b0789f/humanize-4.12.3.tar.gz", hash = "sha256:8430be3a615106fdfceb0b2c1b41c4c98c6b0fc5cc59663a5539b111dd325fb0", size = 80514 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/1e/62a2ec3104394a2975a2629eec89276ede9dbe717092f6966fcf963e1bf0/humanize-4.12.3-py3-none-any.whl", hash = "sha256:2cbf6370af06568fa6d2da77c86edb7886f3160ecd19ee1ffef07979efc597f6", size = 128487 },
+]
+
+[[package]]
 name = "idna"
 version = "3.10"
 source = { registry = "https://pypi.org/simple" }
@@ -642,8 +651,9 @@ wheels = [
 [[package]]
 name = "phonikud"
 version = "0.1.0"
-source = { virtual = "phonikud" }
+source = { editable = "phonikud" }
 dependencies = [
+    { name = "humanize" },
     { name = "tensorboard" },
     { name = "torch" },
     { name = "transformers" },
@@ -652,6 +662,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "humanize", specifier = ">=4.12.3" },
     { name = "tensorboard", specifier = ">=2.19.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "transformers", specifier = ">=4.51.3" },
@@ -683,7 +694,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "onnx", specifier = ">=1.17.0" },
-    { name = "phonikud", virtual = "phonikud" },
+    { name = "phonikud", editable = "phonikud" },
     { name = "torch", specifier = ">=2.6.0" },
 ]
 
