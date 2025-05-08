@@ -5,8 +5,10 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 ## Added Symbols
 
 - Hat'ama (Stress): `\u05ab` also called `ole`
-
 - Mobile Shva (Shva Na): `\u05bd` also called `meteg`
+- Prefix: vertical bar `|`
+
+Example: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 
 ## Setup
 
