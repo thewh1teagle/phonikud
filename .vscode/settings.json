@@ -2,6 +2,7 @@
     "editor.formatOnSave": true,
     "python.analysis.extraPaths": [
         "./phonikud/src",
-        "./phonikud"
+        "./phonikud",
+        "./phonikud/src/train"
     ]
 }

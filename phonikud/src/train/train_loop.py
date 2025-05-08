@@ -10,6 +10,7 @@ from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
 from transformers import BertPreTrainedModel
 
+
 def train_model(
     model: BertPreTrainedModel,
     tokenizer: BertTokenizerFast,
@@ -22,7 +23,7 @@ def train_model(
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
     step = args.pre_training_step
-    best_val_score = float('inf')
+    best_val_score = float("inf")
     no_improvement_counter = 0
 
     for epoch in trange(args.epochs, desc="Epoch"):
@@ -71,12 +72,16 @@ def train_model(
                 tokenizer.save_pretrained(last_dir)
 
                 # Evaluate and maybe save "best"
-                val_score = evaluate_model(model, val_dataloader, args, components, writer, step)
+                val_score = evaluate_model(
+                    model, val_dataloader, args, components, writer, step
+                )
 
                 if val_score < best_val_score:
                     best_val_score = val_score
                     best_dir = f"{args.output_dir}/best"
-                    print(f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}")
+                    print(
+                        f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
+                    )
                     model.save_pretrained(best_dir)
                     tokenizer.save_pretrained(best_dir)
                     no_improvement_counter = 0
@@ -84,7 +89,9 @@ def train_model(
                     no_improvement_counter += 1
 
                 if no_improvement_counter >= args.early_stopping_patience:
-                    print(f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps.")
+                    print(
+                        f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
+                    )
                     break
 
         # Break batch loop

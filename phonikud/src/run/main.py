@@ -10,13 +10,14 @@ from tap import Tap
 
 
 class RunArgs(Tap):
-    model: str = BASE_PATH / "./ckpt/last" # --model, -m
+    model: str = BASE_PATH / "./ckpt/last"  # --model, -m
     device = "cuda"
     file: str = BASE_PATH / "./data/eval/dummy.txt"
 
     def configure(self):
-        self.add_argument('--model', '-m', help='Path to the model checkpoint')
+        self.add_argument("--model", "-m", help="Path to the model checkpoint")
         return super().configure()
+
 
 def main():
     args = RunArgs().parse_args()
