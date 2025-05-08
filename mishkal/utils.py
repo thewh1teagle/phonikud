@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Literal
 from mishkal import lexicon
 import unicodedata
@@ -29,6 +30,7 @@ def remove_nikud(text: str):
     )
 
 
+@lru_cache(maxsize=10000)
 def normalize(text: str) -> str:
     """
     Normalize unicode (decomposite)
@@ -78,6 +80,7 @@ def post_clean(phonemes: str):
 letters_pattern = re.compile(r"(\p{L})([\p{M}'|]*)")
 
 
+@lru_cache(maxsize=10000)
 def get_letters(word: str):
     letters: list[tuple[str, str]] = letters_pattern.findall(word)  # with en_geresh
     letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]

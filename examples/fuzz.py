@@ -1,20 +1,18 @@
-"""
-fuzzing with millions of words to make sure it works fine
-git clone https://github.com/thewh1teagle/hebrew_diacritized
-uv run examples/fuzz.py hebrew_diacritized/data
-"""
-
-from mishkal import phonemize
-from pathlib import Path
 import sys
+from pathlib import Path
 from tqdm import tqdm
-
+from mishkal import phonemize
 
 target_dir = sys.argv[1]
 files = Path(target_dir).glob("**/*.txt")
 
-for file in tqdm(list(files)):
+for file in tqdm(list(files), desc="Files"):
+    # First pass: count lines without storing them
     with open(file, "r", encoding="utf-8") as f:
-        for line in f:
+        num_lines = sum(1 for _ in f)
+
+    # Second pass: process lines with progress bar
+    with open(file, "r", encoding="utf-8") as f:
+        for line in tqdm(f, total=num_lines, desc=f"{file.name}", leave=False):
             phonemes = phonemize(line)
             # print(phonemes)
