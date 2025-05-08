@@ -120,6 +120,7 @@ sentences = [
     "ו֫וֹלְטֶר",
     # "צַהַ״ל",
     # 'צַהַ"ל',
+    "לִרְאוֹת",
 ]
 # print(get_syllables("אֵלָיו"))
 for sentence in sentences:

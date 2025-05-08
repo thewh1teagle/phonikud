@@ -80,7 +80,7 @@ def post_clean(phonemes: str):
 letters_pattern = re.compile(r"(\p{L})([\p{M}'|]*)")
 
 
-@lru_cache(maxsize=10000)
+# @lru_cache(maxsize=10000) TODO?
 def get_letters(word: str):
     letters: list[tuple[str, str]] = letters_pattern.findall(word)  # with en_geresh
     letters: list[Letter] = [Letter(i[0], i[1]) for i in letters]
