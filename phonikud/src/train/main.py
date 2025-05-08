@@ -28,18 +28,16 @@ def main():
     print(f"🟢 Active components: {components}")
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
-    
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     print_model_size(model)
-    
+
     model.to(args.device)
     model.freeze_base_model()
-    
-    
 
-    frozen = [name for name in COMPONENT_INDICES if name not in components]
-    if frozen:
-        model.freeze_mlp_components([COMPONENT_INDICES[n] for n in frozen])
+    # TODO: remove?
+    # frozen = [name for name in COMPONENT_INDICES if name not in components]
+    # if frozen:
+    #     model.freeze_mlp_components([COMPONENT_INDICES[n] for n in frozen])
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     collator = Collator(tokenizer, components)

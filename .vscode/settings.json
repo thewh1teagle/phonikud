@@ -1,6 +1,7 @@
 {
     "editor.formatOnSave": true,
     "python.analysis.extraPaths": [
-        "./phonikud/src"
+        "./phonikud/src",
+        "./phonikud"
     ]
 }

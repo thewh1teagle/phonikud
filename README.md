@@ -19,11 +19,10 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 - The library depends on text with nikud
 - the following hard to predict even from text with nikud
-  - `Milel` - 
-      position of `Hat'ama` / `Stress`. 
-      most of the time it's `Milra`
+  - `Milel` -
+    position of `Hat'ama` / `Stress`.
+    most of the time it's `Milra`
   - `Shva Na`. most of the time it's regular `Shva`
-
 
 We cover these using predictions, and enhanced nakdan is planned.
 
@@ -79,9 +78,7 @@ One of the best ways to improve this library is to ~add words with phonemes to t
 
 `\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Shva Na` clearly.
 
-
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
-
 
 ### Hebrew phonemes
 
@@ -139,16 +136,11 @@ The workflow is as follows:
 
 1. Add diacritics using a standard Nakdan.
 
-
 2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Hat'ama and Shva Na.
-
 
 3. Convert the text with diacritics to phonemes (alphabet characters that represent sounds) using this library, based on coding rules.
 
-
 4. Train the TTS model on phonemes, and at runtime, feed the model phonemes to generate speech.
-
-
 
 This ensures accurate and clear speech synthesis.
 
@@ -166,3 +158,7 @@ This ensures accurate and clear speech synthesis.
 - Stress should be placed in the syllable always **before vowel** and _NOT_ in the first character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
+
+### Testing
+
+Run `uv run pytest`
