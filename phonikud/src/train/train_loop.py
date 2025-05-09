@@ -88,7 +88,9 @@ def train_model(
                     tokenizer.save_pretrained(best_dir)
                     no_improvement_counter = 0
                 else:
-                    no_improvement_counter += 1
+                    print(
+                        f"📉 No improvement at step {step} (no_improvement_counter={no_improvement_counter})"
+                    )
 
                 if (
                     args.early_stopping_patience
