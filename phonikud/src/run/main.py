@@ -10,7 +10,7 @@ from tap import Tap
 
 
 class RunArgs(Tap):
-    model: str = BASE_PATH / "./ckpt/last"  # --model, -m
+    model: str = BASE_PATH / "./ckpt/best"  # --model, -m
     device = "cuda"
     file: str = BASE_PATH / "./data/eval/dummy.txt"
 
