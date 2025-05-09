@@ -24,7 +24,7 @@ Add text files with diacritics, including Hat'ama and Shva Na, to `data/train`.
 Example input: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 
 ```console
-wget https://huggingface.co/datasets/thewh1teagle/phonikud-data/resolve/main/knesset_nikud_v4.7z
+wget https://huggingface.co/datasets/thewh1teagle/phonikud-data/resolve/main/knesset_nikud_v4.txt.7z
 sudo apt install p7zip-full -y
 7z x knesset_nikud_v4.txt.7z
 mv knesset_nikud_v4.txt data/train/
