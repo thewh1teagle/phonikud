@@ -11,6 +11,7 @@ from src.model.phonikud_model import (
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 COMPONENT_INDICES = {"hatama": 0, "shva": 1, "prefix": 2}
 
@@ -36,18 +37,23 @@ def read_lines(
     split_seed: int = 42,
 ) -> Tuple[List[str], List[str]]:
     files = list(Path(data_path).glob("**/*.txt"))
+    total_bytes = sum(f.stat().st_size for f in files)
 
     lines = []
-    for file in files:
-        with open(file, "r", encoding="utf-8") as fp:
-            for line in fp:
-                # Split lines into chunks if they are too long
-                while len(line) > max_context_length:
-                    lines.append(line[:max_context_length].strip())
-                    line = line[max_context_length:]
+    with tqdm(
+        total=total_bytes, desc="Reading files by size", unit="B", unit_scale=True
+    ) as pbar:
+        for file in files:
+            with open(file, "r", encoding="utf-8") as fp:
+                for line in fp:
+                    pbar.update(len(line.encode("utf-8")))
+                    # Split lines into chunks if they are too long
+                    while len(line) > max_context_length:
+                        lines.append(line[:max_context_length].strip())
+                        line = line[max_context_length:]
 
-                if line.strip():
-                    lines.append(line.strip())
+                    if line.strip():
+                        lines.append(line.strip())
 
     # Preprocess lines (remove nikud and other components)
     lines = [
