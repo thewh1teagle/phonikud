@@ -13,13 +13,12 @@ On V100:
 """
 
 from config import get_opts
-from data import Collator, COMPONENT_INDICES, read_lines, get_dataloader
+from data import Collator, get_dataloader
 from train_loop import train_model
-from evaluate import evaluate_model
 from transformers import AutoTokenizer
 from src.model.phonikud_model import PhoNikudModel
 from torch.utils.tensorboard import SummaryWriter
-from utils import print_model_size
+from utils import print_model_size, read_lines
 
 
 def main():
