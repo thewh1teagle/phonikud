@@ -1,6 +1,7 @@
 from typing import List
 
 import torch
+from src.train.config import TrainArgs
 from src.model.phonikud_model import (
     HATAMA_CHAR,
     MOBILE_SHVA_CHAR,
@@ -12,7 +13,9 @@ from torch.utils.data import DataLoader, Dataset
 COMPONENT_INDICES = {"hatama": 0, "shva": 1, "prefix": 2}
 
 
-def get_dataloader(lines, args, components, collator: "Collator"):
+def get_dataloader(
+    lines: list[str], args: TrainArgs, components: list[str], collator: "Collator"
+):
     train_data = TrainData(lines, components)
 
     loader = DataLoader(
