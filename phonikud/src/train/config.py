@@ -2,7 +2,8 @@ from tap import Tap
 from typing import Literal
 from pathlib import Path
 
-BASE_PATH = Path(__file__).parent / '../..'
+BASE_PATH = Path(__file__).parent / "../.."
+
 
 class TrainArgs(Tap):
     model_checkpoint: str = "dicta-il/dictabert-large-char-menaked"
@@ -10,13 +11,13 @@ class TrainArgs(Tap):
 
     device: Literal["cuda", "cpu", "mps"] = "cuda"
 
-    data_dir: str = BASE_PATH / 'data/train'
+    data_dir: str = BASE_PATH / "data/train"
     "Path with txt files for train"
 
     output_dir: str = BASE_PATH / "ckpt/"
     "Path to save checkpoints"
 
-    batch_size: int = 4
+    batch_size: int = 512
     "Batch size"
 
     epochs: int = 10
@@ -29,8 +30,9 @@ class TrainArgs(Tap):
     "Learning rate"
 
     early_stopping_patience = 3
+    "Early stop if no improvement multiple times in checkpoint interval"
 
-    num_workers: int = 0
+    num_workers: int = 2
     "Number of workers for data loading"
 
     checkpoint_interval: int = 1000

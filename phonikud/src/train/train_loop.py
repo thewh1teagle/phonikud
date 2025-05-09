@@ -88,14 +88,20 @@ def train_model(
                 else:
                     no_improvement_counter += 1
 
-                if no_improvement_counter >= args.early_stopping_patience:
+                if (
+                    args.early_stopping_patience
+                    and no_improvement_counter >= args.early_stopping_patience
+                ):
                     print(
                         f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
                     )
                     break
 
         # Break batch loop
-        if no_improvement_counter >= args.early_stopping_patience:
+        if (
+            args.early_stopping_patience
+            and no_improvement_counter >= args.early_stopping_patience
+        ):
             break
 
         # Evaluate each epoch
