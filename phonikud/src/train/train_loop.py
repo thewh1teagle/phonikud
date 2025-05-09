@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from tqdm import tqdm, trange
+from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 from torch.utils.data import DataLoader
@@ -26,9 +26,8 @@ def train_model(
     best_val_score = float("inf")
     no_improvement_counter = 0
 
-    for epoch in trange(args.epochs, desc="Epoch"):
-        pbar = tqdm(train_dataloader, desc="Train iter")
-        for inputs, targets in pbar:
+    for epoch in tqdm(args.epochs, desc="Epoch"):
+        for _, inputs, targets in enumerate(tqdm(train_dataloader, desc="Train iter")):
             optimizer.zero_grad()
 
             # Log learning rate
