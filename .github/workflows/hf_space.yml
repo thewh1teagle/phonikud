@@ -31,6 +31,7 @@ jobs:
           # Copy files
           cp ../.github/workflows/hf_readme.md README.md
           cp -rf ../mishkal .
+          cp -rf ../mishkal/phonikud_onnx .
 
           # Setup phonikud model
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
