@@ -15,7 +15,20 @@ default_text = """
 הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה.
 """.strip()
 
-theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Roboto")])
+css = """
+    .input textarea {
+        font-size: 22px;  /* Increase font size */
+        padding: 15px;    /* Adjust padding for larger input box */
+        height: 200px;    /* Increase height for more space */
+    }
+    .phonemes textarea {
+        font-size: 22px;  /* Increase font size for output */
+        padding: 15px;    /* Adjust padding for larger output box */
+        height: 200px;    /* Increase height for more space */
+    }
+"""
+
+theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Noto Sans Hebrew")])
 
 phonikud = None
 model_path = Path("./phonikud-1.0.int8.onnx")
@@ -34,9 +47,13 @@ def on_submit(
     return text, phonemes
 
 
-with gr.Blocks(theme=theme) as demo:
+with gr.Blocks(theme=theme, css=css) as demo:
     text_input = gr.Textbox(
-        value=default_text, label="Text", rtl=True, elem_classes=["input"], lines=5
+        value=default_text,
+        label="Text",
+        rtl=True,
+        elem_classes=["input"],
+        lines=7,
     )
 
     with gr.Row():
@@ -49,7 +66,7 @@ with gr.Blocks(theme=theme) as demo:
                 value=True, label="Use Phonikud (add diacritics)"
             )
     submit_button = gr.Button("Create")
-    phonemes_output = gr.Textbox(label="Phonemes", lines=5)
+    phonemes_output = gr.Textbox(label="Phonemes", lines=5, elem_classes=["phonemes"])
 
     submit_button.click(
         fn=on_submit,
