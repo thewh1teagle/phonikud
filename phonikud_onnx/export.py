@@ -35,8 +35,8 @@ dynamic_axes_dict = None
 batch_size = 1
 sequence_length = 128
 
-int8_model_path = "dicta-1.0.int8.onnx"
-fp32_model_path = "dicta-1.0.onnx"
+int8_model_path = "phonikud-1.0.int8.onnx"
+fp32_model_path = "phonikud-1.0.onnx"
 
 
 # Define a model wrapper class for ONNX export
