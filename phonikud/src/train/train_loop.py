@@ -64,7 +64,7 @@ def train_model(
                 ).item()
                 writer.add_scalar(f"Loss/{comp}", comp_loss, step)
 
-            if args.checkpoint_interval > 0 and step % args.checkpoint_interval == 0:
+            if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 # Always save "last"
                 last_dir = f"{args.output_dir}/last"
                 print(f"💾 Saving last checkpoint at step {step} to: {last_dir}")
