@@ -1,7 +1,7 @@
 [project]
 name = "phonikud-onnx"
 version = "0.1.0"
-description = "Add your description here"
+description = "Add diacritics to Hebrew text along with phonetic marks"
 readme = "README.md"
 authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" },
@@ -14,11 +14,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = [
-    "onnx>=1.17.0",
-    "phonikud",
-    "torch>=2.6.0",
-]
+dev = ["onnx>=1.17.0", "phonikud", "torch>=2.6.0"]
 
 [tool.uv.sources]
 phonikud = { workspace = true }
