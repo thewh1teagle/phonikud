@@ -46,7 +46,7 @@ uv run tensorboard  --logdir ./ckpt
 
 ```console
 uv pip install nvitop
-nvitop
+uv run nvitop
 ```
 
 ## Run
