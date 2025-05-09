@@ -18,14 +18,22 @@ jobs:
           mkdir phonemize-in-hebrew
           cd phonemize-in-hebrew
           cp ../examples/editor.py app.py
+
+          # Editor deps
           echo "gradio>=5.25.2" >> requirements.txt            
+          # Mishkal deps
           echo "num2words" >> requirements.txt            
           echo "colorlog" >> requirements.txt            
-          echo "regex" >> requirements.txt            
+          echo "regex" >> requirements.txt
+          # Phonikud deps
+          echo "tokenizers" >> requirements.txt
+          echo "onnxruntime" >> requirements.txt
+          # Copy files
           cp ../.github/workflows/hf_readme.md README.md
           cp -rf ../mishkal .
 
-
+          # Setup phonikud model
+          wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
 
           # Initialize git and force push
           git config --global user.email "thewh1teagle"
