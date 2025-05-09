@@ -35,3 +35,5 @@ def evaluate_model(
     val_loss /= len(val_dataloader)  # Average over all validation batches
     writer.add_scalar("Loss/val", val_loss, step)  # Log validation loss
     print(f"Validation Loss after step {step}: {val_loss:.4f}")
+
+    return val_loss

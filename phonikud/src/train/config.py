@@ -15,7 +15,7 @@ class TrainArgs(Tap):
     output_dir: str = "ckpt"
     """Directory to save model checkpoints"""
 
-    batch_size: int = 4
+    batch_size: int = 512
     """Batch size for training"""
 
     epochs: int = 10
@@ -24,10 +24,10 @@ class TrainArgs(Tap):
     pre_training_step: int = 0
     """Resume training from this step"""
 
-    learning_rate: float = 1e-3
+    learning_rate: float = 1e-5
     """Learning rate"""
 
-    num_workers: int = 0
+    num_workers: int = 16
     """Number of workers for data loading"""
 
     checkpoint_interval: int = 1000

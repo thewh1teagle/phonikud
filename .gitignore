@@ -17,3 +17,7 @@ saspeech_gold_standard/
 *.json
 !mishkal/data/*.json
 ckpt/
+*.txt
+*.7z
+.venv
+venv

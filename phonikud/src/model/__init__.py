@@ -40,7 +40,7 @@ class PhoNikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config
-        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
+        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3)) ### i need to talk with moris
         # ^ predicts hatama, mobile shva, and prefix; outputs are logits
 
     def freeze_mlp_components(self, indices: list[int]):

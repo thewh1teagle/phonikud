@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import List, Tuple
 
 import torch
+import sys
+sys.path.append("/home/maxm/mishkal")
 from phonikud.src.model import (
     MOBILE_SHVA_CHAR,
     NIKUD_HASER,
@@ -18,7 +20,7 @@ COMPONENT_INDICES = {"hatama": 0, "shva": 1, "prefix": 2}
 
 def get_dataloader(lines, args, components, collator: "Collator"):
     train_data = TrainData(lines, components)
-
+    
     loader = DataLoader(
         train_data,
         batch_size=args.batch_size,
