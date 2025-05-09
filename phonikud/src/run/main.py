@@ -2,7 +2,7 @@
 uv run src/test.py --device cuda
 """
 
-from src.model.phonikud_model import PhoNikudModel, NIKUD_HASER
+from src.model.phonikud_model import PhoNikudModel, NIKUD_HASER, remove_nikud
 from src.train.config import BASE_PATH
 from transformers import AutoTokenizer
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
@@ -29,6 +29,7 @@ def main():
     with open(args.file, "r", encoding="utf-8") as fp:
         for line in fp:
             line = line.strip()
+            line = remove_nikud(line)
             if not line:
                 continue
             lines = model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)
