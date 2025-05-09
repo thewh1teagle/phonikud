@@ -1,9 +1,3 @@
-"""
-uv sync
-uv pip install "gradio>=5.15.0" phonikud-onnx
-uv run gradio examples/editor.py
-"""
-
 from mishkal import phonemize
 import gradio as gr
 from phonikud_onnx import Phonikud
@@ -17,14 +11,18 @@ default_text = """
 
 css = """
     .input textarea {
-        font-size: 22px;  /* Increase font size */
-        padding: 15px;    /* Adjust padding for larger input box */
-        height: 200px;    /* Increase height for more space */
+        font-size: 22px;
+        padding: 15px;
+        height: 200px;
     }
-    .phonemes textarea {
-        font-size: 22px;  /* Increase font size for output */
-        padding: 15px;    /* Adjust padding for larger output box */
-        height: 200px;    /* Increase height for more space */
+
+    .phonemes {
+        background: var(--input-background-fill);
+        
+    }
+    .phonemes {
+        padding: 5px;
+        min-height: 50px;    
     }
 """
 
@@ -36,15 +34,12 @@ if model_path.exists():
     phonikud = Phonikud(str(model_path))
 
 
-def on_submit(
-    text: str, predict_stress, schema: str, use_phonikud: bool
-) -> tuple[str, str]:
-    if phonikud and use_phonikud:
-        text = phonikud.add_diacritics(text)
+def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
+    diacritized = phonikud.add_diacritics(text) if phonikud and use_phonikud else text
     phonemes = phonemize(
-        text, predict_stress=predict_stress, schema=schema, predict_shva_nah=False
+        diacritized, predict_stress=True, schema=schema, predict_shva_nah=False
     )
-    return text, phonemes
+    return f"<div dir='rtl' style='font-size: 22px;'>{diacritized.strip()}</div><br><div dir='ltr' style='font-size: 22px;'>{phonemes.strip()}</div>"
 
 
 with gr.Blocks(theme=theme, css=css) as demo:
@@ -60,25 +55,18 @@ with gr.Blocks(theme=theme, css=css) as demo:
         schema_dropdown = gr.Dropdown(
             choices=["modern", "plain"], value="plain", label="Phoneme Schema"
         )
-        with gr.Column():
-            predict_stress_checkbox = gr.Checkbox(value=True, label="Predict Stress")
-            use_phonikud_checkbox = gr.Checkbox(
-                value=True, label="Use Phonikud (add diacritics)"
-            )
+        use_phonikud_checkbox = gr.Checkbox(
+            value=True, label="Use Phonikud (add diacritics)"
+        )
+
     submit_button = gr.Button("Create")
-    phonemes_output = gr.Textbox(label="Phonemes", lines=5, elem_classes=["phonemes"])
+    output_box = gr.Markdown(label="Phonemes + Diacritics", elem_classes=["phonemes"])
 
     submit_button.click(
         fn=on_submit,
-        inputs=[
-            text_input,
-            predict_stress_checkbox,
-            schema_dropdown,
-            use_phonikud_checkbox,
-        ],
-        outputs=[text_input, phonemes_output],  # text_input ראשון — יעדכן את תיבת הקלט
+        inputs=[text_input, schema_dropdown, use_phonikud_checkbox],
+        outputs=output_box,
     )
-    ## center markdown
 
     gr.Markdown("""
         <p style='text-align: center;'><a href='https://github.com/thewh1teagle/mishkal' target='_blank'>Mishkal on Github</a></p>
