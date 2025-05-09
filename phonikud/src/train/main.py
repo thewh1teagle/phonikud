@@ -43,7 +43,11 @@ def main():
     collator = Collator(tokenizer, components)
 
     # Data split
+    print("📖🔍 Reading lines from dataset...")
     train_lines, val_lines = read_lines(args.data_dir, components)
+    print(
+        f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
+    )
 
     # Data loader
     train_dataloader = get_dataloader(train_lines, args, components, collator)
