@@ -39,7 +39,10 @@ def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
     phonemes = phonemize(
         diacritized, predict_stress=True, schema=schema, predict_shva_nah=False
     )
-    return f"<div dir='rtl' style='font-size: 22px;'>{diacritized.strip()}</div><br><div dir='ltr' style='font-size: 22px;'>{phonemes.strip()}</div>"
+    if use_phonikud:
+        return f"<div dir='rtl' style='font-size: 22px;'>{diacritized.strip()}</div><br><div dir='ltr' style='font-size: 22px;'>{phonemes.strip()}</div>"
+    else:
+        return f"<div dir='ltr' style='font-size: 22px;'>{phonemes.strip()}</div>"
 
 
 with gr.Blocks(theme=theme, css=css) as demo:
