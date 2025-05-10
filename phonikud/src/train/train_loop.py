@@ -24,7 +24,7 @@ def train_model(
     criterion = nn.BCEWithLogitsLoss()
     step = args.pre_training_step
     best_val_score = float("inf")
-    no_improvement_counter = 0
+    early_stop_counter = 0
 
     for epoch in trange(args.epochs, desc="Epoch"):
         pbar = tqdm(
@@ -86,15 +86,15 @@ def train_model(
                     )
                     model.save_pretrained(best_dir)
                     tokenizer.save_pretrained(best_dir)
-                    no_improvement_counter = 0
+                    early_stop_counter = 0
                 else:
                     print(
-                        f"📉 No improvement at step {step} (no_improvement_counter={no_improvement_counter})"
+                        f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
                     )
 
                 if (
                     args.early_stopping_patience
-                    and no_improvement_counter >= args.early_stopping_patience
+                    and early_stop_counter > args.early_stopping_patience
                 ):
                     print(
                         f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
@@ -104,7 +104,7 @@ def train_model(
         # Break batch loop
         if (
             args.early_stopping_patience
-            and no_improvement_counter >= args.early_stopping_patience
+            and early_stop_counter >= args.early_stopping_patience
         ):
             break
 
