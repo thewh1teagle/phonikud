@@ -40,10 +40,14 @@ jobs:
           git branch -M main
           git config --global user.email "thewh1teagle"
           git config --global user.name "thewh1teagle"
-          git lfs install
           git remote add origin https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-          wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
+          echo dummy > dummy.txt
+          git add .
+          git commit -m "dummy"
+          git push --force origin main
 
+          git lfs install
+          wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
           git lfs track "*.onnx"
           git add .
           git commit -m "latest"
