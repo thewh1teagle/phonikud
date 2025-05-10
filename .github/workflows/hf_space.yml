@@ -38,9 +38,10 @@ jobs:
           # Git
           git config --global user.email "thewh1teagle"
           git config --global user.name "thewh1teagle"
-          
+
           git lfs untrack "*.onnx" || true
           git rm --cached "*.onnx" || true
+          git add .
           git commit -m "clean"
           git push --force space main
 
