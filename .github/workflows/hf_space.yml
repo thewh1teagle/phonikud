@@ -36,8 +36,10 @@ jobs:
           # Setup phonikud model
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
 
-          # # Git
-          # git branch -m master main
+          # Git
+          git init
+          git branch -m master main
+          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
           git lfs uninstall
           git push --force origin main
 
@@ -47,10 +49,8 @@ jobs:
           # Initialize git and force push
           git config --global user.email "thewh1teagle"
           git config --global user.name "thewh1teagle"
-          git init
           git add .
           git commit -m "latest"
-          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
           git push --force space main
 
         env:
