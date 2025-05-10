@@ -22,7 +22,7 @@ pip install git+https://github.com/thewh1teagle/mishkal
 
 You can find the package as well in `pypi.org/project/mishkal-hebrew`
 
-## Play
+## Play 🕹️
 
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
@@ -42,7 +42,7 @@ Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 
 See [examples](examples)
 
-## Docs
+## Docs 📚
 
 - It's recommend to add nikud with [phonikud-onnx](phonikud-onnx) model
 - Hebrew nikud is normalized
@@ -55,6 +55,7 @@ See [examples](examples)
 - `'"` (Gershaim),
 - `\u05ab` (Hat'ama)
 - `\u05bd` (Shva Na)
+- `|` (Prefix letters)
 
 `\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Shva Na` clearly.
 
@@ -104,8 +105,7 @@ Consonants (24)
 ### Mixed English
 
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
-See [examples/with_fallback.py](examples/with_fallback.py) for reference.
-Note that if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
+Note: if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
 Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin), Resh `ʁ` and `χ` (Het).
 
 ## How It Works
