@@ -22,9 +22,12 @@ def train_model(
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
+    scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, total_iters=args.epochs)
+    scaler = torch.amp.GradScaler(args.device)
+
     step = args.pre_training_step
     best_val_score = float("inf")
-    no_improvement_counter = 0
+    early_stop_counter = 0
 
     for epoch in trange(args.epochs, desc="Epoch"):
         pbar = tqdm(
@@ -51,9 +54,17 @@ def train_model(
             ]  # # skip BOS and EOS symbols
 
             loss = criterion(active_logits, targets.float())
-            loss.backward()
 
-            optimizer.step()
+            # Unscale gradients before clipping
+            scaler.unscale_(optimizer)
+
+            # Clip gradients
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+            scaler.step(optimizer)
+            scaler.update()
+            scheduler.step()
+
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
 
@@ -86,15 +97,15 @@ def train_model(
                     )
                     model.save_pretrained(best_dir)
                     tokenizer.save_pretrained(best_dir)
-                    no_improvement_counter = 0
+                    early_stop_counter = 0
                 else:
                     print(
-                        f"📉 No improvement at step {step} (no_improvement_counter={no_improvement_counter})"
+                        f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
                     )
 
                 if (
                     args.early_stopping_patience
-                    and no_improvement_counter >= args.early_stopping_patience
+                    and early_stop_counter > args.early_stopping_patience
                 ):
                     print(
                         f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
@@ -104,7 +115,7 @@ def train_model(
         # Break batch loop
         if (
             args.early_stopping_patience
-            and no_improvement_counter >= args.early_stopping_patience
+            and early_stop_counter >= args.early_stopping_patience
         ):
             break
 
