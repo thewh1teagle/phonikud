@@ -35,17 +35,18 @@ jobs:
 
           # Setup phonikud model
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
-          
 
-          # Initialize git and force push
-          rm -rf .git
-          git init
+          # Git
           git branch -m master main
-          git config user.email "thewh1teagle"
-          git config user.name "thewh1teagle"
+
+          # Clean space
+          git lfs migrate export --include="*.onnx"
+          git push --force origin main
 
           git lfs install
           git lfs track "*.onnx"
+
+          # Initialize git and force push
           git config --global user.email "thewh1teagle"
           git config --global user.name "thewh1teagle"
           git init
