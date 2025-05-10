@@ -91,6 +91,7 @@ def train_model(
                     print(
                         f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
                     )
+                    early_stop_counter += 1
 
                 if (
                     args.early_stopping_patience
