@@ -48,6 +48,7 @@ jobs:
           git lfs track "*.onnx"
           git add .
           git commit -m "latest"
+          du -sh *
           git push --force space main
 
         env:
