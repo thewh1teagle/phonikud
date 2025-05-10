@@ -37,6 +37,8 @@ jobs:
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
 
           # Git
+          git config --global user.email "thewh1teagle"
+          git config --global user.name "thewh1teagle"
           
           git lfs uninstall
           git add .
