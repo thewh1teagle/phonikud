@@ -36,6 +36,9 @@ jobs:
           
 
           # Git
+          git config --global user.email "thewh1teagle"
+          git config --global user.name "thewh1teagle"
+          
           git lfs untrack "*.onnx" || true
           git rm --cached "*.onnx" || true
           git commit -m "clean"
@@ -46,8 +49,6 @@ jobs:
           git init
           git branch -M main
           git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-          git config user.email "thewh1teagle"
-          git config user.name "thewh1teagle"
 
           git lfs install
           git lfs track "*.onnx"
