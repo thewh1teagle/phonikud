@@ -20,7 +20,7 @@ jobs:
           git lfs migrate export --include="*" --everything
           git push --force origin main
           cd ..
-          rm -rf $SPACE
+          rm -rf $SPACE_NAME
 
           # Prepare space
           mkdir $SPACE_NAME
