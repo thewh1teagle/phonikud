@@ -7,15 +7,10 @@ Convert Hebrew text into IPA for TTS systems and learning.
 ## Features
 
 - Nikud model with phonetic marks 🧠
-
-- Real time onnx model support  💫
-
 - Convert nikud text to modern spoken phonemes 🗣️
-
-- Expand dates and numbers with nikud 📅🔢
-
+- Expand dates, numbers, etc 📚 
 - Handle mixed English/Hebrew with fallback 🌍
-- Expand words, symbols & emojis 📚✨
+- Real time onnx model support  💫
 
 ## Install
 
@@ -53,14 +48,6 @@ See [examples](examples)
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
-
-### Enhance vocabulary
-
-One of the best ways to improve this library is to ~add words with phonemes to the dictionary~ create tagged sentences with shva na and hat'ama. you can listen to it with [phoneme-synthesis](https://itinerarium.github.io/phoneme-synthesis/)
-
-### Deduplication
-
-- Hebrew Geresh -> `'` (single quote)
 
 ### Nikud set and symbols
 
