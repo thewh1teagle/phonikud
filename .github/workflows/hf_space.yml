@@ -15,12 +15,12 @@ jobs:
       - name: Prepare and push to HF
         run: |
           # Prepare space
-          mkdir phonemize-in-hebrew
-          cd phonemize-in-hebrew
+          git clone https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+          cd $SPACE_NAME
           cp ../examples/editor.py app.py
 
           # Editor deps
-          echo "gradio>=5.25.2" >> requirements.txt            
+          echo "gradio>=5.25.2" > requirements.txt            
           # Mishkal deps
           echo "num2words" >> requirements.txt            
           echo "colorlog" >> requirements.txt            
@@ -37,21 +37,17 @@ jobs:
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
 
           # Git
-          git init
-          git branch -m master main
-          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+          
           git lfs uninstall
-          git push --force space main
+          git add .
+          git commit -m "clean"
+          git push
 
           git lfs install
           git lfs track "*.onnx"
-
-          # Initialize git and force push
-          git config --global user.email "thewh1teagle"
-          git config --global user.name "thewh1teagle"
           git add .
           git commit -m "latest"
-          git push --force space main
+          git push #--force space main
 
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
