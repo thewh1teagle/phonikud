@@ -40,10 +40,11 @@ jobs:
           git config --global user.name "thewh1teagle"
 
           git lfs untrack "*.onnx" || true
-          git rm --cached "*.onnx" || true
+          git rm --cached phonikud-1.0.int8.onnx || true
           git add .
           git commit -m "clean"
           git push --force origin main
+          git lfs prune
 
           rm -rf .git 
           wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
