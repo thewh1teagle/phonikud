@@ -81,14 +81,19 @@ with gr.Blocks(theme=theme, css=css) as demo:
         use_phonikud_checkbox = gr.Checkbox(
             value=True, label="Use Phonikud (add diacritics)"
         )
-        use_phonikud_checkbox.change(
-            fn=on_phonikud_toggle,
-            inputs=use_phonikud_checkbox,
-            outputs=text_input,
-        )
 
     submit_button = gr.Button("Create")
     output_box = gr.Markdown(label="Phonemes + Diacritics", elem_classes=["phonemes"])
+    use_phonikud_checkbox.change(
+        fn=lambda use_phonikud: (
+            on_phonikud_toggle(use_phonikud),  # Update text_input
+            on_submit(
+                on_phonikud_toggle(use_phonikud), schema_dropdown.value, use_phonikud
+            ),  # Update output_box
+        ),
+        inputs=use_phonikud_checkbox,
+        outputs=[text_input, output_box],  # Update both text input and output box
+    )
 
     submit_button.click(
         fn=on_submit,
