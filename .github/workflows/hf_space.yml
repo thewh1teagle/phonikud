@@ -36,8 +36,8 @@ jobs:
           
 
           # Git
-          git lfs untrack "*.onnx"
-          git rm --cached "*.onnx"
+          git lfs untrack "*.onnx" || true
+          git rm --cached "*.onnx" || true
           git commit -m "clean"
           git push --force space main
 
