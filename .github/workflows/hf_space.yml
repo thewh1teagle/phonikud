@@ -40,7 +40,7 @@ jobs:
           git config --global user.name "thewh1teagle"
 
           git lfs untrack "*.onnx" || true
-          git rm --cached phonikud-1.0.int8.onnx || true
+          # git rm --cached phonikud-1.0.int8.onnx || true
           git add .
           git commit -m "clean"
           git push --force origin main
