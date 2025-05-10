@@ -41,7 +41,7 @@ jobs:
           git branch -m master main
           git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
           git lfs uninstall
-          git push --force origin main
+          git push --force space main
 
           git lfs install
           git lfs track "*.onnx"
