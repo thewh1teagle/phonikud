@@ -1,13 +1,27 @@
+"""
+uv pip install gradio
+uv run gradio examples/editor.py
+"""
+
 from mishkal import phonemize
+from mishkal.utils import remove_nikud
 import gradio as gr
 from phonikud_onnx import Phonikud
 from pathlib import Path
 
+
 default_text = """
-הדייג נצמד לדופן הסירה בזמן הסערה.  
-הסברתי לה את הכל, ואמרתי בדיוק מה קרה.
-הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה.
+הַדַּיָּג נִצְמָד לְדֹפֶן הַסִּירָה בִּזְמַן הַסְּעָרָה.  
+הִסְבַּרְתִּי לָהּ אֶת הַכֹּל, וְאָמַרְתִּי בְּדִיּוּק מָה קָרָה.
+הַיְּלָדִים אָהֲבוּ בִּמְיֻחָד אֶת הַסִּפּוּרִים הַלָּלוּ שֶׁהַמּוֹרָה הִקְרִיאָה.
 """.strip()
+
+
+def on_phonikud_toggle(use_phonikud):
+    if not use_phonikud:
+        return default_text
+    return remove_nikud(default_text)
+
 
 css = """
     .input textarea {
@@ -47,7 +61,7 @@ def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
 
 with gr.Blocks(theme=theme, css=css) as demo:
     text_input = gr.Textbox(
-        value=default_text,
+        value=remove_nikud(default_text),
         label="Text",
         rtl=True,
         elem_classes=["input"],
@@ -60,6 +74,11 @@ with gr.Blocks(theme=theme, css=css) as demo:
         )
         use_phonikud_checkbox = gr.Checkbox(
             value=True, label="Use Phonikud (add diacritics)"
+        )
+        use_phonikud_checkbox.change(
+            fn=on_phonikud_toggle,
+            inputs=use_phonikud_checkbox,
+            outputs=text_input,
         )
 
     submit_button = gr.Button("Create")
