@@ -43,7 +43,7 @@ jobs:
           cd ..
           rm -rf $SPACE
 
-          mkdir $SPACE
+          mkdir $SPACE_NAME
           cd $SPACE
           git init
           git branch -M main
