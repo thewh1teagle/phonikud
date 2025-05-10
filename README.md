@@ -15,6 +15,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Expand dates and numbers with nikud 📅🔢
 
 - Handle mixed English/Hebrew with fallback 🌍
+- Expand words, symbols & emojis 📚✨
 
 ## Install
 
