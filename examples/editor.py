@@ -3,7 +3,7 @@ uv pip install gradio
 uv run gradio examples/editor.py
 """
 
-from mishkal import phonemize
+from mishkal import phonemize, lexicon
 from mishkal.utils import remove_nikud
 import gradio as gr
 from phonikud_onnx import Phonikud
@@ -49,7 +49,13 @@ if model_path.exists():
 
 
 def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
-    diacritized = phonikud.add_diacritics(text) if phonikud and use_phonikud else text
+    diacritized = (
+        phonikud.add_diacritics(
+            text, mark_matres_lectionis=lexicon.NIKUD_HASER_DIACRITIC
+        )
+        if phonikud and use_phonikud
+        else text
+    )
     phonemes = phonemize(
         diacritized, predict_stress=True, schema=schema, predict_shva_nah=False
     )

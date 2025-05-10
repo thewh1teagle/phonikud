@@ -5,12 +5,15 @@ uv run python examples/simple.py
 """
 
 from phonikud_onnx import Phonikud
+from mishkal import lexicon
 
 
 def main():
     phonikud = Phonikud("./phonikud-1.0.int8.onnx")
     sentence = "הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה."
-    with_diacritics = phonikud.add_diacritics(sentence)
+    with_diacritics = phonikud.add_diacritics(
+        sentence, mark_matres_lectionis=lexicon.NIKUD_HASER_DIACRITIC
+    )
     print(with_diacritics)
 
 
