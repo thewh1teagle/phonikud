@@ -14,13 +14,6 @@ jobs:
           lfs: true
       - name: Prepare and push to HF
         run: |
-          # Clean space
-          git clone https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-          cd $SPACE_NAME
-          git lfs migrate export --include="*" --everything
-          git push --force origin main
-          cd ..
-          rm -rf $SPACE_NAME
 
           # Prepare space
           mkdir $SPACE_NAME
