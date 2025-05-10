@@ -36,8 +36,8 @@ jobs:
           # Setup phonikud model
           wget https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx
 
-          # Git
-          git branch -m master main
+          # # Git
+          # git branch -m master main
 
           # Clean space
           git lfs migrate export --include="*.onnx"
