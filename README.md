@@ -46,7 +46,7 @@ See [examples](examples)
 
 ## Docs
 
-- It's recommend to add nikud with [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) model
+- It's recommend to add nikud with [phonikud-onnx](phonikud-onnx) model
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
 - It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
