@@ -6,15 +6,15 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- Nikud model with phonetic features (via [phonikud](phonikud))
+- Nikud model with phonetic marks 🧠
 
-- Real-time onnx model support ⚡
+- Real time onnx model support  ✨
 
 - Convert nikud text to modern spoken phonemes 🗣️
 
 - Expand dates and numbers with nikud 📅🔢
 
-- Handle mixed English/Hebrew with smart fallback 🌍
+- Handle mixed English/Hebrew with fallback 🌍
 
 ## Install
 
