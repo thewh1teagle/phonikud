@@ -40,7 +40,7 @@ jobs:
           git config user.email "thewh1teagle"
           git config user.name "thewh1teagle"
           
-          git lfs uninstall
+          rm -rf *.onnx
           git add .
           git commit -m "clean"
           git push
