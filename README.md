@@ -8,7 +8,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 - Nikud model with phonetic marks 🧠
 
-- Real time onnx model support  ✨
+- Real time onnx model support  💫
 
 - Convert nikud text to modern spoken phonemes 🗣️
 
