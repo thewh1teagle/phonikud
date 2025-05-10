@@ -40,8 +40,7 @@ jobs:
           # git branch -m master main
 
           # Clean space
-          git reset --hard
-          git lfs migrate export --include="*.onnx"
+          yes | git lfs migrate export --include="*.onnx"
           git push --force origin main
 
           git lfs install
