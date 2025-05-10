@@ -13,6 +13,21 @@ Enhanced model of [Dicta model](https://huggingface.co/dicta-il/dictabert-large-
 - Lightweight: Runs with onnx without heavy dependencies 🛠️
 - Dual mode: Output niqqud male (fully marked) and niqqud haser 💡
 
+## Setup
+
+```console
+pip install phonikud-onnx
+```
+
 ## Usage
+
+```python
+from phonikud_onnx import Phonikud
+phonikud = Phonikud("./phonikud-1.0.int8.onnx")
+with_diacritics = phonikud.add_diacritics("מתכת יקרה")
+print(with_diacritics)
+```
+
+## Examples
 
 See [examples](examples)

@@ -1,6 +1,6 @@
 [project]
 name = "phonikud-onnx"
-version = "0.1.0"
+version = "1.0.0"
 description = "Add diacritics to Hebrew text along with phonetic marks"
 readme = "README.md"
 authors = [

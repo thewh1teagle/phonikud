@@ -10,6 +10,18 @@ Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https:/
 
 Example: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 
+## Why
+
+Hebrew is usually written without nikud (vowels), so the pronunciation is unclear.  
+To convert Hebrew to phonemes, we need more than just plain text:
+
+- **Nikud** must be added — it's missing from the text.
+- **Shva** can be vocal (Shva Na) or silent — usually silent.
+- **Hat'ama** (word stress) isn’t marked — usually on the last syllable.
+- **Prefix letters** (e.g., ו־ / ב־) make words harder to analyze.
+
+Phonetic details like these are essential for accurate pronunciation.
+
 ## Setup
 
 ```console

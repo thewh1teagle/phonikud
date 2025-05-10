@@ -6,25 +6,13 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 ## Features
 
-- Lightweight nikud model
-- (WIP) Enhanced nikud model with phonetic features (stress, shva na, ...) see [phonikud](phonikud)
+- Nikud model with phonetic features, see [phonikud](phonikud)
 - Run onnx models with realtime support
 - Convert text with nikud to modern spoken phonemes
 - Expand dates into text with nikud
 - Expand numbers into text with nikud
 - Mixed English in Hebrew with fallback
 - Dictionaries with words, symbols, emojis
-
-## Limitiation
-
-- The library depends on text with nikud
-- the following hard to predict even from text with nikud
-  - `Milel` -
-    position of `Hat'ama` / `Stress`.
-    most of the time it's `Milra`
-  - `Shva Na`. most of the time it's regular `Shva`
-
-We cover these using predictions, and enhanced nakdan is planned.
 
 ## Install
 
@@ -48,7 +36,9 @@ phonemes = phonemize('שָׁלוֹם עוֹלָם')
 print(phonemes) # ʃalˈom olˈam
 ```
 
-Please use [dicta-onnx](https://github.com/thewh1teagle/dicta-onnx) for adding diacritics.
+Note: mishkal expects diacritics and phonetics marks.
+
+Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 
 ## Examples
 
@@ -136,7 +126,7 @@ The workflow is as follows:
 
 1. Add diacritics using a standard Nakdan.
 
-2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Hat'ama and Shva Na.
+2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Hat'ama and Shva Na. See [phonikud](phonikud)
 
 3. Convert the text with diacritics to phonemes (alphabet characters that represent sounds) using this library, based on coding rules.
 
@@ -162,3 +152,7 @@ This ensures accurate and clear speech synthesis.
 ### Testing
 
 Run `uv run pytest`
+
+## Credits
+
+Special thanks ❤️ to [dicta-il](https://huggingface.co/dicta-il/dictabert-large-char-menaked) for their amazing Hebrew diacritics model ✨ and the dataset that made this possible!
