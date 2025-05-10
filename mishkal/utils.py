@@ -22,9 +22,11 @@ NORMALIZE_PATTERNS = {
 }
 
 
-def remove_nikud(text: str):
+def remove_nikud(text: str, to_keep=""):
+    pattern = lexicon.HE_NIKUD_PATTERN
+    pattern = "".join(i for i in pattern if i not in to_keep)
     return re.sub(
-        lexicon.HE_NIKUD_PATTERN,
+        pattern,
         "",
         text,
     )
