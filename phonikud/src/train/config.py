@@ -26,13 +26,13 @@ class TrainArgs(Tap):
     pre_training_step: int = 0
     "Resume training from this step to preserve checkpoint name"
 
-    learning_rate: float = 1e-3
+    learning_rate: float = 1e-5
     "Learning rate"
 
     early_stopping_patience = 3
     "Early stop if no improvement multiple times in checkpoint interval"
 
-    num_workers: int = 2
+    num_workers: int = 16
     "Number of workers for data loading"
 
     checkpoint_interval: int = 1000
