@@ -22,6 +22,10 @@ To convert Hebrew to phonemes, we need more than just plain text:
 
 Phonetic details like these are essential for accurate pronunciation.
 
+## Model card
+
+See [model card](https://huggingface.co/thewh1teagle/phonikud) on HuggingSpace 🤗
+
 ## Setup
 
 ```console
