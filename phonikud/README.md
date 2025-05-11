@@ -71,7 +71,7 @@ uv run src/run/main.py -m path/to/checkpoint/
 
 ## Export onnx
 
-See [onnx_lib](onnx_lib)
+See [phonikud-onnx](../phonikud_onnx)
 
 ## Upload to HuggingFace
 
