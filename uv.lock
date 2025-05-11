@@ -671,7 +671,7 @@ requires-dist = [
 
 [[package]]
 name = "phonikud-onnx"
-version = "0.1.0"
+version = "1.0.0"
 source = { editable = "phonikud_onnx" }
 dependencies = [
     { name = "onnxruntime" },

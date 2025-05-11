@@ -8,6 +8,7 @@ from mishkal.utils import (
     post_clean,
     add_milra_hatama,
     mark_shva_na,
+    sort_hatama,
 )
 from typing import Callable, Literal
 import regex as re
@@ -68,6 +69,7 @@ class Phonemizer:
             if lexicon.HATAMA_DIACRITIC not in word and predict_stress:
                 word = add_milra_hatama(word)
             letters: list[Letter] = get_letters(word)
+            letters = sort_hatama(letters)
 
             phonemes: list[str] = phonemize_hebrew(
                 letters,

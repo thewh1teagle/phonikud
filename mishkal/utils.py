@@ -215,6 +215,16 @@ def mark_shva_na(word: str):
     return "".join(str(i) for i in letters)
 
 
+def sort_hatama(letters: list[Letter]) -> list[Letter]:
+    for i in range(len(letters) - 1):
+        diacs = list(letters[i].all_diac)
+        if lexicon.HATAMA_DIACRITIC in diacs and lexicon.NIKUD_HASER_DIACRITIC in diacs:
+            diacs.remove(lexicon.HATAMA_DIACRITIC)
+            letters[i].all_diac = "".join(diacs)  # Reassign the updated diacritics
+            letters[i + 1].all_diac += lexicon.HATAMA_DIACRITIC
+    return letters
+
+
 def add_milra_hatama(word: str):
     syllables = mishkal.syllables.get_syllables(word)
     stress_index = -1

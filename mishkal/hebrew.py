@@ -73,13 +73,16 @@ def letter_to_phonemes(
     skip_diacritics = False
     skip_consonants = False
     skip_offset = 0
-    # revised rules
 
-    if cur.char == "א" and not cur.diac and prev:
+    if lexicon.NIKUD_HASER_DIACRITIC in cur.all_diac:
+        skip_consonants = True
+        skip_diacritics = True
+
+    elif cur.char == "א" and not cur.diac and prev:
         if next and next.char != "ו":
             skip_consonants = True
 
-    if (
+    elif (
         cur.char == "י"
         and next
         # Yud without diacritics
@@ -93,7 +96,7 @@ def letter_to_phonemes(
     ):
         skip_consonants = True
 
-    if cur.char == "ש" and SIN in cur.diac:
+    elif cur.char == "ש" and SIN in cur.diac:
         if (
             next
             and next.char == "ש"
@@ -110,23 +113,23 @@ def letter_to_phonemes(
             skip_consonants = True
 
     # shin without nikud after sin = sin
-    if cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
+    elif cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
         cur_phonemes.append("s")
         skip_consonants = True
 
-    if not next and cur.char == "ח" and PATAH in cur.diac:
+    elif not next and cur.char == "ח" and PATAH in cur.diac:
         # Final Het gnuva
         cur_phonemes.append("ax")
         skip_diacritics = True
         skip_consonants = True
 
-    if not next and cur.char == "ה" and PATAH in cur.diac:
+    elif not next and cur.char == "ה" and PATAH in cur.diac:
         # Final He gnuva
         cur_phonemes.append("ah")
         skip_diacritics = True
         skip_consonants = True
 
-    if not next and cur.char == "ע" and PATAH in cur.diac:
+    elif not next and cur.char == "ע" and PATAH in cur.diac:
         # Final Ayin gnuva
         cur_phonemes.append("a")
         skip_diacritics = True
@@ -145,7 +148,7 @@ def letter_to_phonemes(
     elif DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES:  # dagesh
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
         skip_consonants = True
-    elif cur.char == "ו":
+    elif cur.char == "ו" and lexicon.NIKUD_HASER_DIACRITIC not in cur.all_diac:
         skip_consonants = True
 
         if prev and "\u05b0" in prev.diac and re.findall("[\u05b9-\u05ba]", cur.diac):
@@ -156,6 +159,7 @@ def letter_to_phonemes(
 
         elif next and next.char == "ו":
             # One of them has holam
+
             holams = re.findall("[\u05b9-\u05ba]", cur.diac + next.diac)
             if len(holams) == 2:
                 cur_phonemes.append("wo")
@@ -171,6 +175,15 @@ def letter_to_phonemes(
                 cur_phonemes.append("vu")
                 skip_diacritics = True
                 skip_offset += 1
+            elif HIRIK in cur.diac:
+                cur_phonemes.append("vi")
+                skip_diacritics = True
+            elif SHVA in cur.diac and not next.diac:
+                cur_phonemes.append("v")
+                skip_diacritics = True
+            elif KAMATZ in cur.diac or PATAH in cur.diac:
+                cur_phonemes.append("va")
+                skip_diacritics = True
             else:
                 # TODO ?
                 # skip_consonants = False
