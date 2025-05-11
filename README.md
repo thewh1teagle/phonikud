@@ -61,7 +61,7 @@ See [examples](examples)
 
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 
-### Hebrew phonemes
+### Hebrew phonemes 🔠
 
 Stress marks (1)
 
@@ -102,13 +102,13 @@ Consonants (24)
 - `ʒ` - Zain with Geresh (`בֵּז׳`) `\u0292`
 - `dʒ` - Gimel with Geresh (`גִּ׳ירָפָה`)
 
-### Mixed English
+### Mixed English 🌎
 
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
 Note: if you use this with TTS, it is recommended to train the model on phonemized English. Otherwise, the model may not recognize the phonemes correctly.
 Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin), Resh `ʁ` and `χ` (Het).
 
-## How It Works
+## How It Works 🔧
 
 To train TTS models, it’s essential to represent speech accurately. Plain Hebrew text is ambiguous without diacritics, and even with them, Shva Na and Hat'ama can cause confusion. For example, "אני אוהב אורז" (I like rice) and "אני אורז מזוודה" (I pack a suitcase) share the same diacritics for "אורז" but have different Hat'ama.
 
@@ -139,7 +139,7 @@ This ensures accurate and clear speech synthesis.
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
 
-### Testing
+### Testing 🧪
 
 Run `uv run pytest`
 
