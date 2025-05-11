@@ -11,7 +11,7 @@ Enhanced model of [Dicta model](https://huggingface.co/dicta-il/dictabert-large-
 - Batching: Supports multiple sentences at once 📚
 - User friendly: Add diacritics with just 2 lines of code ✨
 - Lightweight: Runs with onnx without heavy dependencies 🛠️
-- Dual mode: Output niqqud male (fully marked) and niqqud haser 💡
+- Dual mode: Output nikud male (fully marked) and nikud haser 💡
 
 ## Setup
 
