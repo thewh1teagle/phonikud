@@ -22,6 +22,9 @@ def train_model(
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
+    scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, total_iters=args.epochs)
+    scaler = torch.amp.GradScaler(args.device)
+
     step = args.pre_training_step
     best_val_score = float("inf")
     early_stop_counter = 0
@@ -51,9 +54,17 @@ def train_model(
             ]  # # skip BOS and EOS symbols
 
             loss = criterion(active_logits, targets.float())
-            loss.backward()
 
-            optimizer.step()
+            # Unscale gradients before clipping
+            scaler.unscale_(optimizer)
+
+            # Clip gradients
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+            scaler.step(optimizer)
+            scaler.update()
+            scheduler.step()
+
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
 
