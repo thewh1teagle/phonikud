@@ -654,6 +654,7 @@ version = "0.1.0"
 source = { editable = "phonikud" }
 dependencies = [
     { name = "humanize" },
+    { name = "mishkal-hebrew" },
     { name = "tensorboard" },
     { name = "torch" },
     { name = "transformers" },
@@ -663,6 +664,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "humanize", specifier = ">=4.12.3" },
+    { name = "mishkal-hebrew", editable = "." },
     { name = "tensorboard", specifier = ">=2.19.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "transformers", specifier = ">=4.51.3" },
