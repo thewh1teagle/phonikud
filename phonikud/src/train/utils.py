@@ -83,3 +83,45 @@ def get_diac_to_remove(components: str):
         # Won't train on prefix
         phonetic_diac_to_remove += PREFIX_CHAR
     return phonetic_diac_to_remove
+
+
+
+def load_model_checkpoint(
+    model,
+    tokenizer,
+    checkpoint_path: str,
+    optimizer=None,
+    scheduler=None,
+    device: str = "cuda",
+):
+    """
+    Load a model checkpoint from a given path.
+    """
+    print(f"📂 Loading model from checkpoint: {checkpoint_path}")
+    
+    # Load model and tokenizer
+    model.from_pretrained(checkpoint_path).to(device)
+    tokenizer = type(tokenizer).from_pretrained(checkpoint_path)
+    
+    # Extract training metadata from model config
+    training_metadata = {
+        "learning_rate": getattr(model.config, "learning_rate", None),
+        "train_steps": getattr(model.config, "train_steps", 0),
+        "last_train_loss": getattr(model.config, "last_train_loss", 0),
+        "last_epoch": getattr(model.config, "last_epoch", 0),
+        "last_validation_score": getattr(model.config, "last_validation_score", 0),
+        "last_validation_loss": getattr(model.config, "last_validation_loss", 0),
+    }
+    
+    # Update optimizer if provided
+    if optimizer is not None and hasattr(model.config, "optimizer_step"):
+        optimizer.param_groups[0]["lr"] = training_metadata["learning_rate"]
+    
+    # Update scheduler if provided
+    if scheduler is not None and hasattr(model.config, "scheduler_last_epoch"):
+        scheduler.last_epoch = model.config.scheduler_last_epoch
+    
+    print(f"📊 Loaded metadata: {training_metadata}")
+    
+    return model, tokenizer, training_metadata
+    

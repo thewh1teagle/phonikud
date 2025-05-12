@@ -50,6 +50,9 @@ class TrainArgs(Tap):
     use_eval_file: bool = False
     "Use data/eval/*.txt as validation set instead of splitting train"
 
+    load_model_checkpoint: str = ""
+    "Path to load model checkpoint from"
+
 
 def get_opts():
     return TrainArgs().parse_args()
