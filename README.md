@@ -8,13 +8,13 @@ Convert Hebrew text into IPA for TTS systems and learning.
 
 - Nikud model with phonetic marks 🧠
 - Convert nikud text to modern spoken phonemes 🗣️
-- Expand dates, numbers, etc 📚 
+- Expand dates, numbers, etc 📚
 - Handle mixed English/Hebrew with fallback 🌍
-- Real time onnx model support  💫
+- Real time onnx model support 💫
 
 ## Install
 
-Due to ongoing development, it's recommend to install from git directly.
+Due to ongoing development, it is recommend to install from git directly.
 
 ```console
 pip install git+https://github.com/thewh1teagle/mishkal
@@ -44,10 +44,10 @@ See [examples](examples)
 
 ## Docs 📚
 
-- It's recommend to add nikud with [phonikud-onnx](phonikud_onnx) model
+- It is recommend to add nikud with [phonikud-onnx](phonikud_onnx) model
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
-- It's highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
+- It is highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
 
 ### Nikud set and symbols
 
@@ -96,7 +96,7 @@ Consonants (24)
 - `tʃ` - Tsadik with Geresh (`צִ'יפְּס`)
 - `w` - Example: `וָואלָה`
 - `ʔ` - Alef/Ayin, visually looks like `?`, but it's `\u0294`
-- `ɡ` - Gimel, visually looks like `g`, but its actually `\u0261`
+- `ɡ` - Gimel, visually looks like `g`, but it's actually `\u0261`
 - `ʁ` - Resh `\u0281`
 - `ʃ` - Shin `\u0283`
 - `ʒ` - Zain with Geresh (`בֵּז׳`) `\u0292`
