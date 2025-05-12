@@ -21,3 +21,4 @@ ckpt/
 *.7z
 *.txt
 !phonikud/data/**/*.txt */
+*.zip
