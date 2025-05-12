@@ -34,7 +34,7 @@ jobs:
           cp -rf ../mishkal .
           cp -rf ../phonikud_onnx/src/phonikud_onnx .
 
-          
+
 
           # Git
           git init
@@ -43,7 +43,7 @@ jobs:
           git config --global user.name "thewh1teagle"
           git remote add origin https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
           git lfs install
-          wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
+          wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud-onnx/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
           git lfs track "*.onnx"
           git add .
           git commit -m "latest"
