@@ -83,7 +83,7 @@ See [phonikud-onnx](../phonikud_onnx)
 uv pip install huggingface_hub
 git config --global credential.helper store # Allow clone private repo from HF
 huggingface-cli login --token "token" --add-to-git-credential # https://huggingface.co/settings/tokens
-uv run huggingface-cli upload --repo-type model phonikud ./ckpt/last ./ckpt/last
+uv run huggingface-cli upload --repo-type model phonikud ./ckpt/path # upload contents of the folder
 
 # Fetch the model by
 git lfs install
