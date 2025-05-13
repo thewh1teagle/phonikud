@@ -34,6 +34,6 @@ def num_to_word(maybe_number: str) -> str:
         )
 
     # Replace all whole numbers in the string
-    result = re.sub(r".?-?\d+.?", replace_number, maybe_number)
+    result = re.sub(r"[^\d\-]?-?\d+(?:[\.,]\d+)?[^\d]?", replace_number, maybe_number)
 
     return result
