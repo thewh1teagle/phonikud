@@ -18,11 +18,22 @@ def add_diacritics(words: str):
 
 def num_to_word(maybe_number: str) -> str:
     def replace_number(match):
-        num = match.group()
+        num: str = match.group()
+        suffix, prefix = "", ""
+        # prefix
+        if not num.startswith("-") and not num[0].isdigit():
+            prefix = num[0]
+            num = num[1:]
+        if not num[-1].isdigit():
+            suffix = num[-1]
+            num = num[:-1]
         words = num2words.num2words(num, lang="he", ordinal=False)
-        return add_diacritics(words)
+        words_with_diacritics = add_diacritics(words)
+        return (
+            f"{prefix.strip()} {words_with_diacritics.strip()} {suffix.strip()}".strip()
+        )
 
     # Replace all whole numbers in the string
-    result = re.sub(r"-?\d+", replace_number, maybe_number)
+    result = re.sub(r".?-?\d+.?", replace_number, maybe_number)
 
     return result

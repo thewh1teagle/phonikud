@@ -15,8 +15,6 @@ class Expander:
         self.dictionary = Dictionary()
 
     def expand_text(self, text: str):
-        text = self.dictionary.expand_text(text)
-
         words = []
         for source_word in text.split():
             try:
@@ -29,4 +27,7 @@ class Expander:
             except Exception as e:
                 log.error(f"Failed to expand {word} with error: {e}")
                 words.append(source_word)
-        return " ".join(words)
+        text = " ".join(words)
+        text = self.dictionary.expand_text(text)
+
+        return text
