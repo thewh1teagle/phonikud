@@ -43,7 +43,7 @@ Example input: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 wget https://huggingface.co/datasets/thewh1teagle/phonikud-data/resolve/main/knesset_nikud_v5.txt.7z
 sudo apt install p7zip-full -y
 7z x knesset_nikud_v5.txt.7z
-mv knesset_nikud_v4.txt data/train/
+cp knesset_nikud_v5.txt data/train/
 ```
 
 ## Train
@@ -109,6 +109,14 @@ export LC_ALL=en_US.UTF-8
 ```
 
 Then, close the terminal and reconnect.
+
+2. Cuda version issues
+
+Run
+
+```console
+uv pip install --refresh -U torch
+```
 
 TODO:
 
