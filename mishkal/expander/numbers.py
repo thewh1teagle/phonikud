@@ -23,6 +23,6 @@ def num_to_word(maybe_number: str) -> str:
         return add_diacritics(words)
 
     # Replace all whole numbers in the string
-    result = re.sub(r"\d+", replace_number, maybe_number)
+    result = re.sub(r"-?\d+", replace_number, maybe_number)
 
     return result
