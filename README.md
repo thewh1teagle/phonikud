@@ -124,10 +124,21 @@ The workflow is as follows:
 
 This ensures accurate and clear speech synthesis.
 
-## Datasets for TTS
+## ℹ️ Limitations
 
-- [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (mit)
-- [Saspeech](https://www.openslr.org/134) (Non commercial)
+- Some of the *nikud* may sound a bit formal - similar to other models  
+- Some words get the same *nikud* but different *hatama* - not always accurate  
+- Basic support for non-words (gibberish, typos) - not always handled
+- Names and non-Hebrew words are sometimes predicted incorrectly  
+
+💡 You can always pass your own phonemes using markdown-like syntax:  
+`[...title](/ʔantsiklopˈedja/)`
+
+## Datasets
+
+- [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (speech, MIT)
+- [Saspeech](https://www.openslr.org/134) (speech, non commercial)
+- [phonikud-data](https://huggingface.co/datasets/thewh1teagle/phonikud-data) (nikud and phonetics, cc-4.0)
 
 ### Notes
 
