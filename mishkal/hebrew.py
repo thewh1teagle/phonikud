@@ -184,6 +184,9 @@ def letter_to_phonemes(
             elif KAMATZ in cur.diac or PATAH in cur.diac:
                 cur_phonemes.append("va")
                 skip_diacritics = True
+            elif SEGOL in cur.diac:
+                cur_phonemes.append("ve")
+                skip_diacritics = True
             else:
                 # TODO ?
                 # skip_consonants = False
