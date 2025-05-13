@@ -57,11 +57,12 @@ def get_syllables(word: str) -> list[str]:
         # If two וs are coming: force current syllable to end, and join both וs as next syllable
         if vav1 and vav2:
             if cur:
+                # Finish current syllable
                 syllables.append(cur + str(letters[i]))
                 cur = ""
-            syllables.append(str(letters[i + 1]) + str(letters[i + 2]))
+            cur = str(letters[i + 1]) + str(letters[i + 2])
             i += 3  # skip past the double-vav
-            vowel_state = False
+            vowel_state = True
 
         # If one ו is coming, end the syllable now
         elif vav1 and letters[i + 1].diac:
