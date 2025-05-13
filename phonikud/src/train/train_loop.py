@@ -55,6 +55,7 @@ def train_model(
 
             loss = criterion(active_logits, targets.float())
 
+            scaler.scale(loss).backward()
             # Unscale gradients before clipping
             scaler.unscale_(optimizer)
 
