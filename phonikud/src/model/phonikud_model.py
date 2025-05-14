@@ -43,13 +43,6 @@ class PhoNikudModel(BertForDiacritization):
         self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
         # ^ predicts hatama, mobile shva, and prefix; outputs are logits
 
-    def freeze_mlp_components(self, indices: list[int]):
-        final_layer = self.mlp[2]
-        with torch.no_grad():
-            for idx in indices:
-                final_layer.weight[idx].requires_grad = False
-                final_layer.bias[idx].requires_grad = False
-
     def freeze_base_model(self):
         self.bert.eval()
         self.menaked.eval()

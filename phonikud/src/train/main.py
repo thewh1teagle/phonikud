@@ -4,9 +4,7 @@ Train from scratch:
 Train from checkpoint:
     uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
         --model_checkpoint ./ckpt/step_21441_loss_0.0081/
-Train with specific components:
-    uv run src/train.py --device cuda --epochs 3 --components hatama,prefix \
-        --model_checkpoint dicta-il/dictabert-large-char-menaked
+    uv run src/train.py --device cuda --epochs 3 --model_checkpoint dicta-il/dictabert-large-char-menaked
 On V100:
     uv run src/train.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
     TODO: we may be able to train on very large epoch, with LR tunning
@@ -23,8 +21,6 @@ from utils import print_model_size, read_lines
 
 def main():
     args = get_opts()
-    components = args.components.split(",")
-    print(f"🟢 Active components: {components}")
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
@@ -33,33 +29,26 @@ def main():
     model.to(args.device)
     model.freeze_base_model()
 
-    # TODO: remove?
-    # frozen = [name for name in COMPONENT_INDICES if name not in components]
-    # if frozen:
-    #     model.freeze_mlp_components([COMPONENT_INDICES[n] for n in frozen])
-
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
-    collator = Collator(tokenizer, components)
+    collator = Collator(tokenizer)
 
     # Data split
     print("📖🔍 Reading lines from dataset...")
-    train_lines, val_lines = read_lines(args.data_dir, components)
+    train_lines, val_lines = read_lines(args.data_dir)
     val_lines = val_lines[:10000]  # TODO: does it make sense to limit val?
     print(
         f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
     )
 
     # Data loader
-    train_dataloader = get_dataloader(train_lines, args, components, collator)
-    val_dataloader = get_dataloader(val_lines, args, components, collator)
+    train_dataloader = get_dataloader(train_lines, args, collator)
+    val_dataloader = get_dataloader(val_lines, args, collator)
 
     # Log
     writer = SummaryWriter(log_dir=args.output_dir)
 
     # Train
-    train_model(
-        model, tokenizer, train_dataloader, val_dataloader, args, components, writer
-    )
+    train_model(model, tokenizer, train_dataloader, val_dataloader, args, writer)
 
 
 if __name__ == "__main__":

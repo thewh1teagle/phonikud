@@ -4,26 +4,29 @@ from tqdm import tqdm, trange
 from torch.utils.tensorboard import SummaryWriter
 
 from torch.utils.data import DataLoader
-from data import COMPONENT_INDICES
 from config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
-from transformers import BertPreTrainedModel
+from phonikud.src.model.phonikud_model import PhoNikudModel
+from phonikud.src.train.utils import remove_nikud
+from mishkal import lexicon
 
 
 def train_model(
-    model: BertPreTrainedModel,
+    model: PhoNikudModel,
     tokenizer: BertTokenizerFast,
     train_dataloader: DataLoader,
     val_dataloader: DataLoader,
     args: TrainArgs,
-    components,
     writer: SummaryWriter,
 ):
+    model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, total_iters=args.epochs)
-    scaler = torch.amp.GradScaler(args.device)
+    scaler = torch.amp.GradScaler(
+        args.device, enabled=args.device not in ["mps", "cpu"]
+    )
 
     step = args.pre_training_step
     best_val_score = float("inf")
@@ -34,6 +37,17 @@ def train_model(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
         for _, (inputs, targets) in pbar:
+            print(
+                model.predict(
+                    [
+                        remove_nikud(
+                            "אֵ֫יזֶה טְחִינָה עֲדִינָה! יִהְיֶה טְחִ֫ינָה טְֽעִימָה!",
+                            additional=lexicon.NON_STANDARD_DIAC,
+                        )
+                    ],
+                    tokenizer,
+                )
+            )
             optimizer.zero_grad()
 
             # Log learning rate
@@ -48,10 +62,9 @@ def train_model(
             # ^ shape: (batch_size, n_chars_padded, 3)
 
             # Get only the logits for the components we're training on
-            active_indices = [COMPONENT_INDICES[comp] for comp in components]
             active_logits = output.additional_logits[
-                :, 1:-1, active_indices
-            ]  # # skip BOS and EOS symbols
+                :, 1:-1
+            ]  # skip BOS and EOS symbols
 
             loss = criterion(active_logits, targets.float())
 
@@ -71,12 +84,6 @@ def train_model(
 
             # Log total loss
             writer.add_scalar("Loss/train", loss.item(), step)
-            # Loss per component
-            for i, comp in enumerate(components):
-                comp_loss = criterion(
-                    active_logits[:, :, i], targets[:, :, i].float()
-                ).item()
-                writer.add_scalar(f"Loss/{comp}", comp_loss, step)
 
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 # Always save "last"
@@ -86,9 +93,7 @@ def train_model(
                 tokenizer.save_pretrained(last_dir)
 
                 # Evaluate and maybe save "best"
-                val_score = evaluate_model(
-                    model, val_dataloader, args, components, writer, step
-                )
+                val_score = evaluate_model(model, val_dataloader, args, writer, step)
 
                 if val_score < best_val_score:
                     best_val_score = val_score
@@ -122,7 +127,7 @@ def train_model(
             break
 
         # Evaluate each epoch
-        evaluate_model(model, val_dataloader, args, components, writer, step)
+        evaluate_model(model, val_dataloader, args, writer, step)
 
     final_dir = f"{args.output_dir}/loss_{loss.item():.2f}"
     print(f"🚀 Saving trained model to: {final_dir}")

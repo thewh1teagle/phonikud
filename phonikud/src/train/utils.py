@@ -28,7 +28,6 @@ def print_model_size(model):
 
 def read_lines(
     data_path: str,
-    components: List[str],
     max_context_length: int = 2048,
     val_split: float = 0.1,
     split_seed: int = 42,
@@ -53,10 +52,7 @@ def read_lines(
                         lines.append(line.strip())
 
     # Preprocess lines (remove nikud and other components)
-    lines = [
-        remove_nikud(i, additional=get_diac_to_remove(components=components))
-        for i in lines
-    ]
+    lines = [remove_nikud(i, additional=NIKUD_HASER) for i in lines]
 
     # Split into train and validation sets
     split_idx = int(len(lines) * (1 - val_split))
@@ -65,21 +61,12 @@ def read_lines(
     train_lines = [lines[i] for i in idx[:split_idx]]
     val_lines = [lines[i] for i in idx[split_idx:]]
 
+    # Print samples
+    print("🛤️ Train samples:")
+    for i in train_lines[:3]:
+        print(f"  • {i}")
+    print("🧪 Validation samples:")
+    for i in val_lines[:3]:
+        print(f"  • {i}")
+
     return train_lines, val_lines
-
-
-def get_diac_to_remove(components: str):
-    """
-    We train on specific phonetic diacritics
-    """
-    phonetic_diac_to_remove = NIKUD_HASER
-    if "shva" not in components:
-        # Won't train on shva
-        phonetic_diac_to_remove += MOBILE_SHVA_CHAR
-    if "hatama" not in components:
-        # Won't train on hatama
-        phonetic_diac_to_remove += HATAMA_CHAR
-    if "prefix" not in components:
-        # Won't train on prefix
-        phonetic_diac_to_remove += PREFIX_CHAR
-    return phonetic_diac_to_remove

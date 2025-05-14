@@ -10,13 +10,9 @@ from src.model.phonikud_model import (
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
 
-COMPONENT_INDICES = {"hatama": 0, "shva": 1, "prefix": 2}
 
-
-def get_dataloader(
-    lines: list[str], args: TrainArgs, components: list[str], collator: "Collator"
-):
-    train_data = TrainData(lines, components)
+def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
+    train_data = TrainData(lines)
 
     loader = DataLoader(
         train_data,
@@ -29,20 +25,8 @@ def get_dataloader(
 
 
 class AnnotatedLine:
-    def __init__(self, raw_text, components):
-        self.components = components
-
-        # Get indices for active components
-        self.active_indices = [COMPONENT_INDICES[comp] for comp in components]
-
-        # filter based on components
-        raw_text = "".join(
-            char
-            for char in raw_text
-            if not (char == HATAMA_CHAR and "hatama" not in components)
-            and not (char == MOBILE_SHVA_CHAR and "shva" not in components)
-            and not (char == PREFIX_CHAR and "prefix" not in components)
-        )
+    def __init__(self, raw_text):
+        print(f"raw text {raw_text}")
 
         self.text = ""  # will contain plain hebrew text
         hatama = []  # will contain 0/1 for each character (1=active hatama)
@@ -61,38 +45,34 @@ class AnnotatedLine:
                 hatama += [0]
                 mobile_shva += [0]
                 prefix += [0]  # No prefix for this character by default
-
         assert len(self.text) == len(hatama) == len(mobile_shva) == len(prefix)
 
         # Create tensor for all features
-        all_features = [
+        features = [
             torch.tensor(hatama),
             torch.tensor(mobile_shva),
             torch.tensor(prefix),
         ]
 
-        # Only use the features for active components
-        self.target = torch.stack([all_features[i] for i in self.active_indices])
+        self.target = torch.stack(features)
         # ^ shape: (n_active_components, n_chars)
 
 
 class TrainData(Dataset):
-    def __init__(self, lines: List[str], components: List[str]):
+    def __init__(self, lines: List[str]):
         self.lines = lines
-        self.components = components
 
     def __len__(self):
         return len(self.lines)
 
     def __getitem__(self, idx):
         text = self.lines[idx]
-        return AnnotatedLine(text, components=self.components)
+        return AnnotatedLine(text)
 
 
 class Collator:
-    def __init__(self, tokenizer, components):
+    def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.components = components
 
     def collate_fn(self, items):
         inputs = self.tokenizer(
