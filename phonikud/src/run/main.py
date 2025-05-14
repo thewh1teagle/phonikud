@@ -42,8 +42,10 @@ def main():
                 [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
             )[0]
             predicted = normalize(predicted)
+            src, predicted = remove_nikud(src), remove_nikud(predicted)
             print()
             print(src == predicted)
+            print(without_nikud)
             print(src)
             print(predicted)
 
