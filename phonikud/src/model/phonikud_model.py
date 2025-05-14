@@ -3,16 +3,13 @@ from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
 import re
+
+
 from .dicta_model import (
     BertForDiacritization,
     is_hebrew_letter,
     is_matres_letter,
 )
-
-HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
-PREFIX_CHAR = "|"  # vertical bar
-NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
 
 def remove_nikud(text: str, additional=""):
@@ -20,6 +17,14 @@ def remove_nikud(text: str, additional=""):
     Remove nikud except meteg as we use it for Shva Na
     """
     return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
+
+
+HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
+MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+PREFIX_CHAR = "|"  # vertical bar
+NIKUD_HASER = "\u05af"  # not in use but dicta has it
+
+PHONETIC_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 
 @dataclass

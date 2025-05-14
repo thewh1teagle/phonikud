@@ -29,7 +29,7 @@ def main():
     model.to(args.device)
     model.freeze_base_model()
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint, use_fast=True)
     collator = Collator(tokenizer)
 
     # Data split

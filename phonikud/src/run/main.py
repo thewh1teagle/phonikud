@@ -2,11 +2,17 @@
 uv run src/test.py --device cuda
 """
 
-from src.model.phonikud_model import PhoNikudModel, NIKUD_HASER, remove_nikud
+from src.model.phonikud_model import (
+    PhoNikudModel,
+    NIKUD_HASER,
+    remove_nikud,
+    PHONETIC_NIKUD,
+)
 from src.train.config import BASE_PATH
 from transformers import AutoTokenizer
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from tap import Tap
+from mishkal.utils import normalize
 
 
 class RunArgs(Tap):
@@ -27,14 +33,19 @@ def main():
     model.eval()
 
     with open(args.file, "r", encoding="utf-8") as fp:
-        for line in fp:
-            line = line.strip()
-            line = remove_nikud(line)
+        for src in fp:
+            src = src.strip()
+            line = remove_nikud(src, additional=PHONETIC_NIKUD)
             if not line:
                 continue
-            lines = model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)
-            for line in lines:
-                print(line)
+            line = model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)[
+                0
+            ]
+            print()
+            src, line = normalize(src), normalize(line)
+            print(src == line)
+            print(src)
+            print(line)
 
 
 if __name__ == "__main__":

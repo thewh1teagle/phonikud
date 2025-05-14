@@ -26,8 +26,6 @@ def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
 
 class AnnotatedLine:
     def __init__(self, raw_text):
-        print(f"raw text {raw_text}")
-
         self.text = ""  # will contain plain hebrew text
         hatama = []  # will contain 0/1 for each character (1=active hatama)
         mobile_shva = []  # will contain 0/1 for each character (1=mobile shva)

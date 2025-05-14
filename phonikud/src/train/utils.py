@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import humanize
 import torch
-from src.model.phonikud_model import (
+from phonikud.src.model.phonikud_model import (
     HATAMA_CHAR,
     MOBILE_SHVA_CHAR,
     NIKUD_HASER,
@@ -11,6 +11,7 @@ from src.model.phonikud_model import (
     remove_nikud,
 )
 from tqdm import tqdm
+import re
 
 
 def print_model_size(model):
@@ -64,9 +65,9 @@ def read_lines(
     # Print samples
     print("🛤️ Train samples:")
     for i in train_lines[:3]:
-        print(f"  • {i}")
+        print(f"\t{i}")
     print("🧪 Validation samples:")
     for i in val_lines[:3]:
-        print(f"  • {i}")
+        print(f"\t{i}")
 
     return train_lines, val_lines

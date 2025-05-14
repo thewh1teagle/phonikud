@@ -8,8 +8,6 @@ from config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
 from phonikud.src.model.phonikud_model import PhoNikudModel
-from phonikud.src.train.utils import remove_nikud
-from mishkal import lexicon
 
 
 def train_model(
@@ -36,16 +34,6 @@ def train_model(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
         for _, (inputs, targets) in pbar:
-            prediction = model.predict(
-                [
-                    remove_nikud(
-                        "אֵ֫יזֶה טְחִינָה עֲדִינָה! יִהְיֶה טְחִ֫ינָה טְֽעִימָה!",
-                        additional=lexicon.NON_STANDARD_DIAC,
-                    )
-                ],
-                tokenizer,
-            )
-            print("prediction", prediction)
             optimizer.zero_grad()
 
             # Log learning rate
@@ -83,39 +71,41 @@ def train_model(
             # Log total loss
             writer.add_scalar("Loss/train", loss.item(), step)
 
+            # Always save "last"
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
-                # Always save "last"
                 last_dir = f"{args.output_dir}/last"
                 print(f"💾 Saving last checkpoint at step {step} to: {last_dir}")
                 model.save_pretrained(last_dir)
                 tokenizer.save_pretrained(last_dir)
 
-                # Evaluate and maybe save "best"
-                val_score = evaluate_model(model, val_dataloader, args, writer, step)
+            # # Val
+            # if args.checkpoint_interval and step % args.checkpoint_interval == 0:
+            #     # Evaluate and maybe save "best"
+            #     val_score = evaluate_model(model, val_dataloader, args, writer, step)
 
-                if val_score < best_val_score:
-                    best_val_score = val_score
-                    best_dir = f"{args.output_dir}/best"
-                    print(
-                        f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
-                    )
-                    model.save_pretrained(best_dir)
-                    tokenizer.save_pretrained(best_dir)
-                    early_stop_counter = 0
-                else:
-                    print(
-                        f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
-                    )
-                    early_stop_counter += 1
+            #     if val_score < best_val_score:
+            #         best_val_score = val_score
+            #         best_dir = f"{args.output_dir}/best"
+            #         print(
+            #             f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
+            #         )
+            #         model.save_pretrained(best_dir)
+            #         tokenizer.save_pretrained(best_dir)
+            #         early_stop_counter = 0
+            #     else:
+            #         print(
+            #             f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
+            #         )
+            #         early_stop_counter += 1
 
-                if (
-                    args.early_stopping_patience
-                    and early_stop_counter > args.early_stopping_patience
-                ):
-                    print(
-                        f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
-                    )
-                    break
+            #     if (
+            #         args.early_stopping_patience
+            #         and early_stop_counter > args.early_stopping_patience
+            #     ):
+            #         print(
+            #             f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
+            #         )
+            #         break
 
         # Break batch loop
         if (
@@ -125,7 +115,7 @@ def train_model(
             break
 
         # Evaluate each epoch
-        evaluate_model(model, val_dataloader, args, writer, step)
+        # evaluate_model(model, val_dataloader, args, writer, step)
 
     final_dir = f"{args.output_dir}/loss_{loss.item():.2f}"
     print(f"🚀 Saving trained model to: {final_dir}")
