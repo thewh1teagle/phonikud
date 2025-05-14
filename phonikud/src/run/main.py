@@ -41,6 +41,7 @@ def main():
             predicted = model.predict(
                 [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
             )[0]
+            predicted = normalize(predicted)
             print()
             print(src == predicted)
             print(src)
