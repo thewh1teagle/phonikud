@@ -34,18 +34,17 @@ def main():
 
     with open(args.file, "r", encoding="utf-8") as fp:
         for src in fp:
-            src = src.strip()
-            line = remove_nikud(src, additional=PHONETIC_NIKUD)
-            if not line:
+            src = normalize(src.strip())
+            without_nikud = remove_nikud(src, additional=PHONETIC_NIKUD)
+            if not without_nikud:
                 continue
-            line = model.predict([line], tokenizer, mark_matres_lectionis=NIKUD_HASER)[
-                0
-            ]
+            predicted = model.predict(
+                [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
+            )[0]
             print()
-            src, line = normalize(src), normalize(line)
-            print(src == line)
+            print(src == predicted)
             print(src)
-            print(line)
+            print(predicted)
 
 
 if __name__ == "__main__":
