@@ -24,9 +24,8 @@ def train_model(
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, total_iters=args.epochs)
-    scaler = torch.amp.GradScaler(
-        args.device, enabled=args.device not in ["mps", "cpu"]
-    )
+    # Boosted on GPU
+    scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device)
 
     step = args.pre_training_step
     best_val_score = float("inf")
@@ -37,17 +36,16 @@ def train_model(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
         for _, (inputs, targets) in pbar:
-            print(
-                model.predict(
-                    [
-                        remove_nikud(
-                            "אֵ֫יזֶה טְחִינָה עֲדִינָה! יִהְיֶה טְחִ֫ינָה טְֽעִימָה!",
-                            additional=lexicon.NON_STANDARD_DIAC,
-                        )
-                    ],
-                    tokenizer,
-                )
+            prediction = model.predict(
+                [
+                    remove_nikud(
+                        "אֵ֫יזֶה טְחִינָה עֲדִינָה! יִהְיֶה טְחִ֫ינָה טְֽעִימָה!",
+                        additional=lexicon.NON_STANDARD_DIAC,
+                    )
+                ],
+                tokenizer,
             )
+            print("prediction", prediction)
             optimizer.zero_grad()
 
             # Log learning rate
