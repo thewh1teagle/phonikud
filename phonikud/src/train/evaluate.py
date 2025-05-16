@@ -1,6 +1,5 @@
 from torch import nn
 import torch
-from data import COMPONENT_INDICES
 from config import TrainArgs
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -11,7 +10,6 @@ def evaluate_model(
     model,
     val_dataloader: DataLoader,
     args: TrainArgs,
-    components,
     writer: SummaryWriter,
     step,
 ):
@@ -25,10 +23,7 @@ def evaluate_model(
             targets = targets.to(args.device)
 
             output = model(inputs)
-            active_indices = [COMPONENT_INDICES[comp] for comp in components]
-            active_logits = output.additional_logits[
-                :, 1:-1, active_indices
-            ]  # skip BOS and EOS
+            active_logits = output.additional_logits[:, 1:-1]  # skip BOS and EOS
 
             loss = criterion(active_logits, targets.float())
             val_loss += loss.item()

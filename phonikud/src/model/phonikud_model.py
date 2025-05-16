@@ -3,16 +3,13 @@ from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
 import re
+
+
 from .dicta_model import (
     BertForDiacritization,
     is_hebrew_letter,
     is_matres_letter,
 )
-
-HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
-PREFIX_CHAR = "|"  # vertical bar
-NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
 
 def remove_nikud(text: str, additional=""):
@@ -20,6 +17,14 @@ def remove_nikud(text: str, additional=""):
     Remove nikud except meteg as we use it for Shva Na
     """
     return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
+
+
+HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
+MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+PREFIX_CHAR = "|"  # vertical bar
+NIKUD_HASER = "\u05af"  # not in use but dicta has it
+
+PHONETIC_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 
 @dataclass
@@ -42,13 +47,6 @@ class PhoNikudModel(BertForDiacritization):
         self.config = config
         self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
         # ^ predicts hatama, mobile shva, and prefix; outputs are logits
-
-    def freeze_mlp_components(self, indices: list[int]):
-        final_layer = self.mlp[2]
-        with torch.no_grad():
-            for idx in indices:
-                final_layer.weight[idx].requires_grad = False
-                final_layer.bias[idx].requires_grad = False
 
     def freeze_base_model(self):
         self.bert.eval()
