@@ -78,34 +78,34 @@ def train_model(
                 model.save_pretrained(last_dir)
                 tokenizer.save_pretrained(last_dir)
 
-            # # Val
-            # if args.checkpoint_interval and step % args.checkpoint_interval == 0:
-            #     # Evaluate and maybe save "best"
-            #     val_score = evaluate_model(model, val_dataloader, args, writer, step)
+            # Val
+            if args.checkpoint_interval and step % args.checkpoint_interval == 0:
+                # Evaluate and maybe save "best"
+                val_score = evaluate_model(model, val_dataloader, args, writer, step)
 
-            #     if val_score < best_val_score:
-            #         best_val_score = val_score
-            #         best_dir = f"{args.output_dir}/best"
-            #         print(
-            #             f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
-            #         )
-            #         model.save_pretrained(best_dir)
-            #         tokenizer.save_pretrained(best_dir)
-            #         early_stop_counter = 0
-            #     else:
-            #         print(
-            #             f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
-            #         )
-            #         early_stop_counter += 1
+                if val_score < best_val_score:
+                    best_val_score = val_score
+                    best_dir = f"{args.output_dir}/best"
+                    print(
+                        f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
+                    )
+                    model.save_pretrained(best_dir)
+                    tokenizer.save_pretrained(best_dir)
+                    early_stop_counter = 0
+                else:
+                    print(
+                        f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
+                    )
+                    early_stop_counter += 1
 
-            #     if (
-            #         args.early_stopping_patience
-            #         and early_stop_counter > args.early_stopping_patience
-            #     ):
-            #         print(
-            #             f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
-            #         )
-            #         break
+                if (
+                    args.early_stopping_patience
+                    and early_stop_counter > args.early_stopping_patience
+                ):
+                    print(
+                        f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
+                    )
+                    break
 
         # Break batch loop
         if (
