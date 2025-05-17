@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from dataclasses import dataclass
 from transformers.utils import ModelOutput
+from transformers import BertTokenizerFast
 import re
 
 
@@ -74,15 +75,15 @@ class PhoNikudModel(BertForDiacritization):
             nikud_logits.nikud_logits, nikud_logits.shin_logits, additional_logits
         )
 
-    def encode(self, sentences, tokenizer, padding="longest"):
+    def encode(
+        self, sentences: list[str], tokenizer: BertTokenizerFast, padding="longest"
+    ):
         sentences = [remove_nikud(sentence) for sentence in sentences]
 
         # Assert the lengths are within the tokenizer's max limit
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
-        ), (
-            f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
-        )
+        ), f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
 
         # Tokenize the inputs and return the tensor format
         inputs = tokenizer(
@@ -106,7 +107,7 @@ class PhoNikudModel(BertForDiacritization):
         hatama_predictions,
         mobile_shva_predictions,
         prefix_predictions,
-        mark_matres_lectionis=None,
+        mark_matres_lectionis: str = None,
     ):
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -187,7 +188,11 @@ class PhoNikudModel(BertForDiacritization):
 
     @torch.no_grad()
     def predict(
-        self, sentences, tokenizer, mark_matres_lectionis=None, padding="longest"
+        self,
+        sentences,
+        tokenizer: BertTokenizerFast,
+        mark_matres_lectionis: str = None,
+        padding="longest",
     ):
         # Step 1: Encoding (tokenizing sentences)
         inputs, offset_mapping = self.encode(sentences, tokenizer, padding)
