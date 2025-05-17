@@ -12,20 +12,19 @@ from .dicta_model import (
     is_matres_letter,
 )
 
-
-def remove_nikud(text: str, additional=""):
-    """
-    Remove nikud except meteg as we use it for Shva Na
-    """
-    return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
-
-
 HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
 MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
 PREFIX_CHAR = "|"  # vertical bar
 NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
 PHONETIC_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
+
+
+def remove_nikud(text: str, additional=""):
+    """
+    Remove nikud except meteg as we use it for Shva Na
+    """
+    return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
 
 
 @dataclass
