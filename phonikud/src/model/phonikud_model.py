@@ -45,7 +45,7 @@ class PhoNikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config
-        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 3))
+        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 4))
         # ^ predicts hatama, mobile shva, and prefix; outputs are logits
 
     def freeze_base_model(self):
@@ -168,14 +168,15 @@ class PhoNikudModel(BertForDiacritization):
         # Extract the logits from the model output
         nikud_logits = output.detach()
         additional_logits = output.additional_logits.detach()
+        # additional_logits = additional_logits.permute(0, 2, 1)
 
         # Get predictions from logits
         nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
-        hatama_predictions = (additional_logits[..., 0] > 0).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
-        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
+        hatama_predictions = (additional_logits[..., 1] > 1).int().tolist()
+        mobile_shva_predictions = (additional_logits[..., 2] > 1).int().tolist()
+        prefix_predictions = (additional_logits[..., 3] > 1).int().tolist()
 
         return (
             nikud_predictions,

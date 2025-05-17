@@ -6,7 +6,7 @@ BASE_PATH = Path(__file__).parent / "../.."
 
 
 class TrainArgs(Tap):
-    model_checkpoint: str = "thewh1teagle/phonikud"
+    model_checkpoint: str = "dicta-il/dictabert-large-char-menaked"
     "Path or name of the pretrained model checkpoint"
 
     device: Literal["cuda", "cpu", "mps"] = "cuda"
@@ -29,13 +29,13 @@ class TrainArgs(Tap):
     learning_rate: float = 1e-3
     "Learning rate"
 
-    early_stopping_patience = 3
+    early_stopping_patience = 10
     "Early stop if no improvement multiple times in checkpoint interval"
 
-    num_workers: int = 1
+    num_workers: int = 0
     "Number of workers for data loading"
 
-    checkpoint_interval: int = 5
+    checkpoint_interval: int = 100
     "Number of steps between saving checkpoints"
 
     val_split: float = 0.1

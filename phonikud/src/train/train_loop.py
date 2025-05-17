@@ -45,12 +45,14 @@ def train_model(
             targets = targets.to(args.device)
             # ^ shape: (batch_size, n_chars_padded, n_active_components)
             output = model(inputs)
-            # ^ shape: (batch_size, n_chars_padded, 3)
+            # ^ shape: (batch_size, n_chars_padded, 4)
 
             # Get only the logits for the components we're training on
             active_logits = output.additional_logits[
                 :, 1:-1
             ]  # skip BOS and EOS symbols
+            # active_logits = active_logits.permute(0, 2, 1)
+            # targets = targets.permute(0, 2, 1)
 
             loss = criterion(active_logits, targets.float())
 
