@@ -51,8 +51,6 @@ def train_model(
             active_logits = output.additional_logits[
                 :, 1:-1
             ]  # skip BOS and EOS symbols
-            # active_logits = active_logits.permute(0, 2, 1)
-            # targets = targets.permute(0, 2, 1)
 
             loss = criterion(active_logits, targets.float())
 
