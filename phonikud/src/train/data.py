@@ -1,14 +1,15 @@
 from typing import List
-
 import torch
 from src.train.config import TrainArgs
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
+from transformers import BertTokenizerFast
+from typing import Tuple
 from src.model.phonikud_model import (
     HATAMA_CHAR,
     MOBILE_SHVA_CHAR,
     PREFIX_CHAR,
 )
-from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import DataLoader, Dataset
 
 
 def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
@@ -24,38 +25,6 @@ def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
     return loader
 
 
-class AnnotatedLine:
-    def __init__(self, raw_text):
-        self.text = ""  # will contain plain hebrew text
-        hatama = []  # will contain 0/1 for each character (1=active hatama)
-        mobile_shva = []  # will contain 0/1 for each character (1=mobile shva)
-        prefix = []  # will contain 0/1 for each character (1=prefix)
-
-        for i, char in enumerate(raw_text):
-            if char == HATAMA_CHAR:
-                hatama[-1] = 1
-            elif char == MOBILE_SHVA_CHAR:
-                mobile_shva[-1] = 1
-            elif char == PREFIX_CHAR:
-                prefix[-1] = 1
-            else:
-                self.text += char
-                hatama += [0]
-                mobile_shva += [0]
-                prefix += [0]  # No prefix for this character by default
-        assert len(self.text) == len(hatama) == len(mobile_shva) == len(prefix)
-
-        # Create tensor for all features
-        features = [
-            torch.tensor(hatama),
-            torch.tensor(mobile_shva),
-            torch.tensor(prefix),
-        ]
-
-        self.target = torch.stack(features)
-        # ^ shape: (n_active_components, n_chars)
-
-
 class TrainData(Dataset):
     def __init__(self, lines: List[str]):
         self.lines = lines
@@ -64,19 +33,47 @@ class TrainData(Dataset):
         return len(self.lines)
 
     def __getitem__(self, idx):
-        text = self.lines[idx]
-        return AnnotatedLine(text)
+        line = self.lines[idx]
+        text = ""
+        num_classes = 4
+        targets = []  # list of [num_classes] binary arrays
+
+        for char in line:
+            # Feature char (apply to previous real char)
+            if char in (HATAMA_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR):
+                # Map feature char to class index and queue it
+                label_idx = {HATAMA_CHAR: 1, MOBILE_SHVA_CHAR: 2, PREFIX_CHAR: 3}[char]
+                if len(targets) > 0:
+                    # Set the label for the previous char (multi-label allowed)
+                    targets[-1][label_idx] = 1
+            else:
+                # Real Hebrew character: start with no labels
+                arr = [0] * num_classes
+                arr[0] = 1  # Default "plain" unless any other is present
+                targets.append(arr)
+                text += char
+
+        # Remove "plain" (arr[0]) when any other label is set (optional)
+        for arr in targets:
+            if sum(arr[1:]) > 0:
+                arr[0] = 0
+
+        assert len(text) == len(targets)
+
+        # Output shape: [seq_len, num_classes], dtype float
+        targets_tensor = torch.tensor(targets, dtype=torch.float)
+        return text, targets_tensor
 
 
 class Collator:
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer: BertTokenizerFast):
         self.tokenizer = tokenizer
 
-    def collate_fn(self, items):
+    def collate_fn(self, items: List[Tuple[str, torch.Tensor]]):
         inputs = self.tokenizer(
-            [x.text for x in items], padding=True, truncation=True, return_tensors="pt"
+            [x[0] for x in items], padding=True, truncation=True, return_tensors="pt"
         )
-        targets = pad_sequence([x.target.T for x in items], batch_first=True)
+        targets = pad_sequence([x[1] for x in items], batch_first=True)
         # ^ shape: (batch_size, n_chars_padded, n_active_components)
 
         return inputs, targets

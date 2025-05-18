@@ -4,14 +4,10 @@ from typing import List, Tuple
 import humanize
 import torch
 from phonikud.src.model.phonikud_model import (
-    HATAMA_CHAR,
-    MOBILE_SHVA_CHAR,
     NIKUD_HASER,
-    PREFIX_CHAR,
     remove_nikud,
 )
 from tqdm import tqdm
-import re
 
 
 def print_model_size(model):

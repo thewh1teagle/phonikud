@@ -8,6 +8,7 @@ import torch
 from torch import nn
 from transformers.utils import ModelOutput
 from transformers import BertPreTrainedModel, BertModel, BertTokenizerFast
+import re
 
 # MAT_LECT => Matres Lectionis, known in Hebrew as Em Kriaa.
 MAT_LECT_TOKEN = "<MAT_LECT>"
@@ -265,8 +266,6 @@ MATRES_LETTERS = list("אוי")
 def is_matres_letter(char):
     return char in MATRES_LETTERS
 
-
-import re
 
 nikud_pattern = re.compile(r"[\u05B0-\u05BD\u05C1\u05C2\u05C7]")
 

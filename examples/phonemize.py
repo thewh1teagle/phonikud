@@ -7,7 +7,6 @@ uv run examples/phonemize.py
 """
 
 from mishkal import phonemize
-from mishkal.syllables import get_syllables
 
 sentences = [
     # "הִיא אָמְרָה לִי",  # Hirik with Yod vowel
