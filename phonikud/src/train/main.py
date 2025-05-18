@@ -35,7 +35,6 @@ def main():
     # Data split
     print("📖🔍 Reading lines from dataset...")
     train_lines, val_lines = read_lines(args.data_dir)
-    val_lines = val_lines[:10000]  # TODO: does it make sense to limit val?
     print(
         f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
     )
