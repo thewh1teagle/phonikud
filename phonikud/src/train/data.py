@@ -9,7 +9,6 @@ from src.model.phonikud_model import (
 )
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
-import torch.nn.functional as F
 
 
 def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
@@ -25,7 +24,6 @@ def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
     return loader
 
 
-
 class TrainData(Dataset):
     def __init__(self, lines: List[str]):
         self.lines = lines
@@ -39,18 +37,11 @@ class TrainData(Dataset):
         num_classes = 4
         targets = []  # list of [num_classes] binary arrays
 
-        # Track which labels apply to the previous char
-        pending_labels = set()
-
         for char in line:
             # Feature char (apply to previous real char)
             if char in (HATAMA_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR):
                 # Map feature char to class index and queue it
-                label_idx = {
-                    HATAMA_CHAR: 1,
-                    MOBILE_SHVA_CHAR: 2,
-                    PREFIX_CHAR: 3
-                }[char]
+                label_idx = {HATAMA_CHAR: 1, MOBILE_SHVA_CHAR: 2, PREFIX_CHAR: 3}[char]
                 if len(targets) > 0:
                     # Set the label for the previous char (multi-label allowed)
                     targets[-1][label_idx] = 1
