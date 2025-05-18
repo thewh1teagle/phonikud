@@ -104,9 +104,6 @@ def train_model(
                     args.early_stopping_patience
                     and early_stop_counter > args.early_stopping_patience
                 ):
-                    print(
-                        f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
-                    )
                     break
 
         # Break batch loop
@@ -114,6 +111,9 @@ def train_model(
             args.early_stopping_patience
             and early_stop_counter >= args.early_stopping_patience
         ):
+            print(
+                f"🚨 Early stopping at epoch {epoch}, step {step}. No improvement in validation score for {args.early_stopping_patience} steps."
+            )
             break
 
         # Evaluate each epoch
