@@ -1,14 +1,15 @@
 from typing import List
-
 import torch
 from src.train.config import TrainArgs
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
+from transformers import BertTokenizerFast
+from typing import Tuple
 from src.model.phonikud_model import (
     HATAMA_CHAR,
     MOBILE_SHVA_CHAR,
     PREFIX_CHAR,
 )
-from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import DataLoader, Dataset
 
 
 def get_dataloader(lines: list[str], args: TrainArgs, collator: "Collator"):
@@ -65,10 +66,10 @@ class TrainData(Dataset):
 
 
 class Collator:
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer: BertTokenizerFast):
         self.tokenizer = tokenizer
 
-    def collate_fn(self, items):
+    def collate_fn(self, items: List[Tuple[str, torch.Tensor]]):
         inputs = self.tokenizer(
             [x[0] for x in items], padding=True, truncation=True, return_tensors="pt"
         )
