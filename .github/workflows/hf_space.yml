@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-          ref: 61633533fbf1da092f89202d530e7834e1bab8e5
+          # ref: 61633533fbf1da092f89202d530e7834e1bab8e5
       - name: Prepare and push to HF
         run: |
 
