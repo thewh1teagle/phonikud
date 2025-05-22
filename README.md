@@ -122,7 +122,7 @@ The workflow is as follows:
 
 4. Train the TTS model on phonemes, and at runtime, feed the model phonemes to generate speech.
 
-This ensures accurate and clear speech synthesis. Since the output is in phonemes similar to English, we can fine-tune an English TTS model with as little as one hour of Hebrew data.
+This ensures accurate and clear speech synthesis. Since the output phonemes are similar to English, we can fine tune an English model with as little as one hour of Hebrew data.
 
 
 ## ℹ️ Limitations
