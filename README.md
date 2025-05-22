@@ -136,12 +136,12 @@ This ensures accurate and clear speech synthesis.
 
 ## 🧠 Future Ideas
 
-- Multilingual LLM Expander
+- _Multilingual LLM Expander_
   
   Expand numbers, emojis, dates, times, and more using a lightweight multilingual LLM or transformer.  
   The idea is to train a small model on pairs of raw text → expanded text, making it easier to generate speech-friendly inputs.
 
-- Transformer/LLM G2P
+- _Transformer/LLM G2P_
   
   Skip coding rules - make a dataset with current G2P, then train a model end-to-end on text to phonemes.
 
