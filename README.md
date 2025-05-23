@@ -163,6 +163,10 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
 
+### Paper 📑
+
+See [mishkal-paper](https://github.com/thewh1teagle/mishkal-papaer)
+
 ### Testing 🧪
 
 Run `uv run pytest`
