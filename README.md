@@ -165,7 +165,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 ### Paper 📑
 
-See [mishkal-paper](https://github.com/thewh1teagle/mishkal-papaer)
+See [mishkal-paper](https://github.com/thewh1teagle/mishkal-paper)
 
 ### Testing 🧪
 
