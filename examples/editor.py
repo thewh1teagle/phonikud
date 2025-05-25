@@ -3,8 +3,8 @@ uv pip install gradio
 uv run gradio examples/editor.py
 """
 
-from mishkal import phonemize, lexicon
-from mishkal.utils import remove_nikud
+from kolani import phonemize, lexicon
+from kolani.utils import remove_nikud
 import gradio as gr
 from phonikud_onnx import Phonikud
 from pathlib import Path
@@ -102,7 +102,7 @@ with gr.Blocks(theme=theme, css=css) as demo:
     )
 
     gr.Markdown("""
-        <p style='text-align: center;'><a href='https://github.com/thewh1teagle/mishkal' target='_blank'>Mishkal on Github</a></p>
+        <p style='text-align: center;'><a href='https://github.com/thewh1teagle/kolani' target='_blank'>Kolani on Github</a></p>
     """)
 
 if __name__ == "__main__":

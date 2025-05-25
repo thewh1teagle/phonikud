@@ -1,11 +1,11 @@
-import mishkal
-from mishkal import lexicon
+import kolani
+from kolani import lexicon
 
 
 class Letter:
     def __init__(self, char: str, diac: list[str]):
-        self.char = mishkal.normalize(char)
-        self.all_diac = mishkal.normalize(diac)
+        self.char = kolani.normalize(char)
+        self.all_diac = kolani.normalize(diac)
         self.diac = "".join(
             i for i in self.all_diac if i not in lexicon.SET_PHONETIC_DIACRITICS
         )

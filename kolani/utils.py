@@ -1,11 +1,11 @@
 from functools import lru_cache
 from typing import Literal
-from mishkal import lexicon
+from kolani import lexicon
 import unicodedata
 import regex as re
-import mishkal.syllables
-from mishkal.variants import Letter
-import mishkal
+import kolani.syllables
+from kolani.variants import Letter
+import kolani
 
 
 def sort_diacritics(match):
@@ -226,7 +226,7 @@ def sort_hatama(letters: list[Letter]) -> list[Letter]:
 
 
 def add_milra_hatama(word: str):
-    syllables = mishkal.syllables.get_syllables(word)
+    syllables = kolani.syllables.get_syllables(word)
     stress_index = -1
 
     if not syllables:

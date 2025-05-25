@@ -1,4 +1,4 @@
-# Mishkal
+# Kolani
 
 Grapheme to phoneme in Hebrew
 
@@ -17,10 +17,10 @@ Convert Hebrew text into IPA for TTS systems and learning.
 Due to ongoing development, it is recommend to install from git directly.
 
 ```console
-pip install git+https://github.com/thewh1teagle/mishkal
+pip install git+https://github.com/thewh1teagle/kolani
 ```
 
-You can find the package as well in `pypi.org/project/mishkal-hebrew`
+You can find the package as well in `pypi.org/project/kolani-hebrew`
 
 ## Play 🕹️
 
@@ -29,12 +29,12 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 ## Usage
 
 ```python
-from mishkal import phonemize
+from kolani import phonemize
 phonemes = phonemize('שָׁלוֹם עוֹלָם')
 print(phonemes) # ʃalˈom olˈam
 ```
 
-Note: mishkal expects diacritics and phonetics marks.
+Note: Kolani expects diacritics and phonetics marks.
 
 Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 
@@ -47,7 +47,7 @@ See [examples](examples)
 - It is recommend to add nikud with [phonikud-onnx](phonikud_onnx) model
 - Hebrew nikud is normalized
 - Most of the Hebrew rules happen in `phonemize.py`
-- It is highly recommend to normalize Hebrew using `mishkal.normalize('שָׁלוֹם')` when training models
+- It is highly recommend to normalize Hebrew using `kolani.normalize('שָׁלוֹם')` when training models
 
 ### Nikud set and symbols
 
@@ -165,7 +165,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 ### Paper 📑
 
-See [mishkal-paper](https://github.com/thewh1teagle/mishkal-paper)
+See [kolani-paper](https://github.com/thewh1teagle/kolani-paper)
 
 ### Testing 🧪
 

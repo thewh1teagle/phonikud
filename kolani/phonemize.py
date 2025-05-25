@@ -1,7 +1,7 @@
-from mishkal import lexicon
-from mishkal.variants import Letter
+from kolani import lexicon
+from kolani.variants import Letter
 from .expander import Expander
-from mishkal.utils import (
+from kolani.utils import (
     get_letters,
     normalize,
     post_normalize,
@@ -12,7 +12,7 @@ from mishkal.utils import (
 )
 from typing import Callable, Literal
 import regex as re
-from mishkal.hebrew import phonemize_hebrew
+from kolani.hebrew import phonemize_hebrew
 
 
 class Phonemizer:

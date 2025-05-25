@@ -12,7 +12,7 @@ from src.train.config import BASE_PATH
 from transformers import AutoTokenizer
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from tap import Tap
-from mishkal.utils import normalize
+from kolani.utils import normalize
 
 
 class RunArgs(Tap):

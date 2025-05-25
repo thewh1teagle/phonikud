@@ -1,8 +1,8 @@
 """
-Add stress (Hat'ama) diacritic using Mishkal
+Add stress (Hat'ama) diacritic using Kolani
 """
 
-from mishkal.syllables import add_stress
+from kolani.syllables import add_stress
 
 data = {"אוֹמֶרֶת": -2, "דֶרֶךְ": -2,
         "גִּימִיקִים": -3, "קוֹרֶה": -1, "רַדְיוֹ": -2}

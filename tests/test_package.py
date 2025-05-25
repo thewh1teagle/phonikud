@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def test_has_no_breakpoint():
-    files = Path(__file__).parent.joinpath("../mishkal").resolve().glob("**/*.py")
+    files = Path(__file__).parent.joinpath("../kolani").resolve().glob("**/*.py")
     for file in files:
         print(file)
 

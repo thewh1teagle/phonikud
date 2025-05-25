@@ -1,4 +1,4 @@
-from mishkal import phonemize
+from kolani import phonemize
 
 
 def test_fallback():

@@ -1,6 +1,6 @@
-from mishkal.utils import mark_shva_na, normalize
+from kolani.utils import mark_shva_na, normalize
 import pandas as pd
-from mishkal import lexicon
+from kolani import lexicon
 from pathlib import Path
 
 BASE_PATH = Path(__file__).parent

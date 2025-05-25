@@ -1,5 +1,5 @@
-from mishkal.expander import Expander
-from mishkal.utils import remove_nikud
+from kolani.expander import Expander
+from kolani.utils import remove_nikud
 
 
 def test_numbers():

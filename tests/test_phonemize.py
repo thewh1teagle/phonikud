@@ -1,8 +1,8 @@
-from mishkal import lexicon, phonemize
+from kolani import lexicon, phonemize
 from pathlib import Path
 import pandas as pd
 import warnings
-from mishkal.lexicon import STRESS_PHONEME
+from kolani.lexicon import STRESS_PHONEME
 
 TEST_STRESS = True
 

@@ -3,7 +3,7 @@ uv run pytest tests/test_syllables.py
 """
 
 import pandas as pd
-from mishkal.syllables import add_stress, sort_diacritics
+from kolani.syllables import add_stress, sort_diacritics
 from pathlib import Path
 
 base_path = Path(__file__).parent / "syllables_test_tables"
