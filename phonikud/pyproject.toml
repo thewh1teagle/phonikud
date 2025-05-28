@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "humanize>=4.12.3",
+    "jiwer>=3.1.0",
     "kolani",
     "tensorboard>=2.19.0",
     "torch>=2.6.0",
