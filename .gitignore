@@ -15,7 +15,7 @@ wheels/
 hebrew_diacritized/
 saspeech_gold_standard/
 *.json
-!kolani/data/*.json
+!phonikud/data/*.json
 ckpt/
 
 *.7z

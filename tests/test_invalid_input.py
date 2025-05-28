@@ -1,4 +1,4 @@
-from kolani import phonemize
+from phonikud import phonemize
 
 text = """
 sfd;kljasdf;lkjasdflkjsdf;lfjaksf'fajl;k23409740278423@#$@!4@!#%#^$#$%&$%^*%^*%$^=156465165 5156s1fd 321. as0f0 as321f3as21dfsaf 

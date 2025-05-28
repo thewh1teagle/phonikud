@@ -1,11 +1,11 @@
-import kolani
-from kolani import lexicon
+import phonikud
+from phonikud import lexicon
 
 
 class Letter:
     def __init__(self, char: str, diac: list[str]):
-        self.char = kolani.normalize(char)
-        self.all_diac = kolani.normalize(diac)
+        self.char = phonikud.normalize(char)
+        self.all_diac = phonikud.normalize(diac)
         self.diac = "".join(
             i for i in self.all_diac if i not in lexicon.SET_PHONETIC_DIACRITICS
         )

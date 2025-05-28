@@ -1,5 +1,5 @@
-from kolani.expander import Expander
-from kolani.utils import remove_nikud
+from phonikud.expander import Expander
+from phonikud.utils import remove_nikud
 
 
 def test_numbers():

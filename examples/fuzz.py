@@ -7,7 +7,7 @@ uv run examples/fuzz.py hebrew_diacritized/data
 import sys
 from pathlib import Path
 from tqdm import tqdm
-from kolani import phonemize
+from phonikud import phonemize
 
 target_dir = sys.argv[1]
 files = sorted(Path(target_dir).glob("**/*.txt"), key=lambda f: f.stat().st_size)

@@ -1,5 +1,5 @@
 import time
-from kolani import phonemize
+from phonikud import phonemize
 
 input_text = "אִישׁ לֹא טָרַח בְּֽמֶשֶׁךְ יוֹתֵר מֵחֹ֫ודֶשׁ לְֽהָכִין אֶת הַמַּעֲרָכוֹת הַשּׁוֹנוֹת לַקָּטַסְטְרוֹפָה הַהֲמוֹנִית שֶׁעֲלוּלָה לְֽהִתְרַחֵשׁ כָּאן."
 

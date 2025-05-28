@@ -1,11 +1,11 @@
 """
 https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 
-TODO: add to kolani?
+TODO: add to phonikud?
 """
 
 import regex as re
-import kolani
+import phonikud
 
 VOWEL_DIACS = [chr(i) for i in range(0x05B1, 0x05BC)] + [chr(0x05C7)] + [chr(0x5BD)]
 
@@ -30,7 +30,7 @@ def has_vowel_diacs(s: str):
 
 
 def get_syllables(word: str) -> list[str]:
-    letters = kolani.utils.get_letters(word)
+    letters = phonikud.utils.get_letters(word)
     syllables, cur = [], ""
     vowel_state = False
 
@@ -78,7 +78,7 @@ def get_syllables(word: str) -> list[str]:
 
 
 def add_stress_to_syllable(s: str):
-    letters = kolani.utils.get_letters(s)
+    letters = phonikud.utils.get_letters(s)
     letters[0].all_diac = STRESS + letters[0].all_diac
     return "".join(letter.char + letter.all_diac for letter in letters)
 

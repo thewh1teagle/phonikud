@@ -1,7 +1,7 @@
-from kolani import lexicon
-from kolani.variants import Letter
+from phonikud import lexicon
+from phonikud.variants import Letter
 from .expander import Expander
-from kolani.utils import (
+from phonikud.utils import (
     get_letters,
     normalize,
     post_normalize,
@@ -12,7 +12,7 @@ from kolani.utils import (
 )
 from typing import Callable, Literal
 import regex as re
-from kolani.hebrew import phonemize_hebrew
+from phonikud.hebrew import phonemize_hebrew
 
 
 class Phonemizer:

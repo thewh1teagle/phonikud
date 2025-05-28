@@ -5,9 +5,9 @@ Dictionaries are tab separated key value words
 from pathlib import Path
 import json
 import re
-from kolani.utils import remove_nikud
-from kolani.utils import normalize
-from kolani import lexicon
+from phonikud.utils import remove_nikud
+from phonikud.utils import normalize
+from phonikud import lexicon
 import unicodedata
 
 files = Path(__file__).parent.joinpath("../data").glob("*.json")

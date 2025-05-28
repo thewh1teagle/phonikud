@@ -22,7 +22,7 @@ from src.model.phonikud_model import (
     NIKUD_HASER,
 )
 from src.train.config import BASE_PATH, TrainArgs
-from kolani.utils import normalize
+from phonikud.utils import normalize
 from tap import Tap
 from src.train.utils import read_lines
 

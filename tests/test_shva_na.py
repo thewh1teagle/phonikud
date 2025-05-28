@@ -1,6 +1,6 @@
-from kolani.utils import mark_shva_na, normalize
+from phonikud.utils import mark_shva_na, normalize
 import pandas as pd
-from kolani import lexicon
+from phonikud import lexicon
 from pathlib import Path
 
 BASE_PATH = Path(__file__).parent

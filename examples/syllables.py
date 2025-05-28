@@ -1,8 +1,8 @@
 """
-Add stress (Hat'ama) diacritic using Kolani
+Add stress (Hat'ama) diacritic using Phonikud
 """
 
-from kolani.syllables import add_stress
+from phonikud.syllables import add_stress
 
 data = {"אוֹמֶרֶת": -2, "דֶרֶךְ": -2,
         "גִּימִיקִים": -3, "קוֹרֶה": -1, "רַדְיוֹ": -2}

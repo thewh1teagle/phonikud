@@ -24,7 +24,7 @@ jobs:
 
           # Editor deps
           echo "gradio>=5.25.2" > requirements.txt            
-          # Kolani deps
+          # Phonikud deps
           echo "num2words" >> requirements.txt            
           echo "colorlog" >> requirements.txt            
           echo "regex" >> requirements.txt
@@ -33,7 +33,7 @@ jobs:
           echo "onnxruntime" >> requirements.txt
           # Copy files
           cp ../.github/workflows/hf_readme.md README.md
-          cp -rf ../kolani .
+          cp -rf ../phonikud .
           cp -rf ../phonikud_onnx/src/phonikud_onnx .
 
 

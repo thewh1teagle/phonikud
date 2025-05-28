@@ -6,7 +6,7 @@ uv run examples/with_fallback.py
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 import phonemizer
 import espeakng_loader
-import kolani
+import phonikud
 
 EspeakWrapper.set_library(espeakng_loader.get_library_path())
 EspeakWrapper.set_data_path(espeakng_loader.get_data_path())
@@ -23,7 +23,7 @@ text = """
 מֵרְאִיָּה מְמֻחְשֶׁבֶת עַד Large Language Models: הֵרָשְׁמוּ לְמַחֲזוֹר הֶחָדָשׁ שֶׁל קוּרְס פִּתּוּחַ AI וְ-Deep Learning
 """
 
-phonemes = kolani.phonemize(
+phonemes = phonikud.phonemize(
     text, preserve_punctuation=True, preserve_stress=True, fallback=fallback
 )
 print(phonemes)

@@ -1,5 +1,5 @@
 [project]
-name = "kolani"
+name = "phonikud"
 version = "0.3.7"
 description = "Convert Hebrew text into IPA for TTS systems and learning"
 readme = "README.md"
@@ -10,9 +10,9 @@ requires-python = ">=3.8, <3.13"
 dependencies = ["colorlog>=6.9.0", "num2words>=0.5.14", "regex>=2024.11.6"]
 
 [project.urls]
-Homepage = "https://github.com/thewh1teagle/kolani"
-Repository = "https://github.com/thewh1teagle/kolani"
-Issues = "https://github.com/thewh1teagle/kolani/issues"
+Homepage = "https://github.com/thewh1teagle/phonikud"
+Repository = "https://github.com/thewh1teagle/phonikud"
+Issues = "https://github.com/thewh1teagle/phonikud/issues"
 
 [build-system]
 requires = ["hatchling"]
@@ -22,7 +22,7 @@ build-backend = "hatchling.build"
 dev = ["pytest>=8.3.4", "ruff>=0.9.7", "tqdm>=4.67.1", "pandas>=2.0.3"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["kolani"]
+packages = ["phonikud"]
 
 [tool.uv.workspace]
-members = ["phonikud", "phonikud_onnx"]
+members = ["model", "phonikud_onnx"]

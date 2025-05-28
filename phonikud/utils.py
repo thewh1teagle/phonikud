@@ -1,11 +1,11 @@
 from functools import lru_cache
 from typing import Literal
-from kolani import lexicon
+from phonikud import lexicon
 import unicodedata
 import regex as re
-import kolani.syllables
-from kolani.variants import Letter
-import kolani
+import phonikud.syllables
+from phonikud.variants import Letter
+import phonikud
 
 
 def sort_diacritics(match):
@@ -226,7 +226,7 @@ def sort_hatama(letters: list[Letter]) -> list[Letter]:
 
 
 def add_milra_hatama(word: str):
-    syllables = kolani.syllables.get_syllables(word)
+    syllables = phonikud.syllables.get_syllables(word)
     stress_index = -1
 
     if not syllables:

@@ -19,10 +19,10 @@ Reference:
 """
 
 from typing import Literal
-from kolani.variants import Letter
-from kolani import lexicon
+from phonikud.variants import Letter
+from phonikud import lexicon
 import re
-from kolani.utils import sort_stress
+from phonikud.utils import sort_stress
 
 SHVA = "\u05b0"
 SIN = "\u05c2"

@@ -5,7 +5,7 @@ uv run python examples/simple.py
 """
 
 from phonikud_onnx import Phonikud
-from kolani import lexicon
+from phonikud import lexicon
 
 
 def main():

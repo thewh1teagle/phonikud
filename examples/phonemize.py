@@ -6,7 +6,7 @@ Manual Nakdan https://www.yo-yoo.co.il/tools/nikud
 uv run examples/phonemize.py
 """
 
-from kolani import phonemize
+from phonikud import phonemize
 
 sentences = [
     # "הִיא אָמְרָה לִי",  # Hirik with Yod vowel

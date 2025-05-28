@@ -7,7 +7,7 @@ from .numbers import num_to_word
 from .dates import date_to_word
 from .time_to_word import time_to_word
 from .dictionary import Dictionary
-from kolani.log import log
+from phonikud.log import log
 
 
 class Expander:

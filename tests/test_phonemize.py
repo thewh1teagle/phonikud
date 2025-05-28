@@ -1,8 +1,8 @@
-from kolani import lexicon, phonemize
+from phonikud import lexicon, phonemize
 from pathlib import Path
 import pandas as pd
 import warnings
-from kolani.lexicon import STRESS_PHONEME
+from phonikud.lexicon import STRESS_PHONEME
 
 TEST_STRESS = True
 

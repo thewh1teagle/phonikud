@@ -1,5 +1,5 @@
 [project]
-name = "phonikud"
+name = "model"
 version = "0.1.0"
 description = "Hebrew nakdan with Shva Na and Atama'a"
 readme = "README.md"
@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "humanize>=4.12.3",
     "jiwer>=3.1.0",
-    "kolani",
+    "phonikud",
     "tensorboard>=2.19.0",
     "torch>=2.6.0",
     "transformers>=4.51.3",
@@ -22,4 +22,4 @@ build-backend = "hatchling.build"
 packages = ["src"]
 
 [tool.uv.sources]
-kolani = { workspace = true }
+phonikud = { workspace = true }
