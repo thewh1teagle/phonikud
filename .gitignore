@@ -17,8 +17,11 @@ saspeech_gold_standard/
 *.json
 !mishkal/data/*.json
 ckpt/
+wandb
+best_27_05
 
 *.7z
 *.txt
 !phonikud/data/**/*.txt */
 *.zip
+
