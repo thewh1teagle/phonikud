@@ -31,7 +31,8 @@ jobs:
 
           # Editor deps
           uv export --no-hashes --no-emit-project > requirements.txt
-          echo "gradio>=5.25.2" >> requirements.txt            
+          echo "gradio>=5.25.2" >> requirements.txt
+          echo "phonikud_onnx" >> requirements.txt
 
           # Copy files
           cp ../.github/workflows/hf_readme.md README.md
