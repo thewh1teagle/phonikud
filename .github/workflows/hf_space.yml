@@ -14,6 +14,10 @@ jobs:
           fetch-depth: 0
           lfs: true
           # ref: 61633533fbf1da092f89202d530e7834e1bab8e5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Prepare and push to HF
         run: |
 
@@ -23,20 +27,13 @@ jobs:
           cp ../examples/editor.py app.py
 
           # Editor deps
+          uv export --no-hashes --no-emit-project > requirements.txt
           echo "gradio>=5.25.2" > requirements.txt            
-          # Phonikud deps
-          echo "num2words" >> requirements.txt            
-          echo "colorlog" >> requirements.txt            
-          echo "regex" >> requirements.txt
-          # Phonikud deps
-          echo "tokenizers" >> requirements.txt
-          echo "onnxruntime" >> requirements.txt
+
           # Copy files
           cp ../.github/workflows/hf_readme.md README.md
           cp -rf ../phonikud .
           cp -rf ../phonikud_onnx/src/phonikud_onnx .
-
-
 
           # Git
           git init
