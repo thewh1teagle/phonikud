@@ -20,7 +20,7 @@ Due to ongoing development, it is recommend to install from git directly.
 pip install git+https://github.com/thewh1teagle/phonikud
 ```
 
-You can find the package as well in `pypi.org/project/phonikud-hebrew`
+You can find the package as well in `pypi.org/project/phonikud`
 
 ## Play 🕹️
 
