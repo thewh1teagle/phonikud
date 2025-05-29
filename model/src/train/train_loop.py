@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
-from phonikud.src.model.phonikud_model import PhoNikudModel
+from model.src.model.phonikud_model import PhoNikudModel
 
 
 def train_model(

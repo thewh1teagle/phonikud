@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import humanize
 import torch
-from phonikud.src.model.phonikud_model import (
+from model.src.model.phonikud_model import (
     NIKUD_HASER,
     remove_nikud,
 )
