@@ -144,7 +144,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 - _Punctuation model_
 
-  Add missing punctuation for better intonations
+  Train model to restore missing punctuation for better intonations
 
 - _Transformer/LLM G2P_
   
