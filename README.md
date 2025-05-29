@@ -148,7 +148,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 - _Transformer/LLM G2P_
   
-  Skip coding rules - make a dataset with current G2P, then train a model end-to-end on text to phonemes.
+  Skip coding rules - make a dataset with current G2P, then train a end-to-end model on text to phonemes.
 
 ## Datasets
 
