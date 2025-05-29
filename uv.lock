@@ -749,6 +749,7 @@ dev = [
     { name = "onnx" },
     { name = "phonikud" },
     { name = "torch" },
+    { name = "transformers" },
 ]
 
 [package.metadata]
@@ -762,6 +763,7 @@ dev = [
     { name = "onnx", specifier = ">=1.17.0" },
     { name = "phonikud", editable = "." },
     { name = "torch", specifier = ">=2.6.0" },
+    { name = "transformers", specifier = ">=4.52.3" },
 ]
 
 [[package]]

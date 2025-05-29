@@ -1,6 +1,11 @@
 """
 uv sync --extra onnx
-uv run export.py --model ../phonikud/ckpt/last
+
+From filesystem:
+    uv run export.py --model ../phonikud/ckpt/last
+
+From HuggingFace:
+    uv run .\export.py --model thewh1teagle/phonikud
 """
 
 import torch
@@ -10,7 +15,7 @@ from onnxruntime.quantization import quantize_dynamic, QuantType
 from argparse import ArgumentParser
 import sys
 
-sys.path.append(str(Path(__file__).parent / "../phonikud/src"))
+sys.path.append(str(Path(__file__).parent / "../model/src"))
 from model.phonikud_model import (
     PhoNikudModel,
 )  # TODO: add it as package for autocomplete
@@ -65,7 +70,7 @@ def main():
     print(f"Loading model from: {args.model}")
 
     # Option 1: If your model can be loaded directly from checkpoint
-    model = PhoNikudModel.from_pretrained(args.model)
+    model = PhoNikudModel.from_pretrained(args.model)  # force_download=True
 
     # Option 2: If you need to load from a saved state dict
     # model = PhoNikudModel(config)
