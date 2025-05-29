@@ -148,8 +148,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 ## Datasets
 
-- [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (speech, MIT)
-- [RanSpeech](https://huggingface.co/datasets/thewh1teagle/RanSpeech) (speech, non commercial)
+- [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (speech, MIT/CC-NC)
 - [Saspeech](https://www.openslr.org/134) (speech, non commercial)
 - [phonikud-data](https://huggingface.co/datasets/thewh1teagle/phonikud-data) (nikud and phonetics, cc-4.0)
 
