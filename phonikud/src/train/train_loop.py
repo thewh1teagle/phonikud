@@ -18,6 +18,34 @@ def align_logits_and_targets(logits, targets):
     return aligned_logits, aligned_targets
 
 
+def calculate_wer(predictions, targets, attention_mask=None):
+    """Calculate Word Error Rate between predictions and targets."""
+    # Convert logits to binary predictions
+    pred_binary = (torch.sigmoid(predictions) > 0.5).float()
+    
+    # If attention mask is provided, only consider non-padded tokens
+    if attention_mask is not None:
+        # Expand attention mask to match the shape of predictions
+        mask = attention_mask.unsqueeze(-1).expand_as(pred_binary)
+        pred_binary = pred_binary * mask
+        targets = targets * mask
+    
+    # Calculate token-level accuracy
+    correct_tokens = (pred_binary == targets).all(dim=-1).float()
+    if attention_mask is not None:
+        # Only count non-padded tokens
+        total_tokens = attention_mask.sum()
+        correct_count = (correct_tokens * attention_mask).sum()
+    else:
+        total_tokens = correct_tokens.numel()
+        correct_count = correct_tokens.sum()
+    
+    # WER = 1 - accuracy (error rate)
+    accuracy = correct_count / total_tokens if total_tokens > 0 else 0.0
+    wer = 1.0 - accuracy
+    return wer.item()
+
+
 def train_model(
     model: PhoNikudModel,
     tokenizer: BertTokenizerFast,
@@ -50,6 +78,9 @@ def train_model(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
         total_loss = 0.0
+        total_wer = 0.0
+        wer_count = 0
+        
         for index, batch in pbar:  # Change this line from (inputs, targets) to batch
             optimizer.zero_grad()
 
@@ -86,6 +117,15 @@ def train_model(
 
             loss = criterion(active_logits, targets.float())
             
+            # Calculate WER for this batch
+            attention_mask = inputs.get('attention_mask') if isinstance(inputs, dict) else None
+            if attention_mask is not None:
+                # Align attention mask with logits
+                attention_mask = attention_mask[:, :active_logits.size(1)]
+            
+            batch_wer = calculate_wer(active_logits, targets, attention_mask)
+            total_wer += batch_wer
+            wer_count += 1
 
             scaler.scale(loss).backward()
             scaler.step(optimizer)
@@ -94,11 +134,14 @@ def train_model(
 
             total_loss += loss.item() 
 
-            pbar.set_description(f"Train iter (L={total_loss/ (index+1):.4f})")
+            pbar.set_description(f"Train iter (L={total_loss/ (index+1):.4f}, WER={total_wer/wer_count:.4f})")
             step += 1
 
-            # Log total loss
-            wandb.log({"Loss/train": loss.item()}, step=step)
+            # Log metrics
+            wandb.log({
+                "Loss/train": loss.item(),
+                "WER/train": batch_wer
+            }, step=step)
 
             # Always save "last"
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
