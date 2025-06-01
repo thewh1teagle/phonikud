@@ -8,6 +8,15 @@ from config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
 from model.src.model.phonikud_model import PhoNikudModel
+import wandb
+
+
+def align_logits_and_targets(logits, targets):
+    """Align logits and targets to the same sequence length."""
+    min_seq_len = min(logits.size(1), targets.size(1))
+    aligned_logits = logits[:, :min_seq_len, :]
+    aligned_targets = targets[:, :min_seq_len, :]
+    return aligned_logits, aligned_targets
 
 
 def train_model(
@@ -18,10 +27,17 @@ def train_model(
     args: TrainArgs,
     writer: SummaryWriter,
 ):
+    # Initiate wandb
+    wandb.init(project="phonikud", config=vars(args))
+
     model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     criterion = nn.BCEWithLogitsLoss()
-    scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer, total_iters=args.epochs)
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer,
+        step_size=9000,
+        gamma=0.1,
+    )
     # Boosted on GPU
     scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device)
 
@@ -33,24 +49,32 @@ def train_model(
         pbar = tqdm(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
-        for _, (inputs, targets) in pbar:
+        total_loss = 0.0
+        for index, batch in pbar:
             optimizer.zero_grad()
 
             # Log learning rate
             for param_group in optimizer.param_groups:
                 lr = param_group["lr"]
-                writer.add_scalar("LR", lr, step)
+                wandb.log({"LR": lr}, step=step)
+
+            inputs = {
+                "input_ids": batch["input_ids"],
+                "attention_mask": batch["attention_mask"],
+                "token_type_ids": batch["token_type_ids"],
+            }
+            targets = batch["targets"]
 
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)
-            # ^ shape: (batch_size, n_chars_padded, n_active_components)
+            # ^ shape: (batch_size, n_tokens_padded, n_active_components)
             output = model(inputs)
-            # ^ shape: (batch_size, n_chars_padded, 4)
+            # ^ shape: (batch_size, n_tokens_padded, 4)
 
             # Get only the logits for the components we're training on
-            active_logits = output.additional_logits[
-                :, 1:-1
-            ]  # skip BOS and EOS symbols
+            # Don't skip BOS/EOS here - handle alignment with targets instead
+            active_logits = output.additional_logits
+            active_logits, targets = align_logits_and_targets(active_logits, targets)
 
             loss = criterion(active_logits, targets.float())
 
@@ -65,11 +89,13 @@ def train_model(
             scaler.update()
             scheduler.step()
 
+            total_loss += loss.item()
+
             pbar.set_description(f"Train iter (L={loss.item():.4f})")
             step += 1
 
             # Log total loss
-            writer.add_scalar("Loss/train", loss.item(), step)
+            wandb.log({"Loss/train": loss.item()}, step=step)
 
             # Always save "last"
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
@@ -81,7 +107,7 @@ def train_model(
             # Val
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 # Evaluate and maybe save "best"
-                val_score = evaluate_model(model, val_dataloader, args, writer, step)
+                val_score = evaluate_model(model, val_dataloader, args, step)
 
                 if val_score < best_val_score:
                     best_val_score = val_score
@@ -114,8 +140,8 @@ def train_model(
             )
             break
 
-        # Evaluate each epoch
-        # evaluate_model(model, val_dataloader, args, writer, step)
+        # Finish wandb
+        wandb.finish()
 
     final_dir = f"{args.output_dir}/loss_{loss.item():.2f}"
     print(f"🚀 Saving trained model to: {final_dir}")
