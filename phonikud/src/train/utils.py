@@ -67,3 +67,41 @@ def read_lines(
         print(f"\t{i}")
 
     return train_lines, val_lines
+
+
+
+
+def align_logits_and_targets(logits, targets):
+    """Align logits and targets to the same sequence length."""
+    min_seq_len = min(logits.size(1), targets.size(1))
+    aligned_logits = logits[:, :min_seq_len, :]
+    aligned_targets = targets[:, :min_seq_len, :]
+    return aligned_logits, aligned_targets
+
+
+def calculate_wer(predictions, targets, attention_mask=None):
+    """Calculate Word Error Rate between predictions and targets."""
+    # Convert logits to binary predictions
+    pred_binary = (torch.sigmoid(predictions) > 0.5).float()
+    
+    # If attention mask is provided, only consider non-padded tokens
+    if attention_mask is not None:
+        # Expand attention mask to match the shape of predictions
+        mask = attention_mask.unsqueeze(-1).expand_as(pred_binary)
+        pred_binary = pred_binary * mask
+        targets = targets * mask
+    
+    # Calculate token-level accuracy
+    correct_tokens = (pred_binary == targets).all(dim=-1).float()
+    if attention_mask is not None:
+        # Only count non-padded tokens
+        total_tokens = attention_mask.sum()
+        correct_count = (correct_tokens * attention_mask).sum()
+    else:
+        total_tokens = correct_tokens.numel()
+        correct_count = correct_tokens.sum()
+    
+    # WER = 1 - accuracy (error rate)
+    accuracy = correct_count / total_tokens if total_tokens > 0 else 0.0
+    wer = 1.0 - accuracy
+    return wer.item(), accuracy
