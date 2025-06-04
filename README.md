@@ -51,7 +51,7 @@ See [examples](examples)
 
 ### Nikud set and symbols
 
-- Chars from `\u05b0` to `\u05ea` (Letters and nikud)
+- Chars from `\u05b0` to `\u05ea` (Letters and diacritics)
 - `'"` (Gershaim),
 - `\u05ab` (Hat'ama eg. `טח֫ינה` != `טחינ֫ה` `tahini` != `grinding`)
 - `\u05bd` (Vocal Shva eg. `תְֽפרְסם` notice Meteg in `ת`)
