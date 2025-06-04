@@ -54,7 +54,7 @@ See [examples](examples)
 - Chars from `\u05b0` to `\u05ea` (Letters and nikud)
 - `'"` (Gershaim),
 - `\u05ab` (Hat'ama eg. `טח֫ינה` != `טחינ֫ה` `tahini` != `grinding`)
-- `\u05bd` (Vocal Shva eg. `תְֽפרְסם` notice after `ת`)
+- `\u05bd` (Vocal Shva eg. `תְֽפרְסם` notice Meteg in `ת`)
 - `|` (Prefix letters eg. `ב|ירושלים`)
 
 `\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Vocal Shva` clearly.
