@@ -1,11 +1,11 @@
 # Phonikud
 
-Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added phonetic symbols for Shva Na and Hat'ama (Stress).
+Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added phonetic symbols for Vocal Shva and Hat'ama (Stress).
 
 ## Added Symbols
 
 - Hat'ama (Stress): `\u05ab` also called `ole`
-- Mobile Shva (Shva Na): `\u05bd` also called `meteg`
+- Vocal Shva (e): `\u05bd` also called `meteg`
 - Prefix: vertical bar `|`
 
 Example: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
@@ -16,7 +16,7 @@ Hebrew is usually written without nikud (vowels), so the pronunciation is unclea
 To convert Hebrew to phonemes, we need more than just plain text:
 
 - **Nikud** must be added — it's missing from the text.
-- **Shva** can be vocal (Shva Na) or silent — usually silent.
+- **Shva** can be vocal (e) or silent — usually silent.
 - **Hat'ama** (word stress) isn’t marked — usually on the last syllable.
 - **Prefix letters** (e.g., ו־ / ב־) make words harder to analyze.
 
@@ -35,7 +35,7 @@ uv sync
 
 # Prepare data
 
-Add text files with diacritics, including Hat'ama and Shva Na, to `data/train`.
+Add text files with diacritics, including Hat'ama and vocal Shva, to `data/train`.
 
 Example input: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 

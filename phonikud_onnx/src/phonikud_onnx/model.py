@@ -41,7 +41,7 @@ MATRES_LETTERS = list("אוי")
 ALEF_ORD = ord("א")
 TAF_ORD = ord("ת")
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks Vocal Shva (mobile shva)
 PREFIX_CHAR = "|"
 
 

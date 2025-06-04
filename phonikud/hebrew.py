@@ -6,7 +6,7 @@ Rules implemented:
 2. Nikud (vowel) processing
 3. Dagesh handling
 4. Geresh handling
-5. Shva Na prediction
+5. Vocal Shva prediction
 6. Special letter combinations
 
 Reference:

@@ -5,14 +5,14 @@ ASCII IPA transcription of Hebrew consonants and vowels.
 # https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
 
 # Non standard diacritics
-SHVA_NA_DIACRITIC = "\u05bd"  # Meteg
+VOCAL_SHVA_DIACRITIC = "\u05bd"  # Meteg
 HATAMA_DIACRITIC = "\u05ab"  # Ole
 PREFIX_DIACRITIC = "|"  # Vertical bar
 NIKUD_HASER_DIACRITIC = "\u05af"  # Masora, not in use
 EN_GERESH = "'"
 NON_STANDARD_DIAC = "".join(
     [
-        SHVA_NA_DIACRITIC,
+        VOCAL_SHVA_DIACRITIC,
         HATAMA_DIACRITIC,
         PREFIX_DIACRITIC,
         NIKUD_HASER_DIACRITIC,
@@ -90,7 +90,7 @@ NIKUD_PHONEMES = {
     "\u05b3": "o",  # Hataf qamats
     "\u05b8": "a",  # Kamataz
     HATAMA_DIACRITIC: STRESS_PHONEME,  # Stress (Hat'ama)
-    SHVA_NA_DIACRITIC: "e",  # Shva na
+    VOCAL_SHVA_DIACRITIC: "e",  # Vocal Shva
 }
 
 DEDUPLICATE = {
@@ -99,7 +99,9 @@ DEDUPLICATE = {
 }
 
 # Sets
-SET_PHONETIC_DIACRITICS = set([HATAMA_DIACRITIC, PREFIX_DIACRITIC, SHVA_NA_DIACRITIC])
+SET_PHONETIC_DIACRITICS = set(
+    [HATAMA_DIACRITIC, PREFIX_DIACRITIC, VOCAL_SHVA_DIACRITIC]
+)
 
 ADDITIONAL_PHONEMES = set()  # When using fallback
 SET_PHONEMES = set(

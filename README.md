@@ -54,10 +54,10 @@ See [examples](examples)
 - Chars from `\u05b0` to `\u05ea` (Letters and nikud)
 - `'"` (Gershaim),
 - `\u05ab` (Hat'ama)
-- `\u05bd` (Shva Na)
+- `\u05bd` (Vocal Shva)
 - `|` (Prefix letters)
 
-`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Shva Na` clearly.
+`\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Vocal Shva` clearly.
 
 See [Hebrew UTF-8](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 
@@ -110,13 +110,13 @@ Cool fact: modern Hebrew phonemes mostly exist in English except `ʔ` (Alef/Ayin
 
 ## How It Works 🔧
 
-To train TTS models, it’s essential to represent speech accurately. Plain Hebrew text is ambiguous without diacritics, and even with them, Shva Na and Hat'ama can cause confusion. For example, "אני אוהב אורז" (I like rice) and "אני אורז מזוודה" (I pack a suitcase) share the same diacritics for "אורז" but have different Hat'ama.
+To train TTS models, it’s essential to represent speech accurately. Plain Hebrew text is ambiguous without diacritics, and even with them, Vocal Shva and Hat'ama can cause confusion. For example, "אני אוהב אורז" (I like rice) and "אני אורז מזוודה" (I pack a suitcase) share the same diacritics for "אורז" but have different Hat'ama.
 
 The workflow is as follows:
 
 1. Add diacritics using a standard Nakdan.
 
-2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Hat'ama and Shva Na. See [phonikud](phonikud)
+2. Enhance the diacritics with an enhanced Nakdan that adds invented diacritics for Hat'ama and Vocal Shva. See [phonikud](phonikud)
 
 3. Convert the text with diacritics to phonemes (alphabet characters that represent sounds) using this library, based on coding rules.
 
@@ -161,6 +161,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - Stress should be placed in the syllable always **before vowel** and _NOT_ in the first character of the syllable
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
+- Initially we called Vocal Shva as Shva Na, but we learned that in modern Hebrew spoken Shva is different from written Shva Na, catchy name for it: `שווא נשמע`
 
 ### Paper 📑
 

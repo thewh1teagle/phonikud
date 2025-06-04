@@ -13,7 +13,7 @@ from .dicta_model import (
 )
 
 HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks shva na (mobile shva)
+MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks vocal shva (e)
 PREFIX_CHAR = "|"  # vertical bar
 NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
@@ -22,7 +22,7 @@ PHONETIC_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 def remove_nikud(text: str, additional=""):
     """
-    Remove nikud except meteg as we use it for Shva Na
+    Remove nikud except meteg as we use it for Vocal Shva
     """
     return re.sub(f"[\u05b0-\u05bc\u05be-\u05c7{additional}]", "", text)
 
@@ -82,7 +82,9 @@ class PhoNikudModel(BertForDiacritization):
         # Assert the lengths are within the tokenizer's max limit
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
-        ), f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
+        ), (
+            f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
+        )
 
         # Tokenize the inputs and return the tensor format
         inputs = tokenizer(

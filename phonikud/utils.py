@@ -186,13 +186,13 @@ def sort_stress(
 
 def mark_shva_na(word: str):
     """
-    Shva Na is context-independent and can be predicted with just the word or a dictionary.
+    Vocal Shva is context-independent and can be predicted with just the word or a dictionary.
     See https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע
     Note: we predict only if Shva in the first letter in the word
     Note: we assume that the word comes with | to mark 'Txiliyot'
-    Note: Shva Na rules mid-word are unreliable, so we don’t code them.
+    Note: Vocal Shva rules mid-word are unreliable, so we don’t code them.
 
-    Meteg (\u05bd) will be added in the letter with Shva Na
+    Meteg (\u05bd) will be added in the letter with Vocal Shva
 
     What we don't predict:
     (1) some shva in beginning in future form (we don't know)
@@ -202,12 +202,12 @@ def mark_shva_na(word: str):
     if not letters:
         return word
     if letters[0].char in "למנרי":
-        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
+        letters[0].all_diac += lexicon.VOCAL_SHVA_DIACRITIC
     elif len(letters) > 1 and letters[1].char in "אעה":
-        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
+        letters[0].all_diac += lexicon.VOCAL_SHVA_DIACRITIC
     elif letters[0].char in "וכלב" and lexicon.PREFIX_DIACRITIC in letters[0].all_diac:
         # ^ The nakdan should add |
-        letters[0].all_diac += lexicon.SHVA_NA_DIACRITIC
+        letters[0].all_diac += lexicon.VOCAL_SHVA_DIACRITIC
     # Ensure that prefix character will be last
     for letter in letters:
         if "|" in letter.all_diac:

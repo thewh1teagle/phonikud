@@ -1,7 +1,7 @@
 [project]
 name = "model"
 version = "0.1.0"
-description = "Hebrew nakdan with Shva Na and Atama'a"
+description = "Hebrew nakdan with Vocal Shva and Atama'a"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
