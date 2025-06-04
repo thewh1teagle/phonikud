@@ -53,9 +53,9 @@ See [examples](examples)
 
 - Chars from `\u05b0` to `\u05ea` (Letters and nikud)
 - `'"` (Gershaim),
-- `\u05ab` (Hat'ama)
-- `\u05bd` (Vocal Shva)
-- `|` (Prefix letters)
+- `\u05ab` (Hat'ama eg. `טח֫ינה` != `טחינ֫ה` `tahini` != `grinding`)
+- `\u05bd` (Vocal Shva eg. `תְֽפרְסם` notice after `ת`)
+- `|` (Prefix letters eg. `ב|ירושלים`)
 
 `\u05ab` and `\u05bd` are not standard - we invented them to mark `Hat'ama` and `Vocal Shva` clearly.
 
@@ -166,7 +166,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - See [Unicode Hebrew table](https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table)
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
 - Initially we called Vocal Shva as Shva Na, but we learned that in modern Hebrew spoken Shva is different from written Shva Na, catchy name for it: `שווא נשמע`. See [Shva#Pronunciation_in_Modern_Hebrew](https://en.wikipedia.org/wiki/Shva#Pronunciation_in_Modern_Hebrew)
-- To type Hebrew diacritics, use `Right ALT` (`Windows`), `Left Option` (`macOS`), or `Long Press` on the corresponding letter (`Google Keyboard`) based on the diacritic's name.
+- To type Hebrew diacritics, use `Right ALT` (`Windows`), `Left Option` (`macOS`), or `Long Press` on the corresponding letter (`Google Keyboard`) based on the diacritic's name. eg. for `Katmaz` use `Alt` + `ק`. for `Hatama` use `Alt` + `^`. for Vocal Shva use `Alt` + `&`
 
 ### Paper 📑
 
