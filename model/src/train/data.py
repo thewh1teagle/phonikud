@@ -70,10 +70,46 @@ class Collator:
         self.tokenizer = tokenizer
 
     def collate_fn(self, items: List[Tuple[str, torch.Tensor]]):
+        texts = [x[0] for x in items]
+        char_targets_list = [
+            x[1] for x in items
+        ]  # List of [seq_len, num_classes] tensors
         inputs = self.tokenizer(
-            [x[0] for x in items], padding=True, truncation=True, return_tensors="pt"
+            texts,
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
+            max_length=1024,
+            return_offsets_mapping=True,
+            add_special_tokens=True,
         )
-        targets = pad_sequence([x[1] for x in items], batch_first=True)
-        # ^ shape: (batch_size, n_chars_padded, n_active_components)
+        # Build token-level targets for each item in batch
+        batch_token_targets = []
+        for i, char_targets in enumerate(char_targets_list):
+            # Get offset mapping for this specific item
+            offset_mapping = inputs.offset_mapping[i]
+
+            # Initialize token targets (exclude class 0 "plain", keep classes 1-3)
+            token_targets = torch.zeros(len(offset_mapping), 3)
+
+            for token_idx, (start, end) in enumerate(offset_mapping):
+                if end == 0:  # CLS/SEP/pad tokens → leave zeros
+                    continue
+
+                # Get max values across character range for this token
+                # char_targets shape: [seq_len, 4], we want classes 1-3
+                if start < len(char_targets):
+                    end_idx = min(end, len(char_targets))
+                    token_targets[token_idx] = (
+                        char_targets[start:end_idx, 1:].max(0).values
+                    )
+
+            batch_token_targets.append(token_targets)
+
+        # Stack token targets and remove offset_mapping from inputs
+        targets = torch.stack(batch_token_targets)
+        inputs.pop(
+            "offset_mapping"
+        )  # Remove offset_mapping as it's not needed for model
 
         return inputs, targets

@@ -12,6 +12,7 @@ dependencies = [
     "torch>=2.6.0",
     "transformers>=4.51.3",
     "typed-argument-parser>=1.10.1",
+    "wandb>=0.19.11",
 ]
 
 [build-system]
