@@ -11,6 +11,7 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Expand dates, numbers, etc 📚
 - Handle mixed English/Hebrew with fallback 🌍
 - Real time onnx model support 💫
+- Lightweight TTS library: [phonikud-tts](https://github.com/thewh1teagle/phonikud-tts) 🎤
 
 ## Install
 
@@ -124,13 +125,12 @@ The workflow is as follows:
 
 This ensures accurate and clear speech synthesis. Since the output phonemes are similar to English, we can fine tune an English model with as little as one hour of Hebrew data.
 
-
 ## ℹ️ Limitations
 
-- Some of the *nikud* may sound a bit formal - similar to other models  
-- Some words get the same *nikud* but different *hatama* - not always accurate  
+- Some of the _nikud_ may sound a bit formal - similar to other models
+- Some words get the same _nikud_ but different _hatama_ - not always accurate
 - Basic support for non-words (gibberish, typos) - not always handled
-- Names and non-Hebrew words are sometimes predicted incorrectly  
+- Names and non-Hebrew words are sometimes predicted incorrectly
 
 💡 You can always pass your own phonemes using markdown-like syntax:  
 `[...title](/ʔantsiklopˈedja/)`
@@ -138,7 +138,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 ## 🧠 Future Ideas
 
 - _Multilingual LLM Expander_
-  
+
   Expand numbers, emojis, dates, times, and more using a lightweight multilingual LLM or transformer.  
   The idea is to train a small model on pairs of raw text → expanded text, making it easier to generate speech-friendly inputs.
 
@@ -147,7 +147,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
   Train model to restore missing punctuation for better intonations
 
 - _Transformer/LLM G2P_
-  
+
   Skip coding rules - make a dataset with current G2P, then train a end-to-end model on text to phonemes.
 
 ## Datasets
