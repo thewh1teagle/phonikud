@@ -25,6 +25,8 @@ You can find the package as well in `pypi.org/project/phonikud`
 
 ## Play 🕹️
 
+See [TTS with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonikud-tts)
+
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
 ## Usage
