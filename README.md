@@ -1,8 +1,6 @@
 # Phonikud
 
-Grapheme to phoneme in Hebrew
-
-Convert Hebrew text into IPA for TTS systems and learning.
+Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning. See the *[paper](https://github.com/thewh1teagle/phonikud-paper)* for details. 📑
 
 ## Features
 
@@ -13,6 +11,8 @@ Convert Hebrew text into IPA for TTS systems and learning.
 - Real time onnx model support 💫
 - Lightweight TTS library: [phonikud-tts](https://github.com/thewh1teagle/phonikud-tts) 🎤
 
+You can find the package as well in `pypi.org/project/phonikud`
+
 ## Install
 
 Due to ongoing development, it is recommend to install from git directly.
@@ -20,14 +20,6 @@ Due to ongoing development, it is recommend to install from git directly.
 ```console
 pip install git+https://github.com/thewh1teagle/phonikud
 ```
-
-You can find the package as well in `pypi.org/project/phonikud`
-
-## Play 🕹️
-
-See [TTS with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonikud-tts)
-
-See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
 ## Usage
 
@@ -44,6 +36,12 @@ Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 ## Examples
 
 See [examples](examples)
+
+## Play 🕹️
+
+See [TTS with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonikud-tts)
+
+See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
 ## Docs 📚
 
@@ -169,10 +167,6 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
 - Initially we called Vocal Shva as Shva Na, but we learned that in modern Hebrew spoken Shva is different from written Shva Na, catchy name for it: `שווא נשמע`. See [Shva#Pronunciation_in_Modern_Hebrew](https://en.wikipedia.org/wiki/Shva#Pronunciation_in_Modern_Hebrew)
 - To type Hebrew diacritics, use `Right ALT` (`Windows`), `Left Option` (`macOS`), or `Long Press` on the corresponding letter (`Google Keyboard`) based on the diacritic's name. eg. for `Katmaz` use `Alt` + `ק`. for `Hatama` use `Alt` + `^`. for Vocal Shva use `Alt` + `&`
-
-### Paper 📑
-
-See [phonikud-paper](https://github.com/thewh1teagle/phonikud-paper)
 
 ### Testing 🧪
 
