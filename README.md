@@ -1,6 +1,8 @@
 # Phonikud
 
-Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning. See the *[paper](https://github.com/thewh1teagle/phonikud-paper)* for details. 📑
+Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning. 
+
+See our *[paper](https://github.com/thewh1teagle/phonikud-paper)* for more details.
 
 ## Features
 
