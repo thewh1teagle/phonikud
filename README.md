@@ -2,8 +2,6 @@
 
 Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning. 
 
-See our *[paper](https://github.com/thewh1teagle/phonikud-paper)* for more details.
-
 ## Features
 
 - Nikud model with phonetic marks 🧠
