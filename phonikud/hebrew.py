@@ -1,6 +1,9 @@
 """
 Hebrew Phonemizer
 
+Fast rule-based FST that converts Hebrew text to phonemes.
+See https://en.wikipedia.org/wiki/Finite-state_transducer
+
 Rules implemented:
 1. Consonant handling (including special cases)
 2. Nikud (vowel) processing

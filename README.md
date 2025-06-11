@@ -1,6 +1,6 @@
 # Phonikud
 
-Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning. 
+Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning.
 
 ## Features
 
@@ -47,7 +47,7 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 
 - It is recommend to add nikud with [phonikud-onnx](phonikud_onnx) model
 - Hebrew nikud is normalized
-- Most of the Hebrew rules happen in `phonemize.py`
+- Most Hebrew rules are handled in phonemize.py - a fast rule-based [FST](https://en.wikipedia.org/wiki/Finite-state_transducer) for converting text to phonemes.
 - It is highly recommend to normalize Hebrew using `phonikud.normalize('שָׁלוֹם')` when training models
 
 ### Nikud set and symbols
