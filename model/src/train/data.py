@@ -111,5 +111,4 @@ class Collator:
         inputs.pop(
             "offset_mapping"
         )  # Remove offset_mapping as it's not needed for model
-
         return inputs, targets

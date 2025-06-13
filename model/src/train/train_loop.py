@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 from tqdm import tqdm, trange
-from torch.utils.tensorboard import SummaryWriter
 
 from torch.utils.data import DataLoader
 from config import TrainArgs
@@ -9,14 +8,7 @@ from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
 from model.src.model.phonikud_model import PhoNikudModel
 import wandb
-
-
-def align_logits_and_targets(logits, targets):
-    """Align logits and targets to the same sequence length."""
-    min_seq_len = min(logits.size(1), targets.size(1))
-    aligned_logits = logits[:, :min_seq_len, :]
-    aligned_targets = targets[:, :min_seq_len, :]
-    return aligned_logits, aligned_targets
+from src.model.phonikud_model import align_logits_and_targets
 
 
 def train_model(
@@ -25,7 +17,6 @@ def train_model(
     train_dataloader: DataLoader,
     val_dataloader: DataLoader,
     args: TrainArgs,
-    writer: SummaryWriter,
 ):
     # Initiate wandb
     wandb.init(project="phonikud", config=vars(args))
@@ -50,20 +41,14 @@ def train_model(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
         )
         total_loss = 0.0
-        for index, batch in pbar:
+        for index, (inputs, targets) in pbar:
+            
             optimizer.zero_grad()
 
             # Log learning rate
             for param_group in optimizer.param_groups:
                 lr = param_group["lr"]
                 wandb.log({"LR": lr}, step=step)
-
-            inputs = {
-                "input_ids": batch["input_ids"],
-                "attention_mask": batch["attention_mask"],
-                "token_type_ids": batch["token_type_ids"],
-            }
-            targets = batch["targets"]
 
             inputs = inputs.to(args.device)
             targets = targets.to(args.device)

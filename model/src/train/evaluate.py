@@ -5,15 +5,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 import wandb
-
-
-def align_logits_and_targets(logits, targets):
-    """Align logits and targets to the same sequence length."""
-    min_seq_len = min(logits.size(1), targets.size(1))
-    aligned_logits = logits[:, :min_seq_len, :]
-    aligned_targets = targets[:, :min_seq_len, :]
-    return aligned_logits, aligned_targets
-
+from src.model.phonikud_model import align_logits_and_targets
 
 def evaluate_model(
     model,

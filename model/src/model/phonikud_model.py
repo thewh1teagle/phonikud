@@ -221,3 +221,12 @@ class PhoNikudModel(BertForDiacritization):
         )
 
         return result
+
+
+
+def align_logits_and_targets(logits, targets):
+    """Align logits and targets to the same sequence length."""
+    min_seq_len = min(logits.size(1), targets.size(1))
+    aligned_logits = logits[:, :min_seq_len, :]
+    aligned_targets = targets[:, :min_seq_len, :]
+    return aligned_logits, aligned_targets

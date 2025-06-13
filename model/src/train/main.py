@@ -1,12 +1,12 @@
 """
 Train from scratch:
-    uv run src/train.py --device cpu --epochs 1
+    uv run src/train/main.py --device cpu --epochs 1 --device mps
 Train from checkpoint:
-    uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
+    uv run src/train/main.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
         --model_checkpoint ./ckpt/step_21441_loss_0.0081/
-    uv run src/train.py --device cuda --epochs 3 --model_checkpoint dicta-il/dictabert-large-char-menaked
+    uv run src/train/main.py --device cuda --epochs 3 --model_checkpoint dicta-il/dictabert-large-char-menaked
 On V100:
-    uv run src/train.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
+    uv run src/train/main.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
     TODO: we may be able to train on very large epoch, with LR tunning
 """
 
