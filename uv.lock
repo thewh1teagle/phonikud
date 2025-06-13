@@ -787,7 +787,7 @@ dev = [
 
 [[package]]
 name = "phonikud-onnx"
-version = "1.0.1"
+version = "1.0.2"
 source = { editable = "phonikud_onnx" }
 dependencies = [
     { name = "onnxruntime" },
