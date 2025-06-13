@@ -26,7 +26,7 @@ def parse_args():
     parser.add_argument(
         "--model",
         type=str,
-        default="dicta-il/dictabert-large-char-menaked",
+        default="thewh1teagle/phonikud", # dicta-il/dictabert-large-char-menaked
         help="Name of the model to export and quantize.",
     )
     return parser.parse_args()

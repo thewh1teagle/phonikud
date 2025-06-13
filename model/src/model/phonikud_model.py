@@ -45,7 +45,9 @@ class PhoNikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config
-        self.mlp = nn.Sequential(nn.Linear(1024, 100), nn.ReLU(), nn.Linear(100, 4))
+        self.mlp = nn.Sequential(
+            nn.Linear(1024, 256), nn.ReLU(), nn.Linear(256, 3)
+        )  # 3 for hatama, mobile shva, and prefix
         # ^ predicts hatama, mobile shva, and prefix; outputs are logits
 
     def freeze_base_model(self):
@@ -176,9 +178,9 @@ class PhoNikudModel(BertForDiacritization):
         nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
-        hatama_predictions = (additional_logits[..., 1] > 1).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 2] > 1).int().tolist()
-        prefix_predictions = (additional_logits[..., 3] > 1).int().tolist()
+        hatama_predictions = (additional_logits[..., 0] > 1).int().tolist()
+        mobile_shva_predictions = (additional_logits[..., 1] > 1).int().tolist()
+        prefix_predictions = (additional_logits[..., 2] > 1).int().tolist()
 
         return (
             nikud_predictions,
@@ -221,3 +223,12 @@ class PhoNikudModel(BertForDiacritization):
         )
 
         return result
+
+
+
+def align_logits_and_targets(logits, targets):
+    """Align logits and targets to the same sequence length."""
+    min_seq_len = min(logits.size(1), targets.size(1))
+    aligned_logits = logits[:, :min_seq_len, :]
+    aligned_targets = targets[:, :min_seq_len, :]
+    return aligned_logits, aligned_targets

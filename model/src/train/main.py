@@ -1,21 +1,20 @@
 """
 Train from scratch:
-    uv run src/train.py --device cpu --epochs 1
+    uv run src/train/main.py --device cpu --epochs 1 --device mps
 Train from checkpoint:
-    uv run src/train.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
+    uv run src/train/main.py --device cuda --epochs 5 --batch_size 8 --learning_rate 5e-4 --num_workers 2 \
         --model_checkpoint ./ckpt/step_21441_loss_0.0081/
-    uv run src/train.py --device cuda --epochs 3 --model_checkpoint dicta-il/dictabert-large-char-menaked
+    uv run src/train/main.py --device cuda --epochs 3 --model_checkpoint dicta-il/dictabert-large-char-menaked
 On V100:
-    uv run src/train.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
+    uv run src/train/main.py --device cuda --epochs 5 --batch_size 64 --num_workers 8
     TODO: we may be able to train on very large epoch, with LR tunning
 """
 
-from config import get_opts
+from src.train.config import get_opts
 from data import Collator, get_dataloader
-from train_loop import train_model
+from src.train.train_loop import train_model
 from transformers import AutoTokenizer
 from src.model.phonikud_model import PhoNikudModel
-from torch.utils.tensorboard import SummaryWriter
 from utils import print_model_size, read_lines
 
 
@@ -29,7 +28,9 @@ def main():
     model.to(args.device)
     model.freeze_base_model()
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_checkpoint, trust_remote_code=True
+    )
     collator = Collator(tokenizer)
 
     # Data split
@@ -43,11 +44,8 @@ def main():
     train_dataloader = get_dataloader(train_lines, args, collator)
     val_dataloader = get_dataloader(val_lines, args, collator)
 
-    # Log
-    writer = SummaryWriter(log_dir=args.output_dir)
-
     # Train
-    train_model(model, tokenizer, train_dataloader, val_dataloader, args, writer)
+    train_model(model, tokenizer, train_dataloader, val_dataloader, args)
 
 
 if __name__ == "__main__":

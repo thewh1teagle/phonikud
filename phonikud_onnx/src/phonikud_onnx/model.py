@@ -132,7 +132,7 @@ class OnnxModel:
         shin_predictions = np.argmax(shin_logits, axis=-1)
         stress_predictions = (additional_logits[..., 1] > 1).astype(np.int32)
         mobile_shva_predictions = (additional_logits[..., 2] > 1).astype(np.int32)
-        prefix_predictions = (additional_logits[..., 3] > 1).astype(np.int32)
+        prefix_predictions = (additional_logits[..., 2] > 1).astype(np.int32)
 
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
