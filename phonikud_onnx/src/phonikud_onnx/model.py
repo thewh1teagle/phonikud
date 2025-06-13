@@ -127,12 +127,15 @@ class OnnxModel:
         additional_idx = self.output_names.index("additional_logits")
         additional_logits = outputs[additional_idx]
 
+
         # Get predictions
         nikud_predictions = np.argmax(nikud_logits, axis=-1)
         shin_predictions = np.argmax(shin_logits, axis=-1)
-        stress_predictions = (additional_logits[..., 1] > 1).astype(np.int32)
-        mobile_shva_predictions = (additional_logits[..., 2] > 1).astype(np.int32)
-        prefix_predictions = (additional_logits[..., 2] > 1).astype(np.int32)
+        
+        # Since additional_logits shape is (batch, seq, 3), each index is a separate binary classifier
+        stress_predictions = (additional_logits[..., 0] > 0).astype(np.int32)
+        mobile_shva_predictions = (additional_logits[..., 1] > 0).astype(np.int32)
+        prefix_predictions = (additional_logits[..., 2] > 0).astype(np.int32)
 
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(

@@ -21,7 +21,7 @@ class RunArgs(Tap):
     file: str = BASE_PATH / "./data/eval/dummy.txt"
 
     def configure(self):
-        self.add_argument("--model", "-m", help="Path to the model checkpoint")
+        self.add_argument("--model", "-m", help="Path to the model checkpoint", default="thewh1teagle/phonikud")
         return super().configure()
 
 
@@ -42,11 +42,11 @@ def main():
                 [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
             )[0]
             predicted = normalize(predicted)
-            src, predicted = remove_nikud(src), remove_nikud(predicted)
+            # src, predicted = remove_nikud(src), remove_nikud(predicted)
             print()
-            print(src == predicted)
-            print(without_nikud)
-            print(src)
+            # print(src == predicted)
+            # print(without_nikud)
+            # print(src)
             print(predicted)
 
 
