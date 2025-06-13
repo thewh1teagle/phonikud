@@ -22,5 +22,4 @@ ckpt/
 *.txt
 !phonikud/data/**/*.txt */
 *.zip
-wandb
-best_27_05
+wandb/
