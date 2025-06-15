@@ -1,10 +1,17 @@
 from .model import OnnxModel
 import re
+import onnxruntime as ort
 
 
 class Phonikud:
     def __init__(self, model_path: str):
         self.model = OnnxModel(model_path)
+
+    @classmethod
+    def from_session(cls, session: ort.InferenceSession):
+        instance: 'Phonikud' = cls.__new__(cls)
+        instance.model = OnnxModel(model_path='', session=session)
+        return instance
 
     def add_diacritics(
         self, sentences: list | str, mark_matres_lectionis: str | None = None

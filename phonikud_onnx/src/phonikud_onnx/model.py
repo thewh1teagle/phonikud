@@ -62,13 +62,13 @@ def remove_nikkud(text):
 
 class OnnxModel:
     def __init__(
-        self, model_path, tokenizer_name="dicta-il/dictabert-large-char-menaked"
+        self, model_path, tokenizer_name="dicta-il/dictabert-large-char-menaked", session: ort.InferenceSession = None
     ):
         # Load the tokenizer
         self.tokenizer = Tokenizer.from_pretrained(tokenizer_name)
 
         # Create ONNX Runtime session
-        self.session = ort.InferenceSession(model_path)
+        self.session = session or ort.InferenceSession(model_path)
         self.input_names = [input.name for input in self.session.get_inputs()]
         self.output_names = [output.name for output in self.session.get_outputs()]
 
