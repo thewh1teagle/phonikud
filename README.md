@@ -155,7 +155,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 ## Datasets
 
 - [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (speech, non commercial)
-- [Saspeech](https://www.openslr.org/134) (speech, non commercial)
+- [Saspeech](https://huggingface.co/datasets/thewh1teagle/saspeech) (speech, non commercial)
 - [phonikud-data](https://huggingface.co/datasets/thewh1teagle/phonikud-data) (nikud and phonetics, cc-4.0)
 
 ### Notes
@@ -179,7 +179,7 @@ Run `uv run pytest`
 If you find this code or our data helpful in your research or work, please cite the following paper.
 
 ```bibtex
-@misc{alper2025phonikud,
+@misc{kolani2025phonikud,
   title={Phonikud: Hebrew Grapheme-to-Phoneme Conversion for Real-Time Text-to-Speech},
   author={Yakov Kolani and Maxim Melichov and Cobi Calev and Morris Alper},
   year={2025},
@@ -193,4 +193,3 @@ If you find this code or our data helpful in your research or work, please cite 
 ## Credits
 
 Special thanks ❤️ to [dicta-il](https://huggingface.co/dicta-il/dictabert-large-char-menaked) for their amazing Hebrew diacritics model ✨ and the dataset that made this possible!
-
