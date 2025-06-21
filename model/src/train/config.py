@@ -7,7 +7,7 @@ BASE_PATH = Path(__file__).parent / "../.."
 
 class TrainArgs(Tap):
     model_checkpoint: str = (
-        "dicta-il/dictabert-large-char-menaked"  # thewh1teagle/phonikud
+        "thewh1teagle/phonikud"  # dicta-il/dictabert-large-char-menaked"
     )
     "Path or name of the pretrained model checkpoint"
 
@@ -18,6 +18,9 @@ class TrainArgs(Tap):
 
     output_dir: str = BASE_PATH / "ckpt/"
     "Path to save checkpoints"
+
+    log_dir: str = BASE_PATH / "logs/"
+    "Path to save TensorBoard logs"
 
     batch_size: int = 32
     "Batch size"
@@ -49,11 +52,15 @@ class TrainArgs(Tap):
     use_eval_file: bool = False
     "Use data/eval/*.txt as validation set instead of splitting train"
 
+    # Wandb configuration (for TensorBoard sync)
     wandb_entity: str = "Mishkal"
     "Team or username for Weights & Biases"
 
     wandb_project: str = "phonikud"
     "Project name for Weights & Biases"
+
+    wandb_mode: str = "offline"
+    "Wandb mode: 'online', 'offline', or 'disabled' (default: offline for local use)"
 
 
 def get_opts():

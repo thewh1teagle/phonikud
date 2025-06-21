@@ -6,7 +6,7 @@ from src.model.phonikud_model import (
     PhoNikudModel,
     NIKUD_HASER,
     remove_nikud,
-    PHONETIC_NIKUD,
+    ENHANCED_NIKUD,
 )
 from src.train.config import BASE_PATH
 from transformers import AutoTokenizer
@@ -21,7 +21,12 @@ class RunArgs(Tap):
     file: str = BASE_PATH / "./data/eval/dummy.txt"
 
     def configure(self):
-        self.add_argument("--model", "-m", help="Path to the model checkpoint", default="thewh1teagle/phonikud")
+        self.add_argument(
+            "--model",
+            "-m",
+            help="Path to the model checkpoint",
+            default="thewh1teagle/phonikud",
+        )
         return super().configure()
 
 
@@ -35,7 +40,7 @@ def main():
     with open(args.file, "r", encoding="utf-8") as fp:
         for src in fp:
             src = normalize(src.strip())
-            without_nikud = remove_nikud(src, additional=PHONETIC_NIKUD)
+            without_nikud = remove_nikud(src, additional=ENHANCED_NIKUD)
             if not without_nikud:
                 continue
             predicted = model.predict(

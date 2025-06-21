@@ -58,6 +58,12 @@ uv run src/train/main.py
 uv run tensorboard  --logdir ./ckpt
 ```
 
+You can also enable cloud wandb with
+
+```console
+uv run src/train/main.py --wandb_mode online
+```
+
 ## Monitor GPU
 
 ```console

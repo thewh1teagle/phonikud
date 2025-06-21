@@ -18,7 +18,7 @@ from transformers import AutoTokenizer
 from src.model.phonikud_model import (
     PhoNikudModel,
     remove_nikud,
-    PHONETIC_NIKUD,
+    ENHANCED_NIKUD,
     NIKUD_HASER,
 )
 from src.train.config import BASE_PATH, TrainArgs
@@ -70,7 +70,7 @@ def main():
     gts, preds = [], []
 
     for line in tqdm(lines, desc="Evaluating"):
-        src = remove_nikud(line, additional=PHONETIC_NIKUD)
+        src = remove_nikud(line, additional=ENHANCED_NIKUD)
         if not src:
             continue
         pred = model.predict([src], tokenizer, mark_matres_lectionis=NIKUD_HASER)[0]

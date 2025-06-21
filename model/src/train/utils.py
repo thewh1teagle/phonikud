@@ -1,26 +1,25 @@
 from pathlib import Path
 from typing import List, Tuple
-
-import humanize
+from dataclasses import dataclass
 import torch
-from model.src.model.phonikud_model import (
-    NIKUD_HASER,
-    remove_nikud,
+from src.model.phonikud_model import (
+    PhoNikudModel,
+    remove_enhanced_nikud,
 )
 from tqdm import tqdm
 
 
-def print_model_size(model):
-    def count_params(module):
-        return sum(p.numel() for p in module.parameters())
+@dataclass
+class TrainingLine:
+    vocalized: str  # Vocalized text with diacritics (nikud)
+    unvocalized: str  # Unvocalized text without diacritics
 
-    def pretty(n):
-        return humanize.intword(n)
 
-    print("🔍 Model breakdown:")
-    print(f"  ⚙️  MLP: {pretty(count_params(model.mlp))} parameters")
-    print(f"  📘 Menaked: {pretty(count_params(model.menaked))} parameters")
-    print(f"  🧠  BERT: {pretty(count_params(model.bert))} parameters")
+def print_model_size(model: PhoNikudModel):
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"💾 Total Parameters: {total_params:,}")
+    print(f"🔧 Trainable Parameters: {trainable_params:,}")
 
 
 def read_lines(
@@ -28,7 +27,7 @@ def read_lines(
     max_context_length: int = 2048,
     val_split: float = 0.1,
     split_seed: int = 42,
-) -> Tuple[List[str], List[str]]:
+) -> Tuple[List[TrainingLine], List[TrainingLine]]:
     files = list(Path(data_path).glob("**/*.txt"))
     total_bytes = sum(f.stat().st_size for f in files)
 
@@ -42,28 +41,30 @@ def read_lines(
                     pbar.update(len(line.encode("utf-8")))
                     # Split lines into chunks if they are too long
                     while len(line) > max_context_length:
-                        lines.append(line[:max_context_length].strip())
+                        vocalized = line[:max_context_length].strip()
+                        unvocalized = remove_enhanced_nikud(vocalized)
+                        lines.append(TrainingLine(vocalized, unvocalized))
                         line = line[max_context_length:]
 
                     if line.strip():
-                        lines.append(line.strip())
+                        vocalized = line.strip()
+                        unvocalized = remove_enhanced_nikud(vocalized)
+                        lines.append(TrainingLine(vocalized, unvocalized))
 
-    # Preprocess lines (remove nikud and other components)
-    lines = [remove_nikud(i, additional=NIKUD_HASER) for i in lines]
-
-    # Split into train and validation sets
+    # Split into train and validation sets (keeping pairs together)
     split_idx = int(len(lines) * (1 - val_split))
     torch.manual_seed(split_seed)
     idx = torch.randperm(len(lines))
-    train_lines = [lines[i] for i in idx[:split_idx]]
-    val_lines = [lines[i] for i in idx[split_idx:]]
+
+    train_lines: List[TrainingLine] = [lines[i] for i in idx[:split_idx]]
+    val_lines: List[TrainingLine] = [lines[i] for i in idx[split_idx:]]
 
     # Print samples
     print("🛤️ Train samples:")
     for i in train_lines[:3]:
-        print(f"\t{i}")
+        print(f"\t{i.unvocalized}")
     print("🧪 Validation samples:")
     for i in val_lines[:3]:
-        print(f"\t{i}")
+        print(f"\t{i.unvocalized}")
 
     return train_lines, val_lines
