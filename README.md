@@ -2,7 +2,7 @@
 
 Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning.
 
-[Project Page](https://phonikud.github.io) | [Paper](https://phonikud.github.io)
+[Project Page](https://phonikud.github.io) | [Paper](https://arxiv.org/abs/2506.12311)
 
 ## Features
 
@@ -183,10 +183,10 @@ If you find this code or our data helpful in your research or work, please cite 
   title={Phonikud: Hebrew Grapheme-to-Phoneme Conversion for Real-Time Text-to-Speech},
   author={Yakov Kolani and Maxim Melichov and Cobi Calev and Morris Alper},
   year={2025},
-  eprint={2025.xxxxx},
+  eprint={2506.12311},
   archivePrefix={arXiv},
   primaryClass={cs.CL},
-  url={https://arxiv.org/abs/2025.xxxxx},
+  url={https://arxiv.org/abs/2506.12311},
 }
 ```
 
