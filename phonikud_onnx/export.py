@@ -10,6 +10,7 @@ From HuggingFace:
 
 import torch
 import onnx
+import json
 from pathlib import Path
 from onnxruntime.quantization import quantize_dynamic, QuantType
 from argparse import ArgumentParser
@@ -20,13 +21,27 @@ from model.phonikud_model import (
     PhoNikudModel,
 )  # TODO: add it as package for autocomplete
 
+# Global metadata to add to ONNX models
+metadata = {
+    "commit": "local",
+}
+
+
+def add_meta_data_onnx(filename, key, value):
+    """Add metadata to ONNX model."""
+    model = onnx.load(filename)
+    meta = model.metadata_props.add()
+    meta.key = key
+    meta.value = value
+    onnx.save(model, filename)
+
 
 def parse_args():
     parser = ArgumentParser(description="Export and quantize model")
     parser.add_argument(
         "--model",
         type=str,
-        default="thewh1teagle/phonikud", # dicta-il/dictabert-large-char-menaked
+        default="thewh1teagle/phonikud",  # dicta-il/dictabert-large-char-menaked
         help="Name of the model to export and quantize.",
     )
     return parser.parse_args()
@@ -117,6 +132,11 @@ def main():
     )
     print("✅ ONNX model export completed!")
 
+    # Add metadata to the model as JSON config
+    config = {**metadata, "source_model": args.model}
+    print(f"Adding metadata: {config}")
+    add_meta_data_onnx(fp32_model_path, "config", json.dumps(config))
+
     # Verify the exported model
     print("Verifying ONNX model integrity...")
     onnx_model = onnx.load(fp32_model_path)
@@ -131,6 +151,10 @@ def main():
         weight_type=QuantType.QInt8,  # Use QuantType.QUInt8 for unsigned weights if needed
     )
     print("✅ INT8 quantized model export completed!")
+
+    # Add metadata to quantized model too
+    config_int8 = {**config, "quantization": "int8"}
+    add_meta_data_onnx(int8_model_path, "config", json.dumps(config_int8))
 
 
 if __name__ == "__main__":
