@@ -8,7 +8,7 @@ from config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from evaluate import evaluate_model
 from phonikud.src.model.phonikud_model import PhoNikudModel
-from utils import align_logits_and_targets, calculate_wer
+from utils import calculate_wer
 
 def train_model(
     model: PhoNikudModel,
@@ -23,8 +23,7 @@ def train_model(
     model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     
-
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.BCEWithLogitsLoss()  # Use focal loss instead of BCEWithLogitsLoss
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer,
         step_size=9000,
@@ -46,7 +45,7 @@ def train_model(
         total_acc = 0.0
         batch_count = 0
         
-        for index, batch in pbar:  # Change this line from (inputs, targets) to batch
+        for index, batch in pbar:
             optimizer.zero_grad()
 
             # Log learning rate
@@ -54,45 +53,25 @@ def train_model(
                 lr = param_group["lr"]
                 wandb.log({"LR": lr}, step=step)
 
-            # If batch is a tuple (old format), unpack it
-            if isinstance(batch, tuple):
-                inputs, targets = batch
-                attention_mask = None
-            # If batch is a dict (new format), extract components
-            else:
-                inputs = {
-                    "input_ids": batch["input_ids"],
-                    "attention_mask": batch["attention_mask"],
-                    "token_type_ids": batch["token_type_ids"] 
-                }
-                targets = batch["targets"]
-                attention_mask = inputs["attention_mask"]
+            inputs = {
+                "input_ids": batch["input_ids"],
+                "attention_mask": batch["attention_mask"],
+                "token_type_ids": batch["token_type_ids"] 
+            }
+            targets = batch["targets"]
+            attention_mask = batch["attention_mask"]
 
-            inputs = inputs.to(args.device)
+            inputs = {k: v.to(args.device) for k, v in inputs.items()}
             targets = targets.to(args.device)
-            if attention_mask is not None:
-                attention_mask = attention_mask.to(args.device)
+            attention_mask = attention_mask.to(args.device)
             
-            # ^ shape: (batch_size, n_tokens_padded, n_active_components)
             output = model(inputs)
-            # ^ shape: (batch_size, n_tokens_padded, 4)
+            logits = output.additional_logits
 
-            # Get only the logits for the components we're training on (classes 1-3)
-            # Don't skip BOS/EOS here - handle alignment with targets instead
-            active_logits = output.additional_logits
-            # ^ shape: (batch_size, n_tokens_padded, 3)
-
-            # Align sequence lengths
-            active_logits, targets = align_logits_and_targets(active_logits, targets)
-
-            loss = criterion(active_logits, targets.float())
+            loss = criterion(logits, targets)
             
             # Calculate WER for this batch
-            if attention_mask is not None:
-                # Align attention mask with logits
-                attention_mask = attention_mask[:, :active_logits.size(1)]
-            
-            batch_wer, batch_accuracy = calculate_wer(active_logits, targets, attention_mask)
+            batch_wer, batch_accuracy = calculate_wer(logits, targets, attention_mask)
             total_wer += batch_wer
             total_acc += batch_accuracy.item()
             batch_count += 1
@@ -137,7 +116,7 @@ def train_model(
             # Val
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 # Evaluate and maybe save "best"
-                val_score = evaluate_model(model, val_dataloader, args, step)
+                val_score = evaluate_model(model, val_dataloader, args, step, criterion)
 
                 if val_score < best_val_score:
                     best_val_score = val_score
@@ -177,3 +156,4 @@ def train_model(
     
     # Finish the wandb run
     wandb.finish()
+    print("Training complete! Model saved.")

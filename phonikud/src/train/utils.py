@@ -3,11 +3,81 @@ from typing import List, Tuple
 
 import humanize
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
 from phonikud.src.model.phonikud_model import (
     NIKUD_HASER,
     remove_nikud,
 )
 from tqdm import tqdm
+
+
+class FocalLossBCE(torch.nn.Module):
+    def __init__(
+            self,
+            alpha: float = 0.25,
+            gamma: float = 2,
+            reduction: str = "mean",
+            bce_weight: float = 1.0,
+            focal_weight: float = 1.0,
+    ):
+        super().__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+        self.bce = torch.nn.BCEWithLogitsLoss(reduction=reduction)
+        self.bce_weight = bce_weight
+        self.focal_weight = focal_weight
+
+    def forward(self, logits, targets):
+        focall_loss = torchvision.ops.focal_loss.sigmoid_focal_loss(
+            inputs=logits,
+            targets=targets,
+            alpha=self.alpha,
+            gamma=self.gamma,
+            reduction=self.reduction,
+        )
+        bce_loss = self.bce(logits, targets)
+        return self.bce_weight * bce_loss + self.focal_weight * focall_loss
+
+
+
+class FocalLoss(nn.Module):
+    """
+    Focal Loss for addressing class imbalance in multi-label classification.
+    """
+    def __init__(self, alpha=0.25, gamma=2, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        """
+        Args:
+            inputs: logits of shape (N, C) or (N, L, C)
+            targets: binary targets of shape (N, C) or (N, L, C)
+        """
+        # Apply sigmoid to get probabilities
+        probs = torch.sigmoid(inputs)
+        
+        # Calculate binary cross entropy
+        bce_loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
+        
+        # Calculate focal weight
+        pt = torch.where(targets == 1, probs, 1 - probs)
+        focal_weight = self.alpha * (1 - pt) ** self.gamma
+        
+        # Apply focal weight
+        focal_loss = focal_weight * bce_loss
+        
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
 
 
 def print_model_size(model):
@@ -67,16 +137,6 @@ def read_lines(
         print(f"\t{i}")
 
     return train_lines, val_lines
-
-
-
-
-def align_logits_and_targets(logits, targets):
-    """Align logits and targets to the same sequence length."""
-    min_seq_len = min(logits.size(1), targets.size(1))
-    aligned_logits = logits[:, :min_seq_len, :]
-    aligned_targets = targets[:, :min_seq_len, :]
-    return aligned_logits, aligned_targets
 
 
 def calculate_wer(predictions, targets, attention_mask=None):

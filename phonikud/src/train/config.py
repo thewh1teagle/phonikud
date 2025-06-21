@@ -6,7 +6,7 @@ BASE_PATH = Path(__file__).parent / "../.."
 
 
 class TrainArgs(Tap):
-    model_checkpoint: str = "dicta-il/dictabert-large-char-menaked"# "thewh1teagle/phonikud" 
+    model_checkpoint: str = "dicta-il/dictabert-large-char-menaked" # "thewh1teagle/phonikud"
     "Path or name of the pretrained model checkpoint"
 
     device: Literal["cuda:1", "cpu", "mps"] = "cuda:1"
@@ -17,7 +17,7 @@ class TrainArgs(Tap):
     output_dir: str = BASE_PATH / "ckpt/"
     "Path to save checkpoints"
 
-    batch_size: int = 32
+    batch_size: int = 256
     "Batch size"
 
     epochs: int = 20
@@ -38,7 +38,7 @@ class TrainArgs(Tap):
     checkpoint_interval: int = 9000
     "Number of steps between saving checkpoints"
 
-    val_split: float = 0.0001
+    val_split: float = 0.05
     "Fraction of training data to use as validation (0 to disable)"
 
     split_seed: int = 42
