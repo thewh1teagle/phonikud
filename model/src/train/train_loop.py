@@ -56,6 +56,7 @@ def train_model(
 
     step = args.pre_training_step
     best_val_score = float("inf")
+    best_wer = float("inf")  # Track best WER
     early_stop_counter = 0
 
     for epoch in trange(args.epochs, desc="Epoch"):
@@ -112,24 +113,45 @@ def train_model(
             # Val
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 # Evaluate and maybe save "best"
-                val_score = evaluate_model(
+                val_score, wer = evaluate_model(
                     model, val_dataloader, args, tokenizer, step, writer
                 )
 
+                # Track best validation loss
                 if val_score < best_val_score:
                     best_val_score = val_score
                     best_dir = f"{args.output_dir}/best"
                     print(
-                        f"🏆 New best model at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
+                        f"🏆 New best model (loss) at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
                     )
                     model.save_pretrained(best_dir)
                     tokenizer.save_pretrained(best_dir)
                     early_stop_counter = 0
                 else:
                     print(
-                        f"📉 No improvement at step {step} (no_improvement_counter={early_stop_counter})"
+                        f"📉 No improvement in loss at step {step} (no_improvement_counter={early_stop_counter})"
                     )
                     early_stop_counter += 1
+
+                # Track best WER separately
+                if wer < best_wer:
+                    best_wer = wer
+                    best_wer_dir = f"{args.output_dir}/best_wer"
+                    print(
+                        f"🎯 New best WER at step {step} (WER={wer:.4f}), saving to: {best_wer_dir}"
+                    )
+                    model.save_pretrained(best_wer_dir)
+                    tokenizer.save_pretrained(best_wer_dir)
+                    
+                    # Save WER info to a text file in the checkpoint directory
+                    wer_info_path = Path(best_wer_dir) / "wer_info.txt"
+                    with open(wer_info_path, "w") as f:
+                        f.write(f"Best WER: {wer:.6f}\n")
+                        f.write(f"Step: {step}\n")
+                        f.write(f"Validation Loss: {val_score:.6f}\n")
+                        f.write(f"WER Accuracy: {(1-wer)*100:.2f}%\n")
+                else:
+                    print(f"📊 No WER improvement at step {step} (current WER={wer:.4f}, best WER={best_wer:.4f})")
 
                 if (
                     args.early_stopping_patience
@@ -157,3 +179,8 @@ def train_model(
     print(f"🚀 Saving trained model to: {final_dir}")
     model.save_pretrained(final_dir)
     tokenizer.save_pretrained(final_dir)
+
+    # Print final summary
+    print(f"\n🏁 Training Summary:")
+    print(f"   Best Validation Loss: {best_val_score:.4f}")
+    print(f"   Best WER: {best_wer:.4f} ({(1-best_wer)*100:.2f}% accuracy)")

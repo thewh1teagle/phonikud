@@ -146,4 +146,4 @@ def evaluate_model(
     print(f"   WER:  {wer:.4f} | Accuracy: {wer_accuracy:.2f}% 🔤")
     print(f"   CER:  {cer:.4f} | Accuracy: {cer_accuracy:.2f}% 📝")
 
-    return val_loss
+    return val_loss, wer
