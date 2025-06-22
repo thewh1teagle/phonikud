@@ -35,7 +35,7 @@ class TrainArgs(Tap):
     "Learning rate"
 
     early_stopping_patience: int = 3
-    "Early stop if no improvement multiple times in checkpoint interval"
+    "Early stop if no improvement multiple times in checkpoint interval. Set to 0 to disable early stopping."
 
     num_workers: int = 16
     "Number of workers for data loading"
@@ -52,8 +52,8 @@ class TrainArgs(Tap):
     use_eval_file: bool = False
     "Use data/eval/*.txt as validation set instead of splitting train"
 
-    max_lines: int = -1
-    "Maximum number of lines to read from dataset (-1 for no limit)"
+    max_lines: int = 0
+    "Maximum number of lines to read from dataset (0 for no limit)"
 
     # Wandb configuration (for TensorBoard sync)
     wandb_entity: str = "Phonikud"

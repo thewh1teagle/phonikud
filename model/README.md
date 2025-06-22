@@ -54,13 +54,13 @@ uv run src/train/main.py \
     --checkpoint_interval 1758 \
     --wandb_mode online \
     --val_split 0.05 \
-    --early_stopping_patience 3 \
+    --early_stopping_patience 0 \
     --num_workers 16 \
     --learning_rate 5e-3 \
     --epochs 999999 \
     --batch_size 128 \
     --wandb_mode online \
-    --max_lines 500000
+    --max_lines 1000000
 ```
 
 ## Monitor loss

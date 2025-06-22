@@ -37,7 +37,7 @@ def main():
 
     # Data split
     print("📖🔍 Reading lines from dataset...")
-    max_lines = None if args.max_lines == -1 else args.max_lines
+    max_lines = None if args.max_lines == 0 else args.max_lines
     train_lines, val_lines = read_lines(args.data_dir, max_lines=max_lines)
     print(
         f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
