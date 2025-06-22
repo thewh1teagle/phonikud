@@ -23,3 +23,4 @@ ckpt/
 !phonikud/data/**/*.txt */
 *.zip
 wandb/
+logs/
