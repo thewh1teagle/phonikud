@@ -5,13 +5,14 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import BertTokenizerFast
 from src.train.config import TrainArgs
 from src.model.phonikud_model import HATAMA_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR
+from transformers.tokenization_utils_base import BatchEncoding
 
 
 @dataclass
 class Batch:
     text: List[str]  # Unvocalized text (for tokenization)
     vocalized: List[str]  # Vocalized text with diacritics (for evaluation)
-    input: dict
+    input: BatchEncoding
     outputs: torch.Tensor
 
 
@@ -42,21 +43,20 @@ class TrainData(Dataset):
     def __getitem__(self, idx):
         unvocalized_line = self.unvocalized_lines[idx]
         vocalized_line = self.vocalized_lines[idx]
-        text, targets = "", []
-
-        for char in unvocalized_line:
-            if char in self.label_map and targets:
-                targets[-1][self.label_map[char]] = 1
-            elif char not in self.label_map:
-                targets.append([1, 0, 0, 0])  # Default "plain" label
-                text += char
-
-        # Remove "plain" when other labels exist
-        for label in targets:
-            if any(label[1:]):
-                label[0] = 0
-
-        return text, vocalized_line, torch.tensor(targets, dtype=torch.float)
+        
+        # Create targets for each character in unvocalized text
+        targets = [[1, 0, 0, 0] for _ in unvocalized_line]  # Default "plain" labels
+        
+        # Find enhanced diacritics and apply to previous character
+        for i, char in enumerate(vocalized_line):
+            if char in self.label_map:
+                # Find the position in unvocalized text (look backwards)
+                char_pos = len([c for c in vocalized_line[:i] if c in unvocalized_line]) - 1
+                if 0 <= char_pos < len(targets):
+                    targets[char_pos][self.label_map[char]] = 1
+                    targets[char_pos][0] = 0  # Remove "plain" label
+        
+        return unvocalized_line, vocalized_line, torch.tensor(targets, dtype=torch.float)
 
 
 class Collator:
@@ -67,7 +67,9 @@ class Collator:
 
     def collate_fn(self, items: List[Tuple[str, str, torch.Tensor]]) -> Batch:
         """Collate individual items into a batch."""
-        text_list, vocalized_list, character_targets_list = zip(*items)
+        text_list = [item[0] for item in items]
+        vocalized_list = [item[1] for item in items]
+        character_targets_list = [item[2] for item in items]
 
         # Tokenize all texts in the batch
         tokenized_inputs = self.tokenizer(
@@ -104,7 +106,7 @@ class Collator:
 
     def _map_character_targets_to_tokens(
         self,
-        character_targets_list: Tuple[torch.Tensor, ...],
+        character_targets_list: List[torch.Tensor],
         offset_mappings: torch.Tensor,
         batch_targets: torch.Tensor,
     ) -> None:
@@ -113,6 +115,7 @@ class Collator:
             zip(character_targets_list, offset_mappings)
         ):
             for token_idx, (char_start, char_end) in enumerate(token_offsets):
+                char_start, char_end = int(char_start), int(char_end)
                 if char_end > 0 and char_start < len(char_targets):
                     # Get the character range this token covers
                     char_end_clamped = min(char_end, len(char_targets))

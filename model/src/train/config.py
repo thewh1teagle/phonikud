@@ -7,11 +7,11 @@ BASE_PATH = Path(__file__).parent / "../.."
 
 class TrainArgs(Tap):
     model_checkpoint: str = (
-        "thewh1teagle/phonikud"  # dicta-il/dictabert-large-char-menaked"
+        "dicta-il/dictabert-large-char-menaked"  # "thewh1teagle/phonikud"
     )
     "Path or name of the pretrained model checkpoint"
 
-    device: Literal["cuda:1", "cpu", "mps"] = "cuda:1"
+    device: Literal["cuda", "cuda:1", "cpu", "mps"] = "cuda:1"
 
     data_dir: str = BASE_PATH / "data/train"
     "Path with txt files for train"
@@ -34,7 +34,7 @@ class TrainArgs(Tap):
     learning_rate: float = 5e-3
     "Learning rate"
 
-    early_stopping_patience = 3
+    early_stopping_patience: int = 3
     "Early stop if no improvement multiple times in checkpoint interval"
 
     num_workers: int = 16
@@ -51,6 +51,9 @@ class TrainArgs(Tap):
 
     use_eval_file: bool = False
     "Use data/eval/*.txt as validation set instead of splitting train"
+
+    max_lines: int = -1
+    "Maximum number of lines to read from dataset (-1 for no limit)"
 
     # Wandb configuration (for TensorBoard sync)
     wandb_entity: str = "Phonikud"

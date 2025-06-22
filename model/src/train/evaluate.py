@@ -7,7 +7,7 @@ from tqdm import tqdm
 import jiwer
 import random
 import wandb
-from src.model.phonikud_model import remove_nikud, ENHANCED_NIKUD
+from src.model.phonikud_model import NIKUD_HASER, remove_nikud, ENHANCED_NIKUD
 from src.train.data import Batch
 from model.src.model.phonikud_model import (
     MenakedLogitsOutput,
@@ -83,6 +83,7 @@ def evaluate_model(
                     [predictions.hatama[batch_idx]],
                     [predictions.mobile_shva[batch_idx]],
                     [predictions.prefix[batch_idx]],
+                    mark_matres_lectionis=NIKUD_HASER,
                 )
 
                 # Collect for WER/CER calculation
@@ -132,10 +133,17 @@ def evaluate_model(
 
     examples_table = wandb.Table(columns=["Source", "Prediction"], data=table_data)
     wandb.log({"Examples_Table": examples_table}, step=step)
+    
+    # print examples from validation with nice emojies and it should be understadable that it's from evaluation
+    print(f"🔤 Examples from validation:")
+    for i in random_indices:
+        print(f"   {all_ground_truth[i]}")
+        print(f"   🔤 {all_predictions[i]}")
+        print()
 
     print(f"✅ Validation Results after step {step}:")
     print(f"   Loss: {val_loss:.4f} 📉")
-    print(f"   WER:  {wer:.4f} ({wer*100:.2f}%) | Accuracy: {wer_accuracy:.2f}% 🔤")
-    print(f"   CER:  {cer:.4f} ({cer*100:.2f}%) | Accuracy: {cer_accuracy:.2f}% 📝")
+    print(f"   WER:  {wer:.4f} | Accuracy: {wer_accuracy:.2f}% 🔤")
+    print(f"   CER:  {cer:.4f} | Accuracy: {cer_accuracy:.2f}% 📝")
 
     return val_loss

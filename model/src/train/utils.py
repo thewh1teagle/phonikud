@@ -1,10 +1,11 @@
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from dataclasses import dataclass
 import torch
 from src.model.phonikud_model import (
     PhoNikudModel,
     remove_enhanced_nikud,
+    remove_nikud,
 )
 from tqdm import tqdm
 
@@ -27,6 +28,7 @@ def read_lines(
     max_context_length: int = 2048,
     val_split: float = 0.1,
     split_seed: int = 42,
+    max_lines: Optional[int] = None,
 ) -> Tuple[List[TrainingLine], List[TrainingLine]]:
     files = list(Path(data_path).glob("**/*.txt"))
     total_bytes = sum(f.stat().st_size for f in files)
@@ -38,6 +40,10 @@ def read_lines(
         for file in files:
             with open(file, "r", encoding="utf-8") as fp:
                 for line in fp:
+                    # Check if we've reached the maximum number of lines
+                    if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
+                        break
+                        
                     pbar.update(len(line.encode("utf-8")))
                     # Split lines into chunks if they are too long
                     while len(line) > max_context_length:
@@ -45,11 +51,20 @@ def read_lines(
                         unvocalized = remove_enhanced_nikud(vocalized)
                         lines.append(TrainingLine(vocalized, unvocalized))
                         line = line[max_context_length:]
+                        
+                        # Check limit after adding each chunk
+                        if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
+                            break
 
-                    if line.strip():
+                    if line.strip() and (max_lines is None or max_lines <= 0 or len(lines) < max_lines):
                         vocalized = line.strip()
+                        enhanced = remove_nikud(vocalized)
                         unvocalized = remove_enhanced_nikud(vocalized)
                         lines.append(TrainingLine(vocalized, unvocalized))
+            
+            # Break outer loop if we've reached the limit
+            if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
+                break
 
     # Split into train and validation sets (keeping pairs together)
     split_idx = int(len(lines) * (1 - val_split))
@@ -62,9 +77,10 @@ def read_lines(
     # Print samples
     print("🛤️ Train samples:")
     for i in train_lines[:3]:
-        print(f"\t{i.unvocalized}")
+        print(f"\t{i.vocalized} | {i.unvocalized}")
+
     print("🧪 Validation samples:")
     for i in val_lines[:3]:
-        print(f"\t{i.unvocalized}")
+        print(f"\t{i.vocalized} | {i.unvocalized}")
 
     return train_lines, val_lines

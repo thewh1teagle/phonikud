@@ -49,7 +49,18 @@ cp knesset_nikud_v6.txt data/train/
 ## Train
 
 ```console
-uv run src/train/main.py
+uv run src/train/main.py \
+    --device cuda \
+    --checkpoint_interval 1758 \
+    --wandb_mode online \
+    --val_split 0.05 \
+    --early_stopping_patience 3 \
+    --num_workers 16 \
+    --learning_rate 5e-3 \
+    --epochs 999999 \
+    --batch_size 128 \
+    --wandb_mode online \
+    --max_lines 500000
 ```
 
 ## Monitor loss

@@ -124,7 +124,7 @@ class PhoNikudModel(BertForDiacritization):
         hatama_predictions,
         mobile_shva_predictions,
         prefix_predictions,
-        mark_matres_lectionis: str = None,
+        mark_matres_lectionis: str = '',
     ):
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -162,7 +162,7 @@ class PhoNikudModel(BertForDiacritization):
                     elif mark_matres_lectionis is not None:
                         nikud = mark_matres_lectionis
                     else:
-                        continue
+                        nikud = ""  # No marking, but don't skip the character
 
                 # Apply hatama, mobile shva, and prefix predictions
                 hatama = HATAMA_CHAR if hatama_predictions[sent_idx][idx] == 1 else ""
@@ -190,9 +190,9 @@ class PhoNikudModel(BertForDiacritization):
         nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
-        hatama_predictions = (additional_logits[..., 0] > 1).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 1).int().tolist()
-        prefix_predictions = (additional_logits[..., 2] > 1).int().tolist()
+        hatama_predictions = (additional_logits[..., 0] > 0).int().tolist()
+        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
+        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
         return ModelPredictions(
             nikud=nikud_predictions,
