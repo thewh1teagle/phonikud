@@ -27,7 +27,7 @@ def main():
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     print_model_size(model)
 
-    model.to(args.device)
+    model.to(args.device) # type: ignore
     model.freeze_base_model()
 
     tokenizer = AutoTokenizer.from_pretrained(
