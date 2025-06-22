@@ -33,7 +33,7 @@ jobs:
           cd $SPACE_NAME
           cp -rf ../requirements.txt .
           cp -rf ../examples/space_v1/* .
-          cp -rf ../src/phonikud .
+          cp -rf ../phonikud .
 
           # Git
           git lfs install
