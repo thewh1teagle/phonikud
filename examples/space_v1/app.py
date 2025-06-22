@@ -44,9 +44,12 @@ css = """
 theme = gr.themes.Soft(font=[gr.themes.GoogleFont("Noto Sans Hebrew")])
 
 phonikud = None
+commit = "unknown"
 model_path = Path("./phonikud-1.0.int8.onnx")
 if model_path.exists():
     phonikud = Phonikud(str(model_path))
+    metadata = phonikud.get_metadata()
+    commit = metadata.get("commit", "unknown")
 
 
 def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
@@ -104,6 +107,12 @@ with gr.Blocks(theme=theme, css=css) as demo:
 
     gr.Markdown("""
         <p style='text-align: center;'><a href='https://github.com/thewh1teagle/phonikud' target='_blank'>Phonikud on Github</a></p>
+    """)
+
+    gr.Markdown(f"""
+        <p style='text-align: center; opacity: 0.2; font-size: 10px;'>
+            <a href='https://huggingface.co/thewh1teagle/phonikud/commit/{commit}' target='_blank' style='color: white;'>phonikud {commit}</a>
+        </p>
     """)
 
 if __name__ == "__main__":
