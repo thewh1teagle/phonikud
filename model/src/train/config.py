@@ -13,7 +13,7 @@ class TrainArgs(Tap):
 
     device: Literal["cuda", "cuda:1", "cpu", "mps"] = "cuda:1"
 
-    data_dir: str = BASE_PATH / "data/train"
+    data_dir: str = BASE_PATH / "data/"
     "Path with txt files for train"
 
     output_dir: str = BASE_PATH / "ckpt/"
@@ -48,9 +48,6 @@ class TrainArgs(Tap):
 
     split_seed: int = 42
     "Random seed for train/val split"
-
-    use_eval_file: bool = False
-    "Use data/eval/*.txt as validation set instead of splitting train"
 
     max_lines: int = 0
     "Maximum number of lines to read from dataset (0 for no limit)"

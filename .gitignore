@@ -20,7 +20,7 @@ ckpt/
 
 *.7z
 *.txt
-!model/data/train/dummy.txt
+!model/data/dummy.txt
 !model/data/eval/dummy.txt
 *.zip
 wandb/

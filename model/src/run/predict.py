@@ -16,9 +16,9 @@ from phonikud.utils import normalize
 
 
 class RunArgs(Tap):
-    model: str = BASE_PATH / "./ckpt/best"  # --model, -m
+    model: str = BASE_PATH / "./ckpt/best_wer"  # --model, -m
     device = "cuda"
-    file: str = BASE_PATH / "./data/eval/dummy.txt"
+    file: str = BASE_PATH / "./data/dummy.txt"
 
     def configure(self):
         self.add_argument(
