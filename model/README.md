@@ -1,6 +1,6 @@
 # Phonikud
 
-Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added phonetic symbols for Vocal Shva and Hat'ama (Stress).
+Phonikud is a Hebrew diacritizer based on [dictabert-large-char-menaked](https://huggingface.co/dicta-il/dictabert-large-char-menaked) with added enhanced diacritics for Vocal Shva and Hat'ama (Stress).
 
 ## Added Symbols
 
@@ -35,7 +35,7 @@ uv sync
 
 # Prepare data
 
-Add text files with diacritics, including Hat'ama and vocal Shva, to `data/train`.
+Add text files with diacritics, including Hat'ama and vocal Shva, to `data/`.
 
 Example input: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 
@@ -43,7 +43,7 @@ Example input: `סֵ֫לֵרִי בְּֽ|מַעְבַּד מָזוֹן`
 wget https://huggingface.co/datasets/thewh1teagle/phonikud-data/resolve/main/knesset_nikud_v6.txt.7z
 sudo apt install p7zip-full -y
 7z x knesset_nikud_v6.txt.7z
-cp knesset_nikud_v6.txt data/train/
+cp knesset_nikud_v6.txt data/
 ```
 
 ## Train
