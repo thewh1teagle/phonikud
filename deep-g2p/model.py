@@ -29,19 +29,29 @@ class Attention(nn.Module):
     def forward(self, hidden, encoder_outputs):
         batch_size = encoder_outputs.size(0)
         seq_len = encoder_outputs.size(1)
-        
+
         # hidden is [1, batch_size, hidden_size] from decoder
         # encoder_outputs is [batch_size, seq_len, hidden_size * 2]
         hidden = hidden.squeeze(0)  # [batch_size, hidden_size]
-        hidden = hidden.unsqueeze(1).repeat(1, seq_len, 1)  # [batch_size, seq_len, hidden_size]
-        
+        hidden = hidden.unsqueeze(1).repeat(
+            1, seq_len, 1
+        )  # [batch_size, seq_len, hidden_size]
+
         # Concatenate and compute attention
-        combined = torch.cat([hidden, encoder_outputs], dim=2)  # [batch_size, seq_len, hidden_size + hidden_size * 2]
-        energy = torch.tanh(self.attention(combined))  # [batch_size, seq_len, hidden_size]
-        attention_weights = torch.softmax(self.v(energy).squeeze(2), dim=1)  # [batch_size, seq_len]
-        
+        combined = torch.cat(
+            [hidden, encoder_outputs], dim=2
+        )  # [batch_size, seq_len, hidden_size + hidden_size * 2]
+        energy = torch.tanh(
+            self.attention(combined)
+        )  # [batch_size, seq_len, hidden_size]
+        attention_weights = torch.softmax(
+            self.v(energy).squeeze(2), dim=1
+        )  # [batch_size, seq_len]
+
         # Apply attention weights to encoder outputs
-        context = torch.bmm(attention_weights.unsqueeze(1), encoder_outputs)  # [batch_size, 1, hidden_size * 2]
+        context = torch.bmm(
+            attention_weights.unsqueeze(1), encoder_outputs
+        )  # [batch_size, 1, hidden_size * 2]
         return context.squeeze(1), attention_weights  # [batch_size, hidden_size * 2]
 
 
@@ -57,20 +67,26 @@ class Decoder(nn.Module):
 
     def forward(self, input_token, hidden, cell, encoder_outputs):
         # input_token: [batch_size]
-        embedded = self.embedding(input_token.unsqueeze(1))  # [batch_size, 1, embed_size]
-        
+        embedded = self.embedding(
+            input_token.unsqueeze(1)
+        )  # [batch_size, 1, embed_size]
+
         # Get context from attention
-        context, attention_weights = self.attention(hidden, encoder_outputs)  # [batch_size, hidden_size * 2]
-        
+        context, _attention_weights = self.attention(
+            hidden, encoder_outputs
+        )  # [batch_size, hidden_size * 2]
+
         # Combine embedding and context
-        lstm_input = torch.cat([embedded, context.unsqueeze(1)], dim=2)  # [batch_size, 1, embed_size + hidden_size * 2]
-        
+        lstm_input = torch.cat(
+            [embedded, context.unsqueeze(1)], dim=2
+        )  # [batch_size, 1, embed_size + hidden_size * 2]
+
         # Pass through LSTM
         output, (hidden, cell) = self.lstm(lstm_input, (hidden, cell))
-        
+
         # Generate prediction
         prediction = self.output(output.squeeze(1))  # [batch_size, vocab_size]
-        
+
         return prediction, hidden, cell
 
 
@@ -82,7 +98,7 @@ class Seq2Seq(nn.Module):
         self.encoder = Encoder(input_vocab_size, embed_size, hidden_size)
         self.decoder = Decoder(output_vocab_size, embed_size, hidden_size)
         self.hidden_size = hidden_size
-        
+
         # Projection layers to convert bidirectional encoder states to decoder states
         self.hidden_projection = nn.Linear(hidden_size * 2, hidden_size)
         self.cell_projection = nn.Linear(hidden_size * 2, hidden_size)
@@ -98,13 +114,17 @@ class Seq2Seq(nn.Module):
         # Handle bidirectional LSTM states
         # hidden/cell: [2, batch_size, hidden_size] (2 for bidirectional)
         # We need to combine forward and backward states
-        
+
         # Combine forward and backward hidden states
-        hidden = torch.cat([hidden[0], hidden[1]], dim=1)  # [batch_size, hidden_size * 2]
+        hidden = torch.cat(
+            [hidden[0], hidden[1]], dim=1
+        )  # [batch_size, hidden_size * 2]
         cell = torch.cat([cell[0], cell[1]], dim=1)  # [batch_size, hidden_size * 2]
-        
+
         # Project to decoder hidden size
-        hidden = self.hidden_projection(hidden).unsqueeze(0)  # [1, batch_size, hidden_size]
+        hidden = self.hidden_projection(hidden).unsqueeze(
+            0
+        )  # [1, batch_size, hidden_size]
         cell = self.cell_projection(cell).unsqueeze(0)  # [1, batch_size, hidden_size]
 
         input_token = trg[:, 0]
