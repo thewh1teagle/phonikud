@@ -6,14 +6,35 @@ import json
 from src.model.phonikud_model import (
     PhoNikudModel,
     remove_enhanced_nikud,
+    NIKUD_HASER,
+    remove_nikud,
+    ENHANCED_NIKUD,
 )
 from tqdm import tqdm
+import wandb
+import jiwer
+import random
+from torch.utils.tensorboard import SummaryWriter
+from typing import Union
+from transformers import BertTokenizerFast
+from model.src.model.phonikud_model import ModelPredictions, MenakedLogitsOutput
+from src.train.data import Batch
 
 
 @dataclass
 class TrainingLine:
     vocalized: str  # Vocalized text with diacritics (nikud)
     unvocalized: str  # Unvocalized text without diacritics
+
+
+@dataclass
+class MetricsResult:
+    """Result of WER/CER calculation"""
+    wer: float
+    cer: float
+    wer_accuracy: float
+    cer_accuracy: float
+    val_loss: float
 
 
 def print_model_size(model: PhoNikudModel):
@@ -146,3 +167,189 @@ def prepare_lines(
     print(f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines.")
     
     return train_lines, val_lines
+
+
+def calculate_wer_cer_metrics(
+    predictions: List[str], 
+    ground_truth: List[str],
+    val_loss: float = 0.0
+) -> MetricsResult:
+    """
+    Calculate WER and CER metrics from predictions and ground truth.
+    
+    Args:
+        predictions: List of predicted text strings
+        ground_truth: List of ground truth text strings
+        val_loss: Validation loss (optional, defaults to 0.0)
+    
+    Returns:
+        MetricsResult containing WER, CER, and accuracy metrics
+    """
+    # Calculate WER and CER using jiwer
+    wer = jiwer.wer(ground_truth, predictions)
+    cer = jiwer.cer(ground_truth, predictions)
+    
+    # Handle the case where jiwer returns a dict instead of float
+    if isinstance(wer, dict):
+        wer = float(wer.get('wer', 0.0))
+    if isinstance(cer, dict):
+        cer = float(cer.get('cer', 0.0))
+    
+    # Calculate accuracies as percentages (1 - error_rate) * 100
+    wer_accuracy = (1 - wer) * 100
+    cer_accuracy = (1 - cer) * 100
+    
+    return MetricsResult(
+        wer=wer,
+        cer=cer,
+        wer_accuracy=wer_accuracy,
+        cer_accuracy=cer_accuracy,
+        val_loss=val_loss
+    )
+
+
+def log_metrics_to_tensorboard_and_wandb(
+    metrics: MetricsResult,
+    predictions: List[str],
+    ground_truth: List[str],
+    step: int,
+    writer: SummaryWriter,
+    phase: str = "val"
+) -> None:
+    """
+    Log metrics and examples to TensorBoard and wandb.
+    
+    Args:
+        metrics: MetricsResult containing the calculated metrics
+        predictions: List of predicted text strings
+        ground_truth: List of ground truth text strings
+        step: Training step number
+        writer: TensorBoard SummaryWriter
+        phase: Phase identifier ("train" or "val")
+    """
+    # Log metrics to TensorBoard
+    writer.add_scalar(f"Loss/{phase}", metrics.val_loss, step)
+    writer.add_scalar(f"Metrics/WER_{phase}", metrics.wer, step)
+    writer.add_scalar(f"Metrics/CER_{phase}", metrics.cer, step)
+    writer.add_scalar(f"Metrics/WER_Accuracy_{phase}", metrics.wer_accuracy, step)
+    writer.add_scalar(f"Metrics/CER_Accuracy_{phase}", metrics.cer_accuracy, step)
+
+    # Log random text examples to TensorBoard and wandb
+    num_examples = min(3, len(ground_truth))
+    if num_examples > 0:
+        random_indices = random.sample(range(len(ground_truth)), num_examples)
+
+        # For TensorBoard (text format)
+        examples_text = ""
+        for i, idx in enumerate(random_indices):
+            examples_text += f"**Example {i+1}:**\n"
+            examples_text += f"Source:    {ground_truth[idx]}\n"
+            examples_text += f"Predicted: {predictions[idx]}\n\n"
+
+        writer.add_text(f"Examples_{phase}", examples_text, step)
+
+        # For wandb (table format) - create data list first
+        table_data = []
+        for idx in random_indices:
+            table_data.append([ground_truth[idx], predictions[idx]])
+
+        examples_table = wandb.Table(columns=["Source", "Prediction"], data=table_data)
+        wandb.log({f"Examples_Table_{phase}": examples_table}, step=step)
+
+
+def print_metrics_with_examples(
+    metrics: MetricsResult,
+    predictions: List[str],
+    ground_truth: List[str],
+    step: int,
+    phase: str = "validation"
+) -> None:
+    """
+    Print metrics and examples in a nice format.
+    
+    Args:
+        metrics: MetricsResult containing the calculated metrics
+        predictions: List of predicted text strings
+        ground_truth: List of ground truth text strings  
+        step: Training step number
+        phase: Phase identifier ("validation" or "training")
+    """
+    # Print examples with nice emojis
+    num_examples = min(3, len(ground_truth))
+    if num_examples > 0:
+        random_indices = random.sample(range(len(ground_truth)), num_examples)
+        print(f"🔤 Examples from {phase}:")
+        for i in random_indices:
+            print(f"   {ground_truth[i]}")
+            print(f"   🔤 {predictions[i]}")
+            print()
+
+    # Print metrics summary
+    emoji = "✅" if phase == "validation" else "🏃"
+    phase_title = phase.capitalize()
+    print(f"{emoji} {phase_title} Results after step {step}:")
+    if metrics.val_loss > 0:
+        print(f"   Loss: {metrics.val_loss:.4f} 📉")
+    print(f"   WER:  {metrics.wer:.4f} | Accuracy: {metrics.wer_accuracy:.2f}% 🔤")
+    print(f"   CER:  {metrics.cer:.4f} | Accuracy: {metrics.cer_accuracy:.2f}% 📝")
+
+
+def calculate_train_batch_metrics(
+    model: PhoNikudModel,
+    batch: Batch,
+    tokenizer: BertTokenizerFast,
+    output: MenakedLogitsOutput,
+    loss: float
+) -> MetricsResult:
+    """
+    Calculate WER/CER metrics for a training batch.
+    
+    Args:
+        model: The PhoNikudModel instance
+        batch: Training batch containing vocalized text and inputs
+        tokenizer: BERT tokenizer for offset mapping
+        output: Model output from forward pass
+        loss: Training loss for this batch
+        
+    Returns:
+        MetricsResult containing WER, CER, and accuracy metrics
+    """
+    # Get predictions for this batch
+    predictions: ModelPredictions = model.get_predictions_from_output(output)
+    
+    batch_predictions: List[str] = []
+    batch_ground_truth: List[str] = []
+    
+    # Process each sample in the batch
+    for batch_idx, src_text in enumerate(batch.vocalized):
+        text_without_nikud: str = remove_nikud(src_text, additional=ENHANCED_NIKUD)
+        
+        # Get offset mapping for this specific text
+        tokenized_for_offsets = tokenizer(
+            [text_without_nikud],
+            return_offsets_mapping=True,
+            return_tensors="pt",
+        )
+        offset_mapping = tokenized_for_offsets.offset_mapping[0]
+        
+        # Decode prediction for this sample
+        predicted_texts = model.decode(
+            [text_without_nikud],
+            [offset_mapping],
+            [predictions.nikud[batch_idx]],
+            [predictions.shin[batch_idx]],
+            [predictions.hatama[batch_idx]],
+            [predictions.mobile_shva[batch_idx]],
+            [predictions.prefix[batch_idx]],
+            mark_matres_lectionis=NIKUD_HASER,
+        )
+        
+        # Remove nikud from both predicted and ground truth
+        predicted_texts[0] = remove_nikud(predicted_texts[0])
+        src_text_clean = remove_nikud(src_text)
+        
+        batch_predictions.append(predicted_texts[0])
+        batch_ground_truth.append(src_text_clean)
+    
+    # Calculate metrics using the main utility function
+    return calculate_wer_cer_metrics(batch_predictions, batch_ground_truth, loss)

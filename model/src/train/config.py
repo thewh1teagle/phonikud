@@ -13,13 +13,13 @@ class TrainArgs(Tap):
 
     device: Literal["cuda", "cuda:1", "cpu", "mps"] = "cuda:1"
 
-    data_dir: str = BASE_PATH / "data/"
+    data_dir: Path = BASE_PATH / "data/"
     "Path with txt files for train"
 
-    output_dir: str = BASE_PATH / "ckpt/"
+    output_dir: Path = BASE_PATH / "ckpt/"
     "Path to save checkpoints"
 
-    log_dir: str = BASE_PATH / "logs/"
+    log_dir: Path = BASE_PATH / "logs/"
     "Path to save TensorBoard logs"
 
     batch_size: int = 32

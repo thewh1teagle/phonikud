@@ -8,10 +8,10 @@ from src.train.config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from src.train.evaluate import evaluate_model
 from model.src.model.phonikud_model import PhoNikudModel, MenakedLogitsOutput
-from typing import Dict
 from datetime import datetime
 from pathlib import Path
 import wandb
+from src.train.utils import calculate_train_batch_metrics
 
 
 def train_model(
@@ -27,12 +27,12 @@ def train_model(
     # Initialize wandb with TensorBoard sync
     log_dir = Path(args.log_dir) / run_name
     log_dir.mkdir(parents=True, exist_ok=True)
-    wandb.tensorboard.patch(root_logdir=str(log_dir))
+    wandb.tensorboard.patch(root_logdir=str(log_dir)) # type: ignore
     wandb.init(
         project=args.wandb_project,
         entity=args.wandb_entity,
         config=vars(args),
-        mode=args.wandb_mode,
+        mode=args.wandb_mode, # type: ignore
         name=run_name,
         sync_tensorboard=True,
     )
@@ -52,7 +52,7 @@ def train_model(
         gamma=0.1,
     )
     # Boosted on GPU
-    scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device)
+    scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device) # type: ignore
 
     step = args.pre_training_step
     best_val_score = float("inf")
@@ -66,7 +66,7 @@ def train_model(
         total_loss = 0.0
 
         batch: Batch
-        for index, batch in pbar:
+        for _index, batch in pbar:
             optimizer.zero_grad()
 
             # Log learning rate
@@ -74,7 +74,7 @@ def train_model(
                 lr = param_group["lr"]
                 writer.add_scalar("LR", lr, step)
 
-            inputs: Dict[str, torch.Tensor] = batch.input
+            inputs = batch.input
             targets: torch.Tensor = batch.outputs
             inputs = {k: v.to(args.device) for k, v in inputs.items()}
             targets = targets.to(args.device)
@@ -112,6 +112,23 @@ def train_model(
 
             # Val
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
+                # Calculate training metrics before evaluation
+                try:
+                    train_metrics = calculate_train_batch_metrics(
+                        model, batch, tokenizer, output, loss.item()
+                    )
+                    
+                    # Log training metrics to TensorBoard
+                    writer.add_scalar("Metrics/WER_train", train_metrics.wer, step)
+                    writer.add_scalar("Metrics/CER_train", train_metrics.cer, step)
+                    writer.add_scalar("Metrics/WER_Accuracy_train", train_metrics.wer_accuracy, step)
+                    writer.add_scalar("Metrics/CER_Accuracy_train", train_metrics.cer_accuracy, step)
+                    
+                    print(f"🏃 Training WER at step {step}: {train_metrics.wer:.4f} ({train_metrics.wer_accuracy:.2f}% accuracy)")
+                    
+                except Exception as e:
+                    print(f"⚠️ Could not calculate training WER/CER at step {step}: {e}")
+                
                 # Evaluate and maybe save "best"
                 val_score, wer = evaluate_model(
                     model, val_dataloader, args, tokenizer, step, writer

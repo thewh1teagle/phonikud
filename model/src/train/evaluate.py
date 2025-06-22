@@ -4,9 +4,6 @@ from src.train.config import TrainArgs
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-import jiwer
-import random
-import wandb
 from src.model.phonikud_model import NIKUD_HASER, remove_nikud, ENHANCED_NIKUD
 from src.train.data import Batch
 from model.src.model.phonikud_model import (
@@ -14,8 +11,13 @@ from model.src.model.phonikud_model import (
     PhoNikudModel,
     ModelPredictions,
 )
-from typing import List, Dict
+from typing import List
 from transformers import BertTokenizerFast
+from src.train.utils import (
+    calculate_wer_cer_metrics,
+    log_metrics_to_tensorboard_and_wandb,
+    print_metrics_with_examples,
+)
 
 
 def evaluate_model(
@@ -102,52 +104,17 @@ def evaluate_model(
 
     val_loss /= len(val_dataloader)  # Average over all validation batches
 
-    # Calculate WER and CER using jiwer
-    wer = jiwer.wer(all_ground_truth, all_predictions)
-    cer = jiwer.cer(all_ground_truth, all_predictions)
+    # Calculate WER/CER metrics using utility function
+    metrics = calculate_wer_cer_metrics(all_predictions, all_ground_truth, val_loss)
 
-    # Calculate accuracies as percentages (1 - error_rate) * 100
-    wer_accuracy = (1 - wer) * 100
-    cer_accuracy = (1 - cer) * 100
+    # Log metrics to TensorBoard and wandb using utility function
+    log_metrics_to_tensorboard_and_wandb(
+        metrics, all_predictions, all_ground_truth, step, writer, "val"
+    )
 
-    # Log metrics to TensorBoard
-    writer.add_scalar("Loss/val", val_loss, step)
-    writer.add_scalar("Metrics/WER", wer, step)
-    writer.add_scalar("Metrics/CER", cer, step)
-    writer.add_scalar("Metrics/WER_Accuracy", wer_accuracy, step)
-    writer.add_scalar("Metrics/CER_Accuracy", cer_accuracy, step)
+    # Print metrics and examples using utility function
+    print_metrics_with_examples(
+        metrics, all_predictions, all_ground_truth, step, "validation"
+    )
 
-    # Log random text examples to TensorBoard and wandb
-    num_examples = min(3, len(all_ground_truth))
-    random_indices = random.sample(range(len(all_ground_truth)), num_examples)
-
-    # For TensorBoard (text format)
-    examples_text = ""
-    for i, idx in enumerate(random_indices):
-        examples_text += f"**Example {i+1}:**\n"
-        examples_text += f"Source:    {all_ground_truth[idx]}\n"
-        examples_text += f"Predicted: {all_predictions[idx]}\n\n"
-
-    writer.add_text("Examples", examples_text, step)
-
-    # For wandb (table format) - create data list first
-    table_data = []
-    for idx in random_indices:
-        table_data.append([all_ground_truth[idx], all_predictions[idx]])
-
-    examples_table = wandb.Table(columns=["Source", "Prediction"], data=table_data)
-    wandb.log({"Examples_Table": examples_table}, step=step)
-    
-    # print examples from validation with nice emojies and it should be understadable that it's from evaluation
-    print(f"🔤 Examples from validation:")
-    for i in random_indices:
-        print(f"   {all_ground_truth[i]}")
-        print(f"   🔤 {all_predictions[i]}")
-        print()
-
-    print(f"✅ Validation Results after step {step}:")
-    print(f"   Loss: {val_loss:.4f} 📉")
-    print(f"   WER:  {wer:.4f} | Accuracy: {wer_accuracy:.2f}% 🔤")
-    print(f"   CER:  {cer:.4f} | Accuracy: {cer_accuracy:.2f}% 📝")
-
-    return val_loss, wer
+    return val_loss, metrics.wer
