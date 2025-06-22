@@ -1,7 +1,7 @@
 import argparse
 import torch
 from model import Seq2Seq
-import pickle
+import json
 
 
 def predict(model, text, char_to_idx, phoneme_to_idx, idx_to_phoneme, max_len=50):
@@ -9,7 +9,7 @@ def predict(model, text, char_to_idx, phoneme_to_idx, idx_to_phoneme, max_len=50
 
     text_ids = (
         [char_to_idx["<sos>"]]
-        + [char_to_idx.get(c, 0) for c in text]
+        + [char_to_idx.get(c, char_to_idx["<unk>"]) for c in text]
         + [char_to_idx["<eos>"]]
     )
     src = torch.tensor(text_ids).unsqueeze(0)
@@ -35,10 +35,12 @@ def predict(model, text, char_to_idx, phoneme_to_idx, idx_to_phoneme, max_len=50
 
 
 def infer(args):
-    with open(args.vocab_path, "rb") as f:
-        char_to_idx, phoneme_to_idx = pickle.load(f)
+    with open(args.vocab_path, "r", encoding="utf-8") as f:
+        vocab = json.load(f)
 
-    idx_to_phoneme = {v: k for k, v in phoneme_to_idx.items()}
+    char_to_idx = vocab["char_to_idx"]
+    phoneme_to_idx = vocab["phoneme_to_idx"]
+    idx_to_phoneme = vocab["idx_to_phoneme"]
 
     model = Seq2Seq(len(char_to_idx), len(phoneme_to_idx))
     model.load_state_dict(torch.load(args.model_path))
@@ -67,7 +69,7 @@ def infer(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_path", default="model.pt")
-    parser.add_argument("--vocab_path", default="vocab.pkl")
+    parser.add_argument("--vocab_path", default="vocab.json")
     parser.add_argument("--text", help="Single text to convert")
     parser.add_argument("--input_file", help="File with texts to convert")
 
