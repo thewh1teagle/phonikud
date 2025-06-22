@@ -58,7 +58,7 @@ def is_matres_letter(char):
     return char in MATRES_LETTERS
 
 
-nikud_pattern = re.compile(r"[\u05B0-\u05BD\u05C1\u05C2\u05C7]")
+nikud_pattern = re.compile(r"[\u0590-\u05C7|]")
 
 
 def remove_nikkud(text):
