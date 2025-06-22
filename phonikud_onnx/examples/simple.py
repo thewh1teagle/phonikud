@@ -10,7 +10,7 @@ from phonikud import lexicon
 
 def main():
     phonikud = Phonikud("./phonikud-1.0.int8.onnx")
-    sentence = "הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה."
+    sentence = "כמה אתה חושב שזה יעלה לי? אני מגיע לשם רק בערב.."
     with_diacritics = phonikud.add_diacritics(
         sentence, mark_matres_lectionis=lexicon.NIKUD_HASER_DIACRITIC
     )

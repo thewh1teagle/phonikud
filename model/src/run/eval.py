@@ -44,12 +44,72 @@ class EvalArgs(Tap):
     
     device: str = "cuda"
     "Device to use for inference"
+    
+    input: str = ""
+    "Optional input txt file to evaluate on (if not provided, uses training validation data)"
 
 
+def evaluate_model(model, tokenizer, eval_texts: List[str], device: str):
+    """Evaluate model on given texts and return metrics"""
+    model.to(device)  # type: ignore
+    model.eval()
 
-def main():
-    args = EvalArgs().parse_args()
+    gts, preds = [], []
+    print("🔬 Evaluating...")
+    
+    for line in tqdm(eval_texts):
+        src = remove_nikud(line, additional=ENHANCED_NIKUD)
+        if not src:
+            continue
+        pred = model.predict([src], tokenizer, mark_matres_lectionis=NIKUD_HASER)[0]
+        
+        gts.append(remove_nikud(line))
+        preds.append(remove_nikud(normalize(pred)))
 
+    # Calculate metrics
+    w = float(wer(gts, preds))  # type: ignore
+    c = float(cer(gts, preds))  # type: ignore
+
+    # Print examples
+    print("\n🔤 Examples:")
+    for i in range(min(5, len(gts))):
+        print(f"   GT:   {gts[i]}")
+        print(f"   Pred: {preds[i]}")
+        print()
+
+    # Print results
+    print("📊 Results:")
+    print(f"   Lines: {len(gts)}")
+    print(f"   WER: {w:.3f} (Acc: {(1-w)*100:.1f}%)")
+    print(f"   CER: {c:.3f} (Acc: {(1-c)*100:.1f}%)")
+    
+    return w, c
+
+
+def eval_with_input_file(args: EvalArgs):
+    """Evaluate using provided input file"""
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"❌ Input file not found: {input_path}")
+        return
+    
+    print(f"📖 Loading input file: {input_path}")
+    with open(input_path, "r", encoding="utf-8") as f:
+        eval_texts = [line.strip() for line in f if line.strip()]
+    
+    print(f"📝 Loaded {len(eval_texts)} lines from input file")
+    
+    # Load model
+    print(f"🧠 Loading model: {args.model}")
+    model = PhoNikudModel.from_pretrained(args.model, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    
+    # Evaluate
+    evaluate_model(model, tokenizer, eval_texts, args.device)
+
+
+def eval_against_train_data(args: EvalArgs):
+    """Evaluate against training validation data with verification"""
     # Load saved eval indices
     model_path = Path(args.model)
     indices_file = model_path.parent / "train_metadata.json"
@@ -109,39 +169,20 @@ def main():
     print(f"🧠 Loading model: {args.model}")
     model = PhoNikudModel.from_pretrained(args.model, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(args.model)
-    model.to(args.device)  # type: ignore
-    model.eval()
-
-    # Evaluate
-    gts, preds = [], []
-    print("🔬 Evaluating...")
     
-    for line in tqdm(eval_texts):
-        src = remove_nikud(line, additional=ENHANCED_NIKUD)
-        if not src:
-            continue
-        pred = model.predict([src], tokenizer, mark_matres_lectionis=NIKUD_HASER)[0]
-        
-        gts.append(remove_nikud(line))
-        preds.append(remove_nikud(normalize(pred)))
+    # Evaluate
+    evaluate_model(model, tokenizer, eval_texts, args.device)
 
-    # Calculate metrics
-    w = float(wer(gts, preds))  # type: ignore
-    c = float(cer(gts, preds))  # type: ignore
 
-    # Print examples
-    print("\n🔤 Examples:")
-    for i in range(min(5, len(gts))):
-        print(f"   GT:   {gts[i]}")
-        print(f"   Pred: {preds[i]}")
-        print()
-
-    # Print results
-    print("📊 Results:")
-    print(f"   Lines: {len(gts)}")
-    print(f"   WER: {w:.3f} (Acc: {(1-w)*100:.1f}%)")
-    print(f"   CER: {c:.3f} (Acc: {(1-c)*100:.1f}%)")
-
+def main():
+    args = EvalArgs().parse_args()
+    
+    if args.input:
+        # Evaluate with input file
+        eval_with_input_file(args)
+    else:
+        # Evaluate against training data
+        eval_against_train_data(args)
 
 
 if __name__ == "__main__":

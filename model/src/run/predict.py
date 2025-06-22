@@ -15,10 +15,10 @@ from phonikud.utils import normalize
 
 
 class PredictArgs(Tap):
-    model: str = "thewh1teagle/phonikud"
+    model: str = "ckpt/best_wer"
     "Path or name of the pretrained model"
     
-    text: str = "הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה."
+    text: str = "כמה אתה חושב שזה יעלה לי? אני מגיע לשם רק בערב.."
     "Hebrew text to add nikud to"
     
     device: str = "cuda"
