@@ -20,7 +20,9 @@ ckpt/
 
 *.7z
 *.txt
-!phonikud/data/**/*.txt */
+!model/data/dummy.txt
+!model/data/eval/dummy.txt
 *.zip
 wandb/
 logs/
+wandb/

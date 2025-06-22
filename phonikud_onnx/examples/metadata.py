@@ -10,11 +10,9 @@ from phonikud import lexicon
 
 def main():
     phonikud = Phonikud("./phonikud-1.0.int8.onnx")
-    sentence = "כמה אתה חושב שזה יעלה לי? אני מגיע לשם רק בערב.."
-    with_diacritics = phonikud.add_diacritics(
-        sentence, mark_matres_lectionis=lexicon.NIKUD_HASER_DIACRITIC
-    )
-    print(with_diacritics)
+    metadata = phonikud.get_metadata()
+    commit = metadata["commit"]
+    print(f'Phonikud commit: {commit}')
 
 
 if __name__ == "__main__":

@@ -1,7 +1,12 @@
+"""
+See https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
+"""
+
 import onnxruntime as ort
 import numpy as np
 from tokenizers import Tokenizer
 import re
+import json
 
 # Constants
 NIKUD_CLASSES = [
@@ -53,7 +58,7 @@ def is_matres_letter(char):
     return char in MATRES_LETTERS
 
 
-nikud_pattern = re.compile(r"[\u05B0-\u05BD\u05C1\u05C2\u05C7]")
+nikud_pattern = re.compile(r"[\u0590-\u05C7|]")
 
 
 def remove_nikkud(text):
@@ -62,7 +67,10 @@ def remove_nikkud(text):
 
 class OnnxModel:
     def __init__(
-        self, model_path, tokenizer_name="dicta-il/dictabert-large-char-menaked", session: ort.InferenceSession = None
+        self,
+        model_path,
+        tokenizer_name="dicta-il/dictabert-large-char-menaked",
+        session: ort.InferenceSession = None,
     ):
         # Load the tokenizer
         self.tokenizer = Tokenizer.from_pretrained(tokenizer_name)
@@ -71,6 +79,15 @@ class OnnxModel:
         self.session = session or ort.InferenceSession(model_path)
         self.input_names = [input.name for input in self.session.get_inputs()]
         self.output_names = [output.name for output in self.session.get_outputs()]
+
+    def get_metadata(self):
+        try:
+            metadata = self.session.get_modelmeta().custom_metadata_map
+            if "config" in metadata:
+                return json.loads(metadata["config"])
+            return {}
+        except (json.JSONDecodeError, KeyError):
+            return {}
 
     def _create_inputs(self, sentences: list[str], padding: str):
         # Tokenize inputs using tokenizers library
@@ -127,11 +144,10 @@ class OnnxModel:
         additional_idx = self.output_names.index("additional_logits")
         additional_logits = outputs[additional_idx]
 
-
         # Get predictions
         nikud_predictions = np.argmax(nikud_logits, axis=-1)
         shin_predictions = np.argmax(shin_logits, axis=-1)
-        
+
         # Since additional_logits shape is (batch, seq, 3), each index is a separate binary classifier
         stress_predictions = (additional_logits[..., 0] > 0).astype(np.int32)
         mobile_shva_predictions = (additional_logits[..., 1] > 0).astype(np.int32)

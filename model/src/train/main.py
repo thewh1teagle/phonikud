@@ -1,4 +1,6 @@
 """
+Test train:
+    uv run src/train/main.py --device mps --epochs 100 --num_workers 1 --checkpoint_interval 10
 Train from scratch:
     uv run src/train/main.py --device cpu --epochs 1 --device mps
 Train from checkpoint:
@@ -11,11 +13,11 @@ On V100:
 """
 
 from src.train.config import get_opts
-from data import Collator, get_dataloader
+from src.train.data import Collator, get_dataloader
 from src.train.train_loop import train_model
 from transformers import AutoTokenizer
 from src.model.phonikud_model import PhoNikudModel
-from utils import print_model_size, read_lines
+from src.train.utils import print_model_size, prepare_lines
 
 
 def main():
@@ -25,7 +27,7 @@ def main():
     model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     print_model_size(model)
 
-    model.to(args.device)
+    model.to(args.device) # type: ignore
     model.freeze_base_model()
 
     tokenizer = AutoTokenizer.from_pretrained(
@@ -34,15 +36,27 @@ def main():
     collator = Collator(tokenizer)
 
     # Data split
-    print("📖🔍 Reading lines from dataset...")
-    train_lines, val_lines = read_lines(args.data_dir)
-    print(
-        f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
+    train_lines, val_lines = prepare_lines(
+        data_dir=str(args.data_dir),
+        ckpt_dir=str(args.model_checkpoint),
+        val_split=args.val_split,   
+        split_seed=args.split_seed,
+        max_lines=args.max_lines,
     )
 
-    # Data loader
-    train_dataloader = get_dataloader(train_lines, args, collator)
-    val_dataloader = get_dataloader(val_lines, args, collator)
+    # Data loader - provide both unvocalized and vocalized text
+    train_dataloader = get_dataloader(
+        [line.unvocalized for line in train_lines],
+        [line.vocalized for line in train_lines],
+        args,
+        collator,
+    )
+    val_dataloader = get_dataloader(
+        [line.unvocalized for line in val_lines],
+        [line.vocalized for line in val_lines],
+        args,
+        collator,
+    )
 
     # Train
     train_model(model, tokenizer, train_dataloader, val_dataloader, args)

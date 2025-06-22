@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from transformers.utils import ModelOutput
 from transformers import BertTokenizerFast
 import re
+from typing import List
 
 
 from .dicta_model import (
@@ -17,7 +18,11 @@ MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks vocal shva (e)
 PREFIX_CHAR = "|"  # vertical bar
 NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
-PHONETIC_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
+ENHANCED_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
+
+
+def remove_enhanced_nikud(text: str):
+    return remove_nikud(text, additional=ENHANCED_NIKUD)
 
 
 def remove_nikud(text: str, additional=""):
@@ -39,6 +44,17 @@ class MenakedLogitsOutput(ModelOutput):
             self.shin_logits.detach(),
             self.additional_logits.detach(),
         )
+
+
+@dataclass
+class ModelPredictions:
+    """Container for all model predictions to avoid tuple unpacking."""
+
+    nikud: List[List[int]]
+    shin: List[List[int]]
+    hatama: List[List[int]]
+    mobile_shva: List[List[int]]
+    prefix: List[List[int]]
 
 
 class PhoNikudModel(BertForDiacritization):
@@ -84,9 +100,7 @@ class PhoNikudModel(BertForDiacritization):
         # Assert the lengths are within the tokenizer's max limit
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
-        ), (
-            f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
-        )
+        ), f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
 
         # Tokenize the inputs and return the tensor format
         inputs = tokenizer(
@@ -110,7 +124,7 @@ class PhoNikudModel(BertForDiacritization):
         hatama_predictions,
         mobile_shva_predictions,
         prefix_predictions,
-        mark_matres_lectionis: str = None,
+        mark_matres_lectionis: str = '',
     ):
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -148,7 +162,7 @@ class PhoNikudModel(BertForDiacritization):
                     elif mark_matres_lectionis is not None:
                         nikud = mark_matres_lectionis
                     else:
-                        continue
+                        nikud = ""  # No marking, but don't skip the character
 
                 # Apply hatama, mobile shva, and prefix predictions
                 hatama = HATAMA_CHAR if hatama_predictions[sent_idx][idx] == 1 else ""
@@ -166,29 +180,31 @@ class PhoNikudModel(BertForDiacritization):
 
         return ret
 
-    def create_predictions(self, inputs):
-        output = self.forward(inputs)
-
+    def get_predictions_from_output(self, output) -> ModelPredictions:
+        """Extract predictions from an existing forward pass output to avoid running forward twice."""
         # Extract the logits from the model output
         nikud_logits = output.detach()
         additional_logits = output.additional_logits.detach()
-        # additional_logits = additional_logits.permute(0, 2, 1)
 
         # Get predictions from logits
         nikud_predictions = nikud_logits.nikud_logits.argmax(dim=-1).tolist()
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
-        hatama_predictions = (additional_logits[..., 0] > 1).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 1).int().tolist()
-        prefix_predictions = (additional_logits[..., 2] > 1).int().tolist()
+        hatama_predictions = (additional_logits[..., 0] > 0).int().tolist()
+        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
+        prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
-        return (
-            nikud_predictions,
-            shin_predictions,
-            hatama_predictions,
-            mobile_shva_predictions,
-            prefix_predictions,
+        return ModelPredictions(
+            nikud=nikud_predictions,
+            shin=shin_predictions,
+            hatama=hatama_predictions,
+            mobile_shva=mobile_shva_predictions,
+            prefix=prefix_predictions,
         )
+
+    def create_predictions(self, inputs) -> ModelPredictions:
+        output = self.forward(inputs)
+        return self.get_predictions_from_output(output)
 
     @torch.no_grad()
     def predict(
@@ -202,33 +218,18 @@ class PhoNikudModel(BertForDiacritization):
         inputs, offset_mapping = self.encode(sentences, tokenizer, padding)
 
         # Step 2: Making predictions
-        (
-            nikud_predictions,
-            shin_predictions,
-            hatama_predictions,
-            mobile_shva_predictions,
-            prefix_predictions,
-        ) = self.create_predictions(inputs)
+        predictions = self.create_predictions(inputs)
 
         # Step 3: Decoding (reconstructing the sentences with predictions)
         result = self.decode(
             sentences,
             offset_mapping,
-            nikud_predictions,
-            shin_predictions,
-            hatama_predictions,
-            mobile_shva_predictions,
-            prefix_predictions,
+            predictions.nikud,
+            predictions.shin,
+            predictions.hatama,
+            predictions.mobile_shva,
+            predictions.prefix,
             mark_matres_lectionis,
         )
 
         return result
-
-
-
-def align_logits_and_targets(logits, targets):
-    """Align logits and targets to the same sequence length."""
-    min_seq_len = min(logits.size(1), targets.size(1))
-    aligned_logits = logits[:, :min_seq_len, :]
-    aligned_targets = targets[:, :min_seq_len, :]
-    return aligned_logits, aligned_targets

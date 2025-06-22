@@ -46,3 +46,6 @@ class Phonikud:
         Based on given mark_matres_lectionis remove the nikud nikud male character along with the mark character
         """
         return re.sub(r".\|", "", text)  # Remove {char}{matres_lectionis}
+
+    def get_metadata(self):
+        return self.model.get_metadata()

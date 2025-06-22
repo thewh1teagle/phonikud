@@ -1,53 +1,49 @@
 """
-uv run src/test.py --device cuda
+Simple prediction script
 """
 
+from tap import Tap
 from src.model.phonikud_model import (
     PhoNikudModel,
     NIKUD_HASER,
     remove_nikud,
-    PHONETIC_NIKUD,
+    ENHANCED_NIKUD,
 )
-from src.train.config import BASE_PATH
 from transformers import AutoTokenizer
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
-from tap import Tap
 from phonikud.utils import normalize
 
 
-class RunArgs(Tap):
-    model: str = BASE_PATH / "./ckpt/best"  # --model, -m
-    device = "cuda"
-    file: str = BASE_PATH / "./data/eval/dummy.txt"
-
-    def configure(self):
-        self.add_argument("--model", "-m", help="Path to the model checkpoint", default="thewh1teagle/phonikud")
-        return super().configure()
+class PredictArgs(Tap):
+    model: str = "ckpt/best_wer"
+    "Path or name of the pretrained model"
+    
+    text: str = "כמה אתה חושב שזה יעלה לי? אני מגיע לשם רק בערב.."
+    "Hebrew text to add nikud to"
+    
+    device: str = "cuda"
+    "Device to run inference on"
 
 
 def main():
-    args = RunArgs().parse_args()
+    args = PredictArgs().parse_args()
+    
+    # Load model and tokenizer
     model = PhoNikudModel.from_pretrained(args.model, trust_remote_code=True)
     tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(args.model)
-    model.to(args.device)
+    model.to(args.device)  # type: ignore
     model.eval()
 
-    with open(args.file, "r", encoding="utf-8") as fp:
-        for src in fp:
-            src = normalize(src.strip())
-            without_nikud = remove_nikud(src, additional=PHONETIC_NIKUD)
-            if not without_nikud:
-                continue
-            predicted = model.predict(
-                [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
-            )[0]
-            predicted = normalize(predicted)
-            # src, predicted = remove_nikud(src), remove_nikud(predicted)
-            print()
-            # print(src == predicted)
-            # print(without_nikud)
-            # print(src)
-            print(predicted)
+    # Process the text
+    text = normalize(args.text.strip())
+    without_nikud = remove_nikud(text, additional=ENHANCED_NIKUD)
+    
+    if without_nikud:
+        predicted = model.predict(
+            [without_nikud], tokenizer, mark_matres_lectionis=NIKUD_HASER
+        )[0]
+        predicted = normalize(predicted)
+        print(predicted)
 
 
 if __name__ == "__main__":
