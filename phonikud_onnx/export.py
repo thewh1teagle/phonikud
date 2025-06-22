@@ -23,7 +23,7 @@ from model.phonikud_model import (
 
 # Global metadata to add to ONNX models
 metadata = {
-    "commit": "local",
+    "commit": "10aac8d", # https://huggingface.co/thewh1teagle/phonikud/tree/main
 }
 
 
@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument(
         "--model",
         type=str,
-        default="thewh1teagle/phonikud",  # dicta-il/dictabert-large-char-menaked
+        default="../model/ckpt/best_wer",  # dicta-il/dictabert-large-char-menaked # ../model/ckpt/best_wer # thewh1teagle/phonikud
         help="Name of the model to export and quantize.",
     )
     return parser.parse_args()
