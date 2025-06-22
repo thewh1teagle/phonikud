@@ -17,7 +17,7 @@ from src.train.data import Collator, get_dataloader
 from src.train.train_loop import train_model
 from transformers import AutoTokenizer
 from src.model.phonikud_model import PhoNikudModel
-from src.train.utils import print_model_size, read_lines
+from src.train.utils import print_model_size, prepare_lines
 
 
 def main():
@@ -36,11 +36,12 @@ def main():
     collator = Collator(tokenizer)
 
     # Data split
-    print("📖🔍 Reading lines from dataset...")
-    max_lines = None if args.max_lines == 0 else args.max_lines
-    train_lines, val_lines = read_lines(args.data_dir, max_lines=max_lines)
-    print(
-        f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
+    train_lines, val_lines = prepare_lines(
+        data_dir=str(args.data_dir),
+        ckpt_dir=str(args.model_checkpoint),
+        val_split=args.val_split,   
+        split_seed=args.split_seed,
+        max_lines=args.max_lines,
     )
 
     # Data loader - provide both unvocalized and vocalized text
