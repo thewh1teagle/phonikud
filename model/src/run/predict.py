@@ -2,6 +2,7 @@
 Simple prediction script
 """
 
+from tap import Tap
 from src.model.phonikud_model import (
     PhoNikudModel,
     NIKUD_HASER,
@@ -13,19 +14,28 @@ from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from phonikud.utils import normalize
 
 
+class PredictArgs(Tap):
+    model: str = "thewh1teagle/phonikud"
+    "Path or name of the pretrained model"
+    
+    text: str = "הילדים אהבו במיוחד את הסיפורים הללו שהמורה הקריאה."
+    "Hebrew text to add nikud to"
+    
+    device: str = "cuda"
+    "Device to run inference on"
+
+
 def main():
-    # Hardcoded text
-    text = "שלום עולם"
+    args = PredictArgs().parse_args()
     
     # Load model and tokenizer
-    model_path = "thewh1teagle/phonikud"
-    model = PhoNikudModel.from_pretrained(model_path, trust_remote_code=True)
-    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(model_path)
-    model.to("cuda")  # type: ignore
+    model = PhoNikudModel.from_pretrained(args.model, trust_remote_code=True)
+    tokenizer: BertTokenizerFast = AutoTokenizer.from_pretrained(args.model)
+    model.to(args.device)  # type: ignore
     model.eval()
 
     # Process the text
-    text = normalize(text.strip())
+    text = normalize(args.text.strip())
     without_nikud = remove_nikud(text, additional=ENHANCED_NIKUD)
     
     if without_nikud:
