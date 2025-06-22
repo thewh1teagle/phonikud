@@ -43,7 +43,7 @@ class TrainArgs(Tap):
     checkpoint_interval: int = 9000
     "Number of steps between saving checkpoints"
 
-    val_split: float = 0.0001
+    val_split: float = 0.05
     "Fraction of training data to use as validation (0 to disable)"
 
     split_seed: int = 42

@@ -44,7 +44,7 @@ def evaluate_model(
             src_texts: List[str] = (
                 batch.vocalized
             )  # Vocalized text with diacritics for comparison
-            inputs: Dict[str, torch.Tensor] = batch.input
+            inputs = batch.input
             targets: torch.Tensor = batch.outputs
 
             inputs = {k: v.to(args.device) for k, v in inputs.items()}
@@ -85,6 +85,10 @@ def evaluate_model(
                     [predictions.prefix[batch_idx]],
                     mark_matres_lectionis=NIKUD_HASER,
                 )
+
+                # Remove nikud from both predicted and ground truth (Keep enhanced nikud)
+                predicted_texts[0] = remove_nikud(predicted_texts[0])
+                src_text = remove_nikud(src_text)
 
                 # Collect for WER/CER calculation
                 all_predictions.append(predicted_texts[0])
