@@ -24,14 +24,10 @@ def train_model(
     # Create run name with timestamp
     run_name = f"train_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
-    # Initialize TensorBoard
+    # Initialize wandb with TensorBoard sync
     log_dir = Path(args.log_dir) / run_name
     log_dir.mkdir(parents=True, exist_ok=True)
-    writer = SummaryWriter(log_dir)
-    print(f"📊 TensorBoard logging to: {log_dir}")
-    print(f"    View with: tensorboard --logdir {args.log_dir}")
-
-    # Initialize wandb with TensorBoard sync
+    wandb.tensorboard.patch(root_logdir=str(log_dir))
     wandb.init(
         project=args.wandb_project,
         entity=args.wandb_entity,
@@ -41,6 +37,11 @@ def train_model(
         sync_tensorboard=True,
     )
     print(f"🔗 Wandb syncing from TensorBoard (mode: {args.wandb_mode})")
+
+    # Initialize TensorBoard (convert Path to string for wandb compatibility)
+    writer = SummaryWriter(str(log_dir))
+    print(f"📊 TensorBoard logging to: {log_dir}")
+    print(f"    View with: tensorboard --logdir {args.log_dir}")
 
     model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)

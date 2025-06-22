@@ -6,6 +6,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 import jiwer
 import random
+import wandb
 from src.model.phonikud_model import remove_nikud, ENHANCED_NIKUD
 from src.train.data import Batch
 from model.src.model.phonikud_model import (
@@ -111,10 +112,11 @@ def evaluate_model(
     writer.add_scalar("Metrics/WER_Accuracy", wer_accuracy, step)
     writer.add_scalar("Metrics/CER_Accuracy", cer_accuracy, step)
 
-    # Log random text examples to TensorBoard
+    # Log random text examples to TensorBoard and wandb
     num_examples = min(3, len(all_ground_truth))
     random_indices = random.sample(range(len(all_ground_truth)), num_examples)
 
+    # For TensorBoard (text format)
     examples_text = ""
     for i, idx in enumerate(random_indices):
         examples_text += f"**Example {i+1}:**\n"
@@ -122,6 +124,14 @@ def evaluate_model(
         examples_text += f"Predicted: {all_predictions[idx]}\n\n"
 
     writer.add_text("Examples", examples_text, step)
+
+    # For wandb (table format) - create data list first
+    table_data = []
+    for idx in random_indices:
+        table_data.append([all_ground_truth[idx], all_predictions[idx]])
+
+    examples_table = wandb.Table(columns=["Source", "Prediction"], data=table_data)
+    wandb.log({"Examples_Table": examples_table}, step=step)
 
     print(f"✅ Validation Results after step {step}:")
     print(f"   Loss: {val_loss:.4f} 📉")

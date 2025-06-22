@@ -53,7 +53,7 @@ class TrainArgs(Tap):
     "Use data/eval/*.txt as validation set instead of splitting train"
 
     # Wandb configuration (for TensorBoard sync)
-    wandb_entity: str = "Mishkal"
+    wandb_entity: str = "Phonikud"
     "Team or username for Weights & Biases"
 
     wandb_project: str = "phonikud"
