@@ -36,5 +36,6 @@ packages = ["phonikud"]
 [tool.uv.workspace]
 members = [
     "model",
-    "phonikud_onnx"
+    "phonikud_onnx",
+    "experimental/deep-g2p",
 ]

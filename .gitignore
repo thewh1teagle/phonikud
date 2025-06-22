@@ -16,6 +16,7 @@ hebrew_diacritized/
 saspeech_gold_standard/
 *.json
 !phonikud/data/*.json
+!deep-g2p/data/*.txt
 ckpt/
 
 *.7z
