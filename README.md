@@ -157,6 +157,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - [ILSpeech](https://huggingface.co/datasets/thewh1teagle/ILSpeech) (speech, non commercial)
 - [Saspeech](https://huggingface.co/datasets/thewh1teagle/saspeech) (speech, non commercial)
 - [phonikud-data](https://huggingface.co/datasets/thewh1teagle/phonikud-data) (nikud and phonetics, cc-4.0)
+- [phonikud-phonemes-data](https://huggingface.co/datasets/thewh1teagle/phonikud-phonemes-data) (enhanced nikud alongside IPA phonemes, cc-4.0)
 
 ### Notes
 
