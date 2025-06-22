@@ -2,9 +2,9 @@ name: Push to Hugging Face hub
 on:
   push:
     branches: [main]
-    paths: 
-      - .github/workflows/hf_space.yml
-      - examples/editor.py
+    paths:
+      - ".github/workflows/hf_space.yml"
+      - "examples/space_v1/**"
   workflow_dispatch:
 
 jobs:
@@ -24,30 +24,31 @@ jobs:
       - name: Prepare and push to HF
         run: |
 
+          uv export --no-hashes --no-emit-project > requirements.txt
+          echo "phonikud-onnx" >> requirements.txt
+          echo "gradio>=5.34.2" >> requirements.txt
+
           # Prepare space
           mkdir $SPACE_NAME
           cd $SPACE_NAME
-          cp ../examples/editor.py app.py
-
-          # Editor deps
-          uv export --no-hashes --no-emit-project > requirements.txt
-          echo "gradio>=5.25.2" >> requirements.txt
-          echo "phonikud_onnx" >> requirements.txt
-
-          # Copy files
-          cp ../.github/workflows/hf_readme.md README.md
-          cp -rf ../phonikud .
-          cp -rf ../phonikud_onnx/src/phonikud_onnx .
+          cp -rf ../requirements.txt .
+          cp -rf ../examples/space_v1/* .
+          cp -rf ../src/phonikud .
 
           # Git
+          git lfs install
+          rm -rf .git
+          rm -rf .gitignore
+
           git init
+          git lfs track "*.onnx"
           git branch -M main
           git config --global user.email "thewh1teagle"
           git config --global user.name "thewh1teagle"
           git remote add origin https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-          git lfs install
+
           wget --progress=bar:force https://huggingface.co/thewh1teagle/phonikud-onnx/resolve/main/phonikud-1.0.int8.onnx -O phonikud-1.0.int8.onnx
-          git lfs track "*.onnx"
+
           git add .
           git commit -m "latest"
           git push --force origin main

@@ -1,6 +1,7 @@
 """
-uv pip install gradio
-uv run gradio examples/editor.py
+uv sync
+wget https://huggingface.co/thewh1teagle/phonikud-onnx/resolve/main/phonikud-1.0.int8.onnx
+uv run gradio app.py
 """
 
 from phonikud import phonemize, lexicon
