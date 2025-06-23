@@ -24,6 +24,7 @@ jobs:
       - name: Prepare and push to HF
         run: |
 
+          uv sync -U
           uv export --no-hashes --no-emit-project > requirements.txt
           echo "phonikud-onnx" >> requirements.txt
           echo "gradio>=5.34.2" >> requirements.txt
