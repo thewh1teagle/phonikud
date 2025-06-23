@@ -45,25 +45,73 @@ SEGOL = "\u05b6"
 
 
 def phonemize_hebrew(
-    letters: list[Letter],
-    stress_placement: Literal["syllable", "vowel"],
+    letters: list[Letter], stress_placement: Literal["syllable", "vowel"]
 ) -> list[str]:
-    phonemes = []
-    i = 0
-
+    phonemes, i = [], 0
     while i < len(letters):
         cur = letters[i]
         prev = letters[i - 1] if i > 0 else None
-        next = letters[i + 1] if i < len(letters) - 1 else None
+        next = letters[i + 1] if i + 1 < len(letters) else None
         next_phonemes, skip_offset = letter_to_phonemes(
-            cur, prev, next, stress_placement=stress_placement
+            cur, prev, next, stress_placement
         )
-        # TODO: split into syllables
-        # next_letters = next_phonemes, letters[i:i+skip_offset+1]
         phonemes.extend(next_phonemes)
         i += skip_offset + 1
-
     return phonemes
+
+
+def handle_yud(cur: Letter, prev: Letter | None, next: Letter | None) -> bool:
+    """Returns True if Yud should skip consonants"""
+    return (
+        next
+        # Yud without diacritics
+        and not cur.diac
+        # In middle
+        and prev
+        # Prev Hirik
+        and prev.char + prev.diac != "אֵ"
+        # Next Vav has meaning
+        and not (next.char == "ו" and next.diac and "\u05b0" not in next.diac)
+    )
+
+
+def handle_vav(cur: Letter, prev: Letter | None, next: Letter | None):
+    if prev and SHVA in prev.diac and HOLAM in cur.diac:
+        return ["vo"], True, True, 0
+
+    if next and next.char == "ו":
+        diac = cur.diac + next.diac
+        if HOLAM in diac:
+            return ["vo"], True, True, 1
+        if cur.diac == next.diac:
+            return ["vu"], True, True, 1
+        if HIRIK in cur.diac:
+            return ["vi"], True, True, 0
+        if SHVA in cur.diac and not next.diac:
+            return ["v"], True, True, 0
+        if KAMATZ in cur.diac or PATAH in cur.diac:
+            return ["va"], True, True, 0
+        if TSERE in cur.diac or SEGOL in cur.diac:
+            return ["ve"], True, True, 0
+        return [], False, False, 0
+
+    # Single ו
+    if re.search(PATAH_LIKE_PATTERN, cur.diac):
+        return ["va"], True, True, 0
+    if TSERE in cur.diac or SEGOL in cur.diac:
+        return ["ve"], True, True, 0
+    if HOLAM in cur.diac:
+        return ["o"], True, True, 0
+    if KUBUTS in cur.diac or DAGESH in cur.diac:
+        return ["u"], True, True, 0
+    if SHVA in cur.diac and not prev:
+        return ["ve"], True, True, 0
+    if HIRIK in cur.diac:
+        return ["vi"], True, True, 0
+    if next and not cur.diac:
+        return [], True, True, 0
+
+    return ["v"], True, True, 0
 
 
 def letter_to_phonemes(
@@ -85,18 +133,7 @@ def letter_to_phonemes(
         if next and next.char != "ו":
             skip_consonants = True
 
-    elif (
-        cur.char == "י"
-        and next
-        # Yud without diacritics
-        and not cur.diac
-        # In middle
-        and prev
-        # Prev Hirik
-        and prev.char + prev.diac != "אֵ"
-        # Next Vav has meaning
-        and not (next.char == "ו" and next.diac and "\u05b0" not in next.diac)
-    ):
+    elif cur.char == "י" and handle_yud(cur, prev, next):
         skip_consonants = True
 
     elif cur.char == "ש" and SIN in cur.diac:
@@ -152,76 +189,13 @@ def letter_to_phonemes(
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
         skip_consonants = True
     elif cur.char == "ו" and lexicon.NIKUD_HASER_DIACRITIC not in cur.all_diac:
-        skip_consonants = True
-
-        if prev and "\u05b0" in prev.diac and re.findall("[\u05b9-\u05ba]", cur.diac):
-            # ^ לִגְוֹעַ
-            cur_phonemes.append("vo")
-            skip_diacritics = True
-            skip_consonants = True
-
-        elif next and next.char == "ו":
-            # One of them has holam
-
-            holams = re.findall("[\u05b9-\u05ba]", cur.diac + next.diac)
-            if holams:
-                cur_phonemes.append("vo")
-                skip_diacritics = True
-                skip_offset += 1
-            # patah and next.diac empty
-            elif cur.diac == next.diac:
-                # double Vav
-                cur_phonemes.append("vu")
-                skip_diacritics = True
-                skip_offset += 1
-            elif HIRIK in cur.diac:
-                cur_phonemes.append("vi")
-                skip_diacritics = True
-            elif SHVA in cur.diac and not next.diac:
-                cur_phonemes.append("v")
-                skip_diacritics = True
-            elif KAMATZ in cur.diac or PATAH in cur.diac:
-                cur_phonemes.append("va")
-                skip_diacritics = True
-            elif SEGOL in cur.diac or TSERE in cur.diac:
-                cur_phonemes.append("ve")
-                skip_diacritics = True
-            else:
-                # TODO ?
-                # skip_consonants = False
-                skip_diacritics = False
-        else:
-            # Single vav
-
-            # Vav with Patah
-            if re.search(PATAH_LIKE_PATTERN, cur.diac):
-                cur_phonemes.append("va")
-
-            # Tsere
-            elif TSERE in cur.diac:
-                cur_phonemes.append("ve")
-            elif SEGOL in cur.diac:
-                cur_phonemes.append("ve")
-            # Holam haser
-            elif HOLAM in cur.diac:
-                cur_phonemes.append("o")
-            # Shuruk / Kubutz
-            elif KUBUTS in cur.diac or DAGESH in cur.diac:
-                cur_phonemes.append("u")
-            # Vav with Shva in start
-            elif SHVA in cur.diac and not prev:
-                cur_phonemes.append("ve")
-            # Hirik
-            elif HIRIK in cur.diac:
-                cur_phonemes.append("vi")
-            elif next and not cur.diac:
-                # It is fine for now since we use Dicta
-                skip_consonants = True
-                skip_diacritics = True
-            else:
-                cur_phonemes.append("v")
-
-            skip_diacritics = True
+        vav_phonemes, vav_skip_consonants, vav_skip_diacritics, vav_skip_offset = (
+            handle_vav(cur, prev, next)
+        )
+        cur_phonemes.extend(vav_phonemes)
+        skip_consonants = vav_skip_consonants
+        skip_diacritics = vav_skip_diacritics
+        skip_offset += vav_skip_offset
 
     if not skip_consonants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
