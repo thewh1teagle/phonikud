@@ -164,11 +164,7 @@ def letter_to_phonemes(
             # One of them has holam
 
             holams = re.findall("[\u05b9-\u05ba]", cur.diac + next.diac)
-            if len(holams) == 2:
-                cur_phonemes.append("wo")
-                skip_diacritics = True
-                skip_offset += 1
-            if len(holams) == 1:
+            if holams:
                 cur_phonemes.append("vo")
                 skip_diacritics = True
                 skip_offset += 1
@@ -187,7 +183,7 @@ def letter_to_phonemes(
             elif KAMATZ in cur.diac or PATAH in cur.diac:
                 cur_phonemes.append("va")
                 skip_diacritics = True
-            elif SEGOL in cur.diac:
+            elif SEGOL in cur.diac or TSERE in cur.diac:
                 cur_phonemes.append("ve")
                 skip_diacritics = True
             else:
