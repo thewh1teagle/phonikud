@@ -21,7 +21,7 @@ def run_phoneme_check(
         preserve_stress=using_stress,
         use_post_normalize=True,
         use_expander=True,
-        predict_shva_nah=False,
+        predict_vocal_shva=False,
         schema="plain",
     )
     ref = expected_ipa

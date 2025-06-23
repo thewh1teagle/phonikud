@@ -134,7 +134,7 @@ for sentence in sentences:
         use_post_normalize=True,
         use_expander=True,
         predict_stress=True,
-        predict_shva_nah=True,
+        predict_vocal_shva=True,
         stress_placement="vowel",
         schema="modern",
     )

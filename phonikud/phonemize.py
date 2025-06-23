@@ -7,7 +7,7 @@ from phonikud.utils import (
     post_normalize,
     post_clean,
     add_milra_hatama,
-    mark_shva_na,
+    mark_vocal_shva,
     sort_hatama,
 )
 from typing import Callable, Literal
@@ -30,7 +30,7 @@ class Phonemizer:
         use_expander: bool,
         use_post_normalize: bool,  # For TTS
         predict_stress: bool,
-        predict_shva_nah: bool,
+        predict_vocal_shva: bool,
         stress_placement: Literal["syllable", "vowel"],
         schema: Literal["plain", "modern"],
         fallback: Callable[[str], str] = None,
@@ -64,8 +64,8 @@ class Phonemizer:
                 # Skip if it starts with [ as it's used for hyper phonemes
                 return word
 
-            if predict_shva_nah:
-                mark_shva_na(word)
+            if predict_vocal_shva:
+                mark_vocal_shva(word)
             if lexicon.HATAMA_DIACRITIC not in word and predict_stress:
                 word = add_milra_hatama(word)
             letters: list[Letter] = get_letters(word)

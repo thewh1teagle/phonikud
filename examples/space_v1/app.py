@@ -61,7 +61,7 @@ def on_submit(text: str, schema: str, use_phonikud: bool) -> str:
         else text
     )
     phonemes = phonemize(
-        diacritized, predict_stress=True, schema=schema, predict_shva_nah=False
+        diacritized, predict_stress=True, schema=schema, predict_vocal_shva=False
     )
     if use_phonikud:
         return f"<div dir='rtl' style='font-size: 22px;'>{diacritized.strip()}</div><br><div dir='ltr' style='font-size: 22px;'>{phonemes.strip()}</div>"

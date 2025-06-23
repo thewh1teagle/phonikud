@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from torch.utils.data import DataLoader, Dataset
 from transformers import BertTokenizerFast
 from src.train.config import TrainArgs
-from src.model.phonikud_model import HATAMA_CHAR, MOBILE_SHVA_CHAR, PREFIX_CHAR
+from src.model.phonikud_model import HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR
 from transformers.tokenization_utils_base import BatchEncoding
 
 
@@ -35,7 +35,7 @@ class TrainData(Dataset):
     def __init__(self, unvocalized_lines: List[str], vocalized_lines: List[str]):
         self.unvocalized_lines = unvocalized_lines
         self.vocalized_lines = vocalized_lines
-        self.label_map = {HATAMA_CHAR: 1, MOBILE_SHVA_CHAR: 2, PREFIX_CHAR: 3}
+        self.label_map = {HATAMA_CHAR: 1, VOCAL_SHVA_CHAR: 2, PREFIX_CHAR: 3}
 
     def __len__(self):
         return len(self.unvocalized_lines)
@@ -43,20 +43,26 @@ class TrainData(Dataset):
     def __getitem__(self, idx):
         unvocalized_line = self.unvocalized_lines[idx]
         vocalized_line = self.vocalized_lines[idx]
-        
+
         # Create targets for each character in unvocalized text
         targets = [[1, 0, 0, 0] for _ in unvocalized_line]  # Default "plain" labels
-        
+
         # Find enhanced diacritics and apply to previous character
         for i, char in enumerate(vocalized_line):
             if char in self.label_map:
                 # Find the position in unvocalized text (look backwards)
-                char_pos = len([c for c in vocalized_line[:i] if c in unvocalized_line]) - 1
+                char_pos = (
+                    len([c for c in vocalized_line[:i] if c in unvocalized_line]) - 1
+                )
                 if 0 <= char_pos < len(targets):
                     targets[char_pos][self.label_map[char]] = 1
                     targets[char_pos][0] = 0  # Remove "plain" label
-        
-        return unvocalized_line, vocalized_line, torch.tensor(targets, dtype=torch.float)
+
+        return (
+            unvocalized_line,
+            vocalized_line,
+            torch.tensor(targets, dtype=torch.float),
+        )
 
 
 class Collator:
@@ -85,7 +91,7 @@ class Collator:
         # Create target tensor matching tokenized sequence length
         batch_size = len(text_list)
         sequence_length = tokenized_inputs.input_ids.size(1)
-        num_labels = 3  # HATAMA, MOBILE_SHVA, PREFIX
+        num_labels = 3  # HATAMA, VOCAL_SHVA, PREFIX
 
         batch_targets = torch.zeros(batch_size, sequence_length, num_labels)
 

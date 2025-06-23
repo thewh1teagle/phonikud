@@ -184,7 +184,7 @@ def sort_stress(
     return phonemes
 
 
-def mark_shva_na(word: str):
+def mark_vocal_shva(word: str):
     """
     Vocal Shva is context-independent and can be predicted with just the word or a dictionary.
     See https://hebrew-academy.org.il/2020/08/11/איך-הוגים-את-השווא-הנע

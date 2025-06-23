@@ -83,7 +83,7 @@ def evaluate_model(
                     [predictions.nikud[batch_idx]],
                     [predictions.shin[batch_idx]],
                     [predictions.hatama[batch_idx]],
-                    [predictions.mobile_shva[batch_idx]],
+                    [predictions.vocal_shva[batch_idx]],
                     [predictions.prefix[batch_idx]],
                     mark_matres_lectionis=NIKUD_HASER,
                 )

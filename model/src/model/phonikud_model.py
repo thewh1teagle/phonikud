@@ -14,11 +14,11 @@ from .dicta_model import (
 )
 
 HATAMA_CHAR = "\u05ab"  # "ole" symbol marks hatama
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks vocal shva (e)
+VOCAL_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks vocal shva (e)
 PREFIX_CHAR = "|"  # vertical bar
 NIKUD_HASER = "\u05af"  # not in use but dicta has it
 
-ENHANCED_NIKUD = HATAMA_CHAR + MOBILE_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
+ENHANCED_NIKUD = HATAMA_CHAR + VOCAL_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 
 def remove_enhanced_nikud(text: str):
@@ -53,7 +53,7 @@ class ModelPredictions:
     nikud: List[List[int]]
     shin: List[List[int]]
     hatama: List[List[int]]
-    mobile_shva: List[List[int]]
+    vocal_shva: List[List[int]]
     prefix: List[List[int]]
 
 
@@ -100,7 +100,9 @@ class PhoNikudModel(BertForDiacritization):
         # Assert the lengths are within the tokenizer's max limit
         assert all(
             len(sentence) + 2 <= tokenizer.model_max_length for sentence in sentences
-        ), f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
+        ), (
+            f"All sentences must be <= {tokenizer.model_max_length}, please segment and try again"
+        )
 
         # Tokenize the inputs and return the tensor format
         inputs = tokenizer(
@@ -122,9 +124,9 @@ class PhoNikudModel(BertForDiacritization):
         nikud_predictions,
         shin_predictions,
         hatama_predictions,
-        mobile_shva_predictions,
+        vocal_shva_predictions,
         prefix_predictions,
-        mark_matres_lectionis: str = '',
+        mark_matres_lectionis: str = "",
     ):
         ret = []
         for sent_idx, (sentence, sent_offsets) in enumerate(
@@ -166,14 +168,14 @@ class PhoNikudModel(BertForDiacritization):
 
                 # Apply hatama, mobile shva, and prefix predictions
                 hatama = HATAMA_CHAR if hatama_predictions[sent_idx][idx] == 1 else ""
-                mobile_shva = (
-                    MOBILE_SHVA_CHAR
-                    if mobile_shva_predictions[sent_idx][idx] == 1
+                vocal_shva = (
+                    VOCAL_SHVA_CHAR
+                    if vocal_shva_predictions[sent_idx][idx] == 1
                     else ""
                 )
                 prefix = PREFIX_CHAR if prefix_predictions[sent_idx][idx] == 1 else ""
 
-                output.append(char + shin + nikud + hatama + mobile_shva + prefix)
+                output.append(char + shin + nikud + hatama + vocal_shva + prefix)
 
             output.append(sentence[prev_index:])
             ret.append("".join(output))
@@ -191,14 +193,14 @@ class PhoNikudModel(BertForDiacritization):
         shin_predictions = nikud_logits.shin_logits.argmax(dim=-1).tolist()
 
         hatama_predictions = (additional_logits[..., 0] > 0).int().tolist()
-        mobile_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
+        vocal_shva_predictions = (additional_logits[..., 1] > 0).int().tolist()
         prefix_predictions = (additional_logits[..., 2] > 0).int().tolist()
 
         return ModelPredictions(
             nikud=nikud_predictions,
             shin=shin_predictions,
             hatama=hatama_predictions,
-            mobile_shva=mobile_shva_predictions,
+            vocal_shva=vocal_shva_predictions,
             prefix=prefix_predictions,
         )
 
@@ -227,7 +229,7 @@ class PhoNikudModel(BertForDiacritization):
             predictions.nikud,
             predictions.shin,
             predictions.hatama,
-            predictions.mobile_shva,
+            predictions.vocal_shva,
             predictions.prefix,
             mark_matres_lectionis,
         )

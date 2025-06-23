@@ -46,7 +46,7 @@ MATRES_LETTERS = list("אוי")
 ALEF_ORD = ord("א")
 TAF_ORD = ord("ת")
 STRESS_CHAR = "\u05ab"  # "ole" symbol marks stress
-MOBILE_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks Vocal Shva (mobile shva)
+VOCAL_SHVA_CHAR = "\u05bd"  # "meteg" symbol marks Vocal Shva (mobile shva)
 PREFIX_CHAR = "|"
 
 
@@ -150,7 +150,7 @@ class OnnxModel:
 
         # Since additional_logits shape is (batch, seq, 3), each index is a separate binary classifier
         stress_predictions = (additional_logits[..., 0] > 0).astype(np.int32)
-        mobile_shva_predictions = (additional_logits[..., 1] > 0).astype(np.int32)
+        vocal_shva_predictions = (additional_logits[..., 1] > 0).astype(np.int32)
         prefix_predictions = (additional_logits[..., 2] > 0).astype(np.int32)
 
         ret = []
@@ -195,10 +195,10 @@ class OnnxModel:
                     and stress_predictions[sent_idx][idx] == 1
                     else ""
                 )
-                mobile_shva = (
-                    MOBILE_SHVA_CHAR
-                    if mobile_shva_predictions is not None
-                    and mobile_shva_predictions[sent_idx][idx] == 1
+                vocal_shva = (
+                    VOCAL_SHVA_CHAR
+                    if vocal_shva_predictions is not None
+                    and vocal_shva_predictions[sent_idx][idx] == 1
                     else ""
                 )
 
@@ -209,7 +209,7 @@ class OnnxModel:
                     else ""
                 )
 
-                output.append(char + shin + nikud + stress + mobile_shva + prefix)
+                output.append(char + shin + nikud + stress + vocal_shva + prefix)
             output.append(sentence[prev_index:])
             ret.append("".join(output))
 

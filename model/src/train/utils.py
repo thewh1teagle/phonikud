@@ -30,6 +30,7 @@ class TrainingLine:
 @dataclass
 class MetricsResult:
     """Result of WER/CER calculation"""
+
     wer: float
     cer: float
     wer_accuracy: float
@@ -44,31 +45,39 @@ def print_model_size(model: PhoNikudModel):
     print(f"🔧 Trainable Parameters: {trainable_params:,}")
 
 
-def save_train_metadata(eval_indices: List[int], eval_lines: List[TrainingLine], val_split: float, split_seed: int, max_lines: Optional[int], data_dir: str, ckpt_dir: str):
+def save_train_metadata(
+    eval_indices: List[int],
+    eval_lines: List[TrainingLine],
+    val_split: float,
+    split_seed: int,
+    max_lines: Optional[int],
+    data_dir: str,
+    ckpt_dir: str,
+):
     """Save eval indices with verification"""
     sorted_indices = sorted(eval_indices)
-    
+
     eval_data = {
         "eval_indices": eval_indices,
         "verification": {
             "first_index": sorted_indices[0],
             "last_index": sorted_indices[-1],
             "first_line": eval_lines[sorted_indices[0]].vocalized,
-            "last_line": eval_lines[sorted_indices[-1]].vocalized
+            "last_line": eval_lines[sorted_indices[-1]].vocalized,
         },
         "params": {
             "val_split": val_split,
             "split_seed": split_seed,
             "max_lines": max_lines,
-            "data_dir": str(data_dir)
-        }
+            "data_dir": str(data_dir),
+        },
     }
-    
+
     indices_file = Path(ckpt_dir) / "train_metadata.json"
     indices_file.parent.mkdir(parents=True, exist_ok=True)
     with open(indices_file, "w", encoding="utf-8") as f:
         json.dump(eval_data, f, indent=2, ensure_ascii=False)
-    
+
     print(f"💾 Saved {len(eval_indices)} eval indices")
 
 
@@ -89,9 +98,13 @@ def read_lines(
             with open(file, "r", encoding="utf-8") as fp:
                 for line in fp:
                     # Check if we've reached the maximum number of lines
-                    if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
+                    if (
+                        max_lines is not None
+                        and max_lines > 0
+                        and len(lines) >= max_lines
+                    ):
                         break
-                        
+
                     pbar.update(len(line.encode("utf-8")))
                     # Split lines into chunks if they are too long
                     while len(line) > max_context_length:
@@ -99,16 +112,22 @@ def read_lines(
                         unvocalized = remove_enhanced_nikud(vocalized)
                         lines.append(TrainingLine(vocalized, unvocalized))
                         line = line[max_context_length:]
-                        
+
                         # Check limit after adding each chunk
-                        if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
+                        if (
+                            max_lines is not None
+                            and max_lines > 0
+                            and len(lines) >= max_lines
+                        ):
                             break
 
-                    if line.strip() and (max_lines is None or max_lines <= 0 or len(lines) < max_lines):
+                    if line.strip() and (
+                        max_lines is None or max_lines <= 0 or len(lines) < max_lines
+                    ):
                         vocalized = line.strip()
                         unvocalized = remove_enhanced_nikud(vocalized)
                         lines.append(TrainingLine(vocalized, unvocalized))
-            
+
             # Break outer loop if we've reached the limit
             if max_lines is not None and max_lines > 0 and len(lines) >= max_lines:
                 break
@@ -125,10 +144,10 @@ def prepare_indices(
     split_idx = int(len(lines) * (1 - val_split))
     torch.manual_seed(split_seed)
     idx = torch.randperm(len(lines))
-    
+
     train_indices = idx[:split_idx].tolist()
     val_indices = idx[split_idx:].tolist()
-    
+
     return train_indices, val_indices
 
 
@@ -144,17 +163,19 @@ def prepare_lines(
     # Read all lines
     print("📖🔍 Reading lines from dataset...")
     lines = read_lines(data_dir, max_context_length, max_lines)
-    
+
     # Prepare train/val split
     train_indices, val_indices = prepare_indices(lines, val_split, split_seed)
-    
+
     # Create train and validation datasets
     train_lines = [lines[i] for i in train_indices]
     val_lines = [lines[i] for i in val_indices]
-    
+
     # Save metadata
-    save_train_metadata(val_indices, lines, val_split, split_seed, max_lines, data_dir, ckpt_dir)
-    
+    save_train_metadata(
+        val_indices, lines, val_split, split_seed, max_lines, data_dir, ckpt_dir
+    )
+
     # Print samples
     print("🛤️ Train samples:")
     for i in train_lines[:3]:
@@ -163,48 +184,48 @@ def prepare_lines(
     print("🧪 Validation samples:")
     for i in val_lines[:3]:
         print(f"\t{i.vocalized} | {i.unvocalized}")
-    
-    print(f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines.")
-    
+
+    print(
+        f"✅ Loaded {len(train_lines)} training lines and {len(val_lines)} validation lines."
+    )
+
     return train_lines, val_lines
 
 
 def calculate_wer_cer_metrics(
-    predictions: List[str], 
-    ground_truth: List[str],
-    val_loss: float = 0.0
+    predictions: List[str], ground_truth: List[str], val_loss: float = 0.0
 ) -> MetricsResult:
     """
     Calculate WER and CER metrics from predictions and ground truth.
-    
+
     Args:
         predictions: List of predicted text strings
         ground_truth: List of ground truth text strings
         val_loss: Validation loss (optional, defaults to 0.0)
-    
+
     Returns:
         MetricsResult containing WER, CER, and accuracy metrics
     """
     # Calculate WER and CER using jiwer
     wer = jiwer.wer(ground_truth, predictions)
     cer = jiwer.cer(ground_truth, predictions)
-    
+
     # Handle the case where jiwer returns a dict instead of float
     if isinstance(wer, dict):
-        wer = float(wer.get('wer', 0.0))
+        wer = float(wer.get("wer", 0.0))
     if isinstance(cer, dict):
-        cer = float(cer.get('cer', 0.0))
-    
+        cer = float(cer.get("cer", 0.0))
+
     # Calculate accuracies as percentages (1 - error_rate) * 100
     wer_accuracy = (1 - wer) * 100
     cer_accuracy = (1 - cer) * 100
-    
+
     return MetricsResult(
         wer=wer,
         cer=cer,
         wer_accuracy=wer_accuracy,
         cer_accuracy=cer_accuracy,
-        val_loss=val_loss
+        val_loss=val_loss,
     )
 
 
@@ -214,11 +235,11 @@ def log_metrics_to_tensorboard_and_wandb(
     ground_truth: List[str],
     step: int,
     writer: SummaryWriter,
-    phase: str = "val"
+    phase: str = "val",
 ) -> None:
     """
     Log metrics and examples to TensorBoard and wandb.
-    
+
     Args:
         metrics: MetricsResult containing the calculated metrics
         predictions: List of predicted text strings
@@ -242,7 +263,7 @@ def log_metrics_to_tensorboard_and_wandb(
         # For TensorBoard (text format)
         examples_text = ""
         for i, idx in enumerate(random_indices):
-            examples_text += f"**Example {i+1}:**\n"
+            examples_text += f"**Example {i + 1}:**\n"
             examples_text += f"Source:    {ground_truth[idx]}\n"
             examples_text += f"Predicted: {predictions[idx]}\n\n"
 
@@ -262,15 +283,15 @@ def print_metrics_with_examples(
     predictions: List[str],
     ground_truth: List[str],
     step: int,
-    phase: str = "validation"
+    phase: str = "validation",
 ) -> None:
     """
     Print metrics and examples in a nice format.
-    
+
     Args:
         metrics: MetricsResult containing the calculated metrics
         predictions: List of predicted text strings
-        ground_truth: List of ground truth text strings  
+        ground_truth: List of ground truth text strings
         step: Training step number
         phase: Phase identifier ("validation" or "training")
     """
@@ -299,31 +320,31 @@ def calculate_train_batch_metrics(
     batch: Batch,
     tokenizer: BertTokenizerFast,
     output: MenakedLogitsOutput,
-    loss: float
+    loss: float,
 ) -> MetricsResult:
     """
     Calculate WER/CER metrics for a training batch.
-    
+
     Args:
         model: The PhoNikudModel instance
         batch: Training batch containing vocalized text and inputs
         tokenizer: BERT tokenizer for offset mapping
         output: Model output from forward pass
         loss: Training loss for this batch
-        
+
     Returns:
         MetricsResult containing WER, CER, and accuracy metrics
     """
     # Get predictions for this batch
     predictions: ModelPredictions = model.get_predictions_from_output(output)
-    
+
     batch_predictions: List[str] = []
     batch_ground_truth: List[str] = []
-    
+
     # Process each sample in the batch
     for batch_idx, src_text in enumerate(batch.vocalized):
         text_without_nikud: str = remove_nikud(src_text, additional=ENHANCED_NIKUD)
-        
+
         # Get offset mapping for this specific text
         tokenized_for_offsets = tokenizer(
             [text_without_nikud],
@@ -331,7 +352,7 @@ def calculate_train_batch_metrics(
             return_tensors="pt",
         )
         offset_mapping = tokenized_for_offsets.offset_mapping[0]
-        
+
         # Decode prediction for this sample
         predicted_texts = model.decode(
             [text_without_nikud],
@@ -339,17 +360,17 @@ def calculate_train_batch_metrics(
             [predictions.nikud[batch_idx]],
             [predictions.shin[batch_idx]],
             [predictions.hatama[batch_idx]],
-            [predictions.mobile_shva[batch_idx]],
+            [predictions.vocal_shva[batch_idx]],
             [predictions.prefix[batch_idx]],
             mark_matres_lectionis=NIKUD_HASER,
         )
-        
+
         # Remove nikud from both predicted and ground truth
         predicted_texts[0] = remove_nikud(predicted_texts[0])
         src_text_clean = remove_nikud(src_text)
-        
+
         batch_predictions.append(predicted_texts[0])
         batch_ground_truth.append(src_text_clean)
-    
+
     # Calculate metrics using the main utility function
     return calculate_wer_cer_metrics(batch_predictions, batch_ground_truth, loss)
