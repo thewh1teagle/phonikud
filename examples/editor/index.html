@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <title>פרויקט מישקל</title>
+    <title>פרויקט פוניקוד</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -242,8 +242,15 @@
       document
         .getElementById("add-diacritics-btn")
         .addEventListener("click", async function () {
-          const text = textarea.value.trim();
+          const text = textarea.value;
           if (!text) return;
+
+          const btn = this;
+          const originalText = btn.textContent;
+
+          // Show progress
+          btn.textContent = "מנקד...";
+          btn.disabled = true;
 
           try {
             const response = await fetch("/add_diacritics", {
@@ -262,6 +269,10 @@
             }
           } catch (error) {
             alert("שגיאה בחיבור לשרת");
+          } finally {
+            // Reset button
+            btn.textContent = originalText;
+            btn.disabled = false;
           }
         });
 

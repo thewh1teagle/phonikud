@@ -9,12 +9,42 @@ class Phonikud:
 
     @classmethod
     def from_session(cls, session: ort.InferenceSession):
-        instance: 'Phonikud' = cls.__new__(cls)
-        instance.model = OnnxModel(model_path='', session=session)
+        instance: "Phonikud" = cls.__new__(cls)
+        instance.model = OnnxModel(model_path="", session=session)
         return instance
 
+    def prepare_chunks(self, text: str) -> list[str]:
+        """
+        Split text into chunks no longer than 2046 characters.
+        """
+        if len(text) <= 2046:
+            return [text]
+
+        parts = re.split(r"(\.|\n)", text)
+        chunks = []
+        buf = ""
+
+        for part in parts:
+            if len(buf + part) <= 2046:
+                buf += part
+            else:
+                if buf:
+                    chunks.append(buf)
+                buf = part
+        if buf:
+            chunks.append(buf)
+
+        result = []
+        for chunk in chunks:
+            if len(chunk) <= 2046:
+                result.append(chunk)
+            else:
+                result.extend([chunk[i : i + 2046] for i in range(0, len(chunk), 2046)])
+
+        return result
+
     def add_diacritics(
-        self, sentences: list | str, mark_matres_lectionis: str | None = None
+        self, sentence: str, mark_matres_lectionis: str | None = None
     ) -> str:
         """
         Adds nikud (Hebrew diacritics) to the given text.
@@ -27,13 +57,14 @@ class Phonikud:
         Returns:
         - str: The text with added diacritics.
         """
-
-        if isinstance(sentences, str):
-            sentences = [sentences]
-        result = self.model.predict(
-            sentences, mark_matres_lectionis=mark_matres_lectionis
-        )
-        return result[0]
+        chunks = self.prepare_chunks(sentence)
+        results = []
+        for chunk in chunks:
+            result = self.model.predict(
+                chunk, mark_matres_lectionis=mark_matres_lectionis
+            )
+            results.append(result[0])
+        return "".join(results)
 
     def get_nikud_male(self, text: str, mark_matres_lectionis: str):
         """

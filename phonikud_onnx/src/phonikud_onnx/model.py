@@ -74,6 +74,7 @@ class OnnxModel:
     ):
         # Load the tokenizer
         self.tokenizer = Tokenizer.from_pretrained(tokenizer_name)
+        self.max_context_length = 2048 - 2  # 2 for the special tokens
 
         # Create ONNX Runtime session
         self.session = session or ort.InferenceSession(model_path)
@@ -128,8 +129,12 @@ class OnnxModel:
             "token_type_ids": np.zeros_like(np.array(input_ids, dtype=np.int64)),
         }, offset_mapping
 
-    def predict(self, sentences, mark_matres_lectionis=None, padding="longest"):
-        sentences = [remove_nikkud(sentence) for sentence in sentences]
+    def predict(self, sentence: str, mark_matres_lectionis=None, padding="longest"):
+        """
+        Make sure the sentence is not longer than 2046 characters. (2048 - 2 for the special tokens)
+        """
+
+        sentences = [remove_nikkud(sentence)]
         inputs, offset_mapping = self._create_inputs(sentences, padding)
 
         # Run inference
