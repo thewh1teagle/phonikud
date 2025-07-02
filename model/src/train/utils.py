@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import torch
 import json
 from src.model.phonikud_model import (
-    PhoNikudModel,
+    PhonikudModel,
     remove_enhanced_nikud,
     NIKUD_HASER,
     remove_nikud,
@@ -19,6 +19,7 @@ from typing import Union
 from transformers import BertTokenizerFast
 from model.src.model.phonikud_model import ModelPredictions, MenakedLogitsOutput
 from src.train.data import Batch
+import shutil
 
 
 @dataclass
@@ -38,7 +39,7 @@ class MetricsResult:
     val_loss: float
 
 
-def print_model_size(model: PhoNikudModel):
+def print_model_size(model: PhonikudModel):
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"💾 Total Parameters: {total_params:,}")
@@ -316,7 +317,7 @@ def print_metrics_with_examples(
 
 
 def calculate_train_batch_metrics(
-    model: PhoNikudModel,
+    model: PhonikudModel,
     batch: Batch,
     tokenizer: BertTokenizerFast,
     output: MenakedLogitsOutput,
@@ -326,7 +327,7 @@ def calculate_train_batch_metrics(
     Calculate WER/CER metrics for a training batch.
 
     Args:
-        model: The PhoNikudModel instance
+        model: The PhonikudModel instance
         batch: Training batch containing vocalized text and inputs
         tokenizer: BERT tokenizer for offset mapping
         output: Model output from forward pass
@@ -374,3 +375,28 @@ def calculate_train_batch_metrics(
 
     # Calculate metrics using the main utility function
     return calculate_wer_cer_metrics(batch_predictions, batch_ground_truth, loss)
+
+
+def save_model(model: PhonikudModel, tokenizer: BertTokenizerFast, dst_path: str):
+    dst_path = Path(dst_path)
+    model_dir = Path(__file__).parent / "../model"
+    model_dir = model_dir.resolve()
+    phonikud_modal_file = model_dir / "phonikud_model.py"
+    dicta_modal_file = model_dir / "dicta_model.py"
+    model_config_file = dst_path / "config.json"
+
+    model.save_pretrained(dst_path)
+    tokenizer.save_pretrained(dst_path)
+
+    # Copy models to the new model for transformers to use
+    shutil.copy(phonikud_modal_file, dst_path)
+    shutil.copy(dicta_modal_file, dst_path)
+
+    # Add auto_map to the config for transformers to use
+    with open(model_config_file, "r") as f:
+        config = json.load(f)
+
+    config["auto_map"] = {"AutoModel": "phonikud_model.PhonikudModel"}
+
+    with open(model_config_file, "w") as f:
+        json.dump(config, f, indent=4)

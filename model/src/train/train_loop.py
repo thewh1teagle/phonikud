@@ -7,15 +7,15 @@ from torch.utils.data import DataLoader
 from src.train.config import TrainArgs
 from transformers.models.bert.tokenization_bert_fast import BertTokenizerFast
 from src.train.evaluate import evaluate_model
-from model.src.model.phonikud_model import PhoNikudModel, MenakedLogitsOutput
+from model.src.model.phonikud_model import PhonikudModel, MenakedLogitsOutput
 from datetime import datetime
 from pathlib import Path
 import wandb
-from src.train.utils import calculate_train_batch_metrics
+from src.train.utils import calculate_train_batch_metrics, save_model
 
 
 def train_model(
-    model: PhoNikudModel,
+    model: PhonikudModel,
     tokenizer: BertTokenizerFast,
     train_dataloader: DataLoader,
     val_dataloader: DataLoader,
@@ -27,12 +27,12 @@ def train_model(
     # Initialize wandb with TensorBoard sync
     log_dir = Path(args.log_dir) / run_name
     log_dir.mkdir(parents=True, exist_ok=True)
-    wandb.tensorboard.patch(root_logdir=str(log_dir)) # type: ignore
+    wandb.tensorboard.patch(root_logdir=str(log_dir))  # type: ignore
     wandb.init(
         project=args.wandb_project,
         entity=args.wandb_entity,
         config=vars(args),
-        mode=args.wandb_mode, # type: ignore
+        mode=args.wandb_mode,  # type: ignore
         name=run_name,
         sync_tensorboard=True,
     )
@@ -52,7 +52,7 @@ def train_model(
         gamma=0.1,
     )
     # Boosted on GPU
-    scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device) # type: ignore
+    scaler = torch.amp.GradScaler(args.device, enabled="cuda" in args.device)  # type: ignore
 
     step = args.pre_training_step
     best_val_score = float("inf")
@@ -107,8 +107,7 @@ def train_model(
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
                 last_dir = f"{args.output_dir}/last"
                 print(f"💾 Saving last checkpoint at step {step} to: {last_dir}")
-                model.save_pretrained(last_dir)
-                tokenizer.save_pretrained(last_dir)
+                save_model(model, tokenizer, last_dir)
 
             # Val
             if args.checkpoint_interval and step % args.checkpoint_interval == 0:
@@ -117,18 +116,24 @@ def train_model(
                     train_metrics = calculate_train_batch_metrics(
                         model, batch, tokenizer, output, loss.item()
                     )
-                    
+
                     # Log training metrics to TensorBoard
                     writer.add_scalar("Metrics/WER_train", train_metrics.wer, step)
                     writer.add_scalar("Metrics/CER_train", train_metrics.cer, step)
-                    writer.add_scalar("Metrics/WER_Accuracy_train", train_metrics.wer_accuracy, step)
-                    writer.add_scalar("Metrics/CER_Accuracy_train", train_metrics.cer_accuracy, step)
-                    
-                    print(f"🏃 Training WER at step {step}: {train_metrics.wer:.4f} ({train_metrics.wer_accuracy:.2f}% accuracy)")
-                    
+                    writer.add_scalar(
+                        "Metrics/WER_Accuracy_train", train_metrics.wer_accuracy, step
+                    )
+                    writer.add_scalar(
+                        "Metrics/CER_Accuracy_train", train_metrics.cer_accuracy, step
+                    )
+
+                    print(
+                        f"🏃 Training WER at step {step}: {train_metrics.wer:.4f} ({train_metrics.wer_accuracy:.2f}% accuracy)"
+                    )
+
                 except Exception as e:
                     print(f"⚠️ Could not calculate training WER/CER at step {step}: {e}")
-                
+
                 # Evaluate and maybe save "best"
                 val_score, wer = evaluate_model(
                     model, val_dataloader, args, tokenizer, step, writer
@@ -141,8 +146,7 @@ def train_model(
                     print(
                         f"🏆 New best model (loss) at step {step} (val_score={val_score:.4f}), saving to: {best_dir}"
                     )
-                    model.save_pretrained(best_dir)
-                    tokenizer.save_pretrained(best_dir)
+                    save_model(model, tokenizer, best_dir)
                     early_stop_counter = 0
                 else:
                     print(
@@ -157,18 +161,19 @@ def train_model(
                     print(
                         f"🎯 New best WER at step {step} (WER={wer:.4f}), saving to: {best_wer_dir}"
                     )
-                    model.save_pretrained(best_wer_dir)
-                    tokenizer.save_pretrained(best_wer_dir)
-                    
+                    save_model(model, tokenizer, best_wer_dir)
+
                     # Save WER info to a text file in the checkpoint directory
                     wer_info_path = Path(best_wer_dir) / "wer_info.txt"
                     with open(wer_info_path, "w") as f:
                         f.write(f"Best WER: {wer:.6f}\n")
                         f.write(f"Step: {step}\n")
                         f.write(f"Validation Loss: {val_score:.6f}\n")
-                        f.write(f"WER Accuracy: {(1-wer)*100:.2f}%\n")
+                        f.write(f"WER Accuracy: {(1 - wer) * 100:.2f}%\n")
                 else:
-                    print(f"📊 No WER improvement at step {step} (current WER={wer:.4f}, best WER={best_wer:.4f})")
+                    print(
+                        f"📊 No WER improvement at step {step} (current WER={wer:.4f}, best WER={best_wer:.4f})"
+                    )
 
                 if (
                     args.early_stopping_patience
@@ -194,10 +199,9 @@ def train_model(
 
     final_dir = f"{args.output_dir}/loss_{loss.item():.2f}"
     print(f"🚀 Saving trained model to: {final_dir}")
-    model.save_pretrained(final_dir)
-    tokenizer.save_pretrained(final_dir)
+    save_model(model, tokenizer, final_dir)
 
     # Print final summary
-    print(f"\n🏁 Training Summary:")
+    print("\n🏁 Training Summary:")
     print(f"   Best Validation Loss: {best_val_score:.4f}")
-    print(f"   Best WER: {best_wer:.4f} ({(1-best_wer)*100:.2f}% accuracy)")
+    print(f"   Best WER: {best_wer:.4f} ({(1 - best_wer) * 100:.2f}% accuracy)")

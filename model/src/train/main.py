@@ -16,7 +16,7 @@ from src.train.config import get_opts
 from src.train.data import Collator, get_dataloader
 from src.train.train_loop import train_model
 from transformers import AutoTokenizer
-from src.model.phonikud_model import PhoNikudModel
+from src.model.phonikud_model import PhonikudModel
 from src.train.utils import print_model_size, prepare_lines
 
 
@@ -24,10 +24,10 @@ def main():
     args = get_opts()
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
-    model = PhoNikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
+    model = PhonikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
     print_model_size(model)
 
-    model.to(args.device) # type: ignore
+    model.to(args.device)  # type: ignore
     model.freeze_base_model()
 
     tokenizer = AutoTokenizer.from_pretrained(
@@ -39,7 +39,7 @@ def main():
     train_lines, val_lines = prepare_lines(
         data_dir=str(args.data_dir),
         ckpt_dir=str(args.model_checkpoint),
-        val_split=args.val_split,   
+        val_split=args.val_split,
         split_seed=args.split_seed,
         max_lines=args.max_lines,
     )

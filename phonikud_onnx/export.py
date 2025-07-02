@@ -18,12 +18,12 @@ import sys
 
 sys.path.append(str(Path(__file__).parent / "../model/src"))
 from model.phonikud_model import (
-    PhoNikudModel,
+    PhonikudModel,
 )  # TODO: add it as package for autocomplete
 
 # Global metadata to add to ONNX models
 metadata = {
-    "commit": "10aac8d", # https://huggingface.co/thewh1teagle/phonikud/tree/main
+    "commit": "10aac8d",  # https://huggingface.co/thewh1teagle/phonikud/tree/main
 }
 
 
@@ -85,10 +85,10 @@ def main():
     print(f"Loading model from: {args.model}")
 
     # Option 1: If your model can be loaded directly from checkpoint
-    model = PhoNikudModel.from_pretrained(args.model)  # force_download=True
+    model = PhonikudModel.from_pretrained(args.model)  # force_download=True
 
     # Option 2: If you need to load from a saved state dict
-    # model = PhoNikudModel(config)
+    # model = PhonikudModel(config)
     # state_dict = torch.load(os.path.join(args.model, "pytorch_model.bin"))
     # model.load_state_dict(state_dict)
 

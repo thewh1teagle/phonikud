@@ -57,7 +57,7 @@ class ModelPredictions:
     prefix: List[List[int]]
 
 
-class PhoNikudModel(BertForDiacritization):
+class PhonikudModel(BertForDiacritization):
     def __init__(self, config):
         super().__init__(config)
         self.config = config

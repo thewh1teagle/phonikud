@@ -8,7 +8,7 @@ from src.model.phonikud_model import NIKUD_HASER, remove_nikud, ENHANCED_NIKUD
 from src.train.data import Batch
 from model.src.model.phonikud_model import (
     MenakedLogitsOutput,
-    PhoNikudModel,
+    PhonikudModel,
     ModelPredictions,
 )
 from typing import List
@@ -21,7 +21,7 @@ from src.train.utils import (
 
 
 def evaluate_model(
-    model: PhoNikudModel,
+    model: PhonikudModel,
     val_dataloader: DataLoader,
     args: TrainArgs,
     tokenizer: BertTokenizerFast,
