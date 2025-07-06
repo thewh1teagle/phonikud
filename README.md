@@ -130,12 +130,13 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 ## ℹ️ Limitations
 
 - Some of the _nikud_ may sound a bit formal - similar to other models
-- Some words get the same _nikud_ but different _hatama_ - not always accurate
+- Some words get the same _nikud_ but different _hat'ama_ - not always accurate
+- Does not currently support user choice between multiple possibilities, or _nikud_ hints in input 
 - Basic support for non-words (gibberish, typos) - not always handled
 - Names and non-Hebrew words are sometimes predicted incorrectly
 
 💡 You can always pass your own phonemes using markdown-like syntax:  
-`[...title](/ʔantsiklopˈedja/)`
+`[...title](/ʔentsiklopˈedja/)`
 
 ## 🧠 Future Ideas
 
