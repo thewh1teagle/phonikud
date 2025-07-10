@@ -160,6 +160,12 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 - [phonikud-data](https://huggingface.co/datasets/thewh1teagle/phonikud-data) (nikud and phonetics, cc-4.0)
 - [phonikud-phonemes-data](https://huggingface.co/datasets/thewh1teagle/phonikud-phonemes-data) (enhanced nikud alongside IPA phonemes, cc-4.0)
 
+## License
+
+Phonikud G2P (the code in this repository) is licensed under CC BY 4.0 (open use).
+Note: The datasets included or referenced in this repository have their own separate licenses.
+Please make sure to read both the Phonikud license (see LICENSE) and the individual dataset licenses carefully before use.
+
 ### Notes
 
 - The default schema is `modern`. you can use `plain` schema for simplicify (eg. `x` instead of `χ`). use `phonemize(..., schema='plain')`
