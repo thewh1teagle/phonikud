@@ -45,6 +45,13 @@ See [TTS with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonikud-
 
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
 
+
+## Community
+
+[![Discord](https://img.shields.io/badge/chat-discord-7289da.svg)](https://discord.gg/EcxWSstQN8)
+
+Come chat about Hebrew TTS!
+
 ## Docs 📚
 
 - It is recommend to add nikud with [phonikud-onnx](phonikud_onnx) model
