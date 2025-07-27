@@ -48,7 +48,7 @@ See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/pho
 
 ## Community
 
-[![Discord](https://img.shields.io/badge/chat-discord-7289da.svg)](https://discord.gg/EcxWSstQN8)
+[![Discord](https://img.shields.io/badge/chat-discord-7289da.svg)](https://discord.gg/trfCMfhhum)
 
 Come chat about Hebrew TTS!
 
