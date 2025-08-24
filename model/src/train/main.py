@@ -38,7 +38,7 @@ def main():
     # Data split
     train_lines, val_lines = prepare_lines(
         data_dir=str(args.data_dir),
-        ckpt_dir=str(args.model_checkpoint),
+        ckpt_dir=str(args.output_dir),
         val_split=args.val_split,
         split_seed=args.split_seed,
         max_lines=args.max_lines,

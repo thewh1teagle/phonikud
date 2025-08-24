@@ -50,6 +50,9 @@ class EvalArgs(Tap):
     model: str = str(BASE_PATH / "ckpt/best_wer")
     "Model path or name"
 
+    indices_file: str = str(BASE_PATH / "ckpt/train_metadata.json")
+    "Path to indices file"
+
     device: str = "cuda"
     "Device to use for inference"
 
@@ -120,7 +123,7 @@ def eval_against_train_data(args: EvalArgs):
     """Evaluate against training validation data with verification"""
     # Load saved eval indices
     model_path = Path(args.model)
-    indices_file = model_path.parent / "train_metadata.json"
+    indices_file = Path(args.indices_file)
 
     if not indices_file.exists():
         print(f"❌ No train_metadata.json found in {model_path}")
