@@ -23,7 +23,7 @@ from model.phonikud_model import (
 
 # Global metadata to add to ONNX models
 metadata = {
-    "commit": "10aac8d",  # https://huggingface.co/thewh1teagle/phonikud/tree/main
+    "commit": "aef4b26",  # https://huggingface.co/thewh1teagle/phonikud/tree/main
 }
 
 
