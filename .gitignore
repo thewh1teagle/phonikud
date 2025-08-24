@@ -26,3 +26,4 @@ ckpt/
 wandb/
 logs/
 wandb/
+events.out.tfevents*
