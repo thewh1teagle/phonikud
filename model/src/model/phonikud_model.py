@@ -21,6 +21,16 @@ NIKUD_HASER = "\u05af"  # not in use but dicta has it
 ENHANCED_NIKUD = HATAMA_CHAR + VOCAL_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 
+def get_char_name(char: str) -> str:
+    """Get clean character name without Unicode symbols"""
+    names = {
+        HATAMA_CHAR: "HATAMA",
+        VOCAL_SHVA_CHAR: "VOCAL_SHVA",
+        PREFIX_CHAR: "PREFIX",
+    }
+    return names.get(char, char)
+
+
 def remove_enhanced_nikud(text: str):
     return remove_nikud(text, additional=ENHANCED_NIKUD)
 
@@ -76,22 +86,29 @@ class PhonikudModel(BertForDiacritization):
             param.requires_grad = False
 
     def freeze_specific_chars(self, chars_to_train: List[str]):
-        """Freeze MLP parameters for characters not being trained"""
+        """Freeze entire MLP, then unfreeze only specific character outputs"""
         if len(chars_to_train) == 3:
             return  # Training all characters, no freezing needed
 
-        final_layer = self.mlp[-1]  # nn.Linear(256, 3)
+        # Step 1: Freeze entire MLP
+        for param in self.mlp.parameters():
+            param.requires_grad = False
+        print("🧊 Frozen entire MLP")
 
-        # Map characters to channel indices
+        # Step 2: Unfreeze only specific output weights for training characters
+        final_layer = self.mlp[-1]  # nn.Linear(256, 3)
         char_to_idx = {HATAMA_CHAR: 0, VOCAL_SHVA_CHAR: 1, PREFIX_CHAR: 2}
 
-        # Freeze parameters for channels not being trained
-        for char, idx in char_to_idx.items():
-            if char not in chars_to_train:
-                # Freeze weight column and bias element for this character
-                final_layer.weight[idx].requires_grad = False
-                final_layer.bias[idx].requires_grad = False
-                print(f"🧊 Frozen parameters for {char} (channel {idx})")
+        for char in chars_to_train:
+            if char in char_to_idx:
+                idx = char_to_idx[char]
+                final_layer.weight[idx].requires_grad = True
+                final_layer.bias[idx].requires_grad = True
+                from src.train.utils import get_char_name
+
+                print(
+                    f"🔓 Unfrozen parameters for {get_char_name(char)} (channel {idx})"
+                )
 
     def forward(self, x):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
