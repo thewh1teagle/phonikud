@@ -15,11 +15,11 @@ import wandb
 import jiwer
 import random
 from torch.utils.tensorboard import SummaryWriter
-from typing import Union
 from transformers import BertTokenizerFast
 from model.src.model.phonikud_model import ModelPredictions, MenakedLogitsOutput
 from src.train.data import Batch
 import shutil
+from src.model.phonikud_model import HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR
 
 
 @dataclass
@@ -400,3 +400,30 @@ def save_model(model: PhonikudModel, tokenizer: BertTokenizerFast, dst_path: str
 
     with open(model_config_file, "w") as f:
         json.dump(config, f, indent=4)
+
+
+def get_char_mask(chars_to_train: List[str]) -> torch.Tensor:
+    """Returns boolean mask for [hatama, vocal_shva, prefix] channels"""
+    if not chars_to_train:  # Empty list = train all
+        return torch.ones(3, dtype=torch.bool)
+
+    # Map characters to channel indices
+    mask = torch.zeros(3, dtype=torch.bool)
+    if HATAMA_CHAR in chars_to_train:
+        mask[0] = True  # hatama
+    if VOCAL_SHVA_CHAR in chars_to_train:
+        mask[1] = True  # vocal_shva
+    if PREFIX_CHAR in chars_to_train:
+        mask[2] = True  # prefix
+
+    return mask
+
+
+def get_train_char_name(char: str) -> str:
+    """Get readable name for a single character"""
+    names = {
+        HATAMA_CHAR: "hatama(֫)",
+        VOCAL_SHVA_CHAR: "vocal_shva(ֽ)",
+        PREFIX_CHAR: "prefix(|)",
+    }
+    return names.get(char, char)

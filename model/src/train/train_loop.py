@@ -11,7 +11,12 @@ from model.src.model.phonikud_model import PhonikudModel, MenakedLogitsOutput
 from datetime import datetime
 from pathlib import Path
 import wandb
-from src.train.utils import calculate_train_batch_metrics, save_model
+from src.train.utils import (
+    calculate_train_batch_metrics,
+    save_model,
+    get_char_mask,
+    get_train_char_name,
+)
 
 
 def train_model(
@@ -59,6 +64,15 @@ def train_model(
     best_wer = float("inf")  # Track best WER
     early_stop_counter = 0
 
+    # Setup character-specific training
+    char_mask = get_char_mask(args.train_chars).to(args.device)
+
+    if len(args.train_chars) == 3:
+        print("🎯 Training on all characters")
+    else:
+        names = [get_train_char_name(char) for char in args.train_chars]
+        print(f"🎯 Training only on: {', '.join(names)}")
+
     for epoch in trange(args.epochs, desc="Epoch"):
         pbar = tqdm(
             enumerate(train_dataloader), desc="Train iter", total=len(train_dataloader)
@@ -80,9 +94,14 @@ def train_model(
             targets = targets.to(args.device)
 
             output: MenakedLogitsOutput = model(inputs)
-            active_logits: torch.Tensor = output.additional_logits
+            logits: torch.Tensor = output.additional_logits
 
-            loss = criterion(active_logits, targets.float())
+            # Apply selective training mask
+            if len(args.train_chars) < 3:  # Only mask if not training all chars
+                logits = logits * char_mask.float()
+                targets = targets * char_mask.float()
+
+            loss = criterion(logits, targets.float())
 
             scaler.scale(loss).backward()
             # Unscale gradients before clipping
