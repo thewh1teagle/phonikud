@@ -14,7 +14,6 @@ import wandb
 from src.train.utils import (
     calculate_train_batch_metrics,
     save_model,
-    get_char_mask,
     get_train_char_name,
 )
 
@@ -64,9 +63,7 @@ def train_model(
     best_wer = float("inf")  # Track best WER
     early_stop_counter = 0
 
-    # Setup character-specific training
-    char_mask = get_char_mask(args.train_chars).to(args.device)
-
+    # Print character training info
     if len(args.train_chars) == 3:
         print("🎯 Training on all characters")
     else:
@@ -95,11 +92,6 @@ def train_model(
 
             output: MenakedLogitsOutput = model(inputs)
             logits: torch.Tensor = output.additional_logits
-
-            # Apply selective training mask
-            if len(args.train_chars) < 3:  # Only mask if not training all chars
-                logits = logits * char_mask.float()
-                targets = targets * char_mask.float()
 
             loss = criterion(logits, targets.float())
 

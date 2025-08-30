@@ -402,23 +402,6 @@ def save_model(model: PhonikudModel, tokenizer: BertTokenizerFast, dst_path: str
         json.dump(config, f, indent=4)
 
 
-def get_char_mask(chars_to_train: List[str]) -> torch.Tensor:
-    """Returns boolean mask for [hatama, vocal_shva, prefix] channels"""
-    if not chars_to_train:  # Empty list = train all
-        return torch.ones(3, dtype=torch.bool)
-
-    # Map characters to channel indices
-    mask = torch.zeros(3, dtype=torch.bool)
-    if HATAMA_CHAR in chars_to_train:
-        mask[0] = True  # hatama
-    if VOCAL_SHVA_CHAR in chars_to_train:
-        mask[1] = True  # vocal_shva
-    if PREFIX_CHAR in chars_to_train:
-        mask[2] = True  # prefix
-
-    return mask
-
-
 def get_train_char_name(char: str) -> str:
     """Get readable name for a single character"""
     names = {

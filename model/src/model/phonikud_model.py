@@ -75,6 +75,24 @@ class PhonikudModel(BertForDiacritization):
         for param in self.menaked.parameters():
             param.requires_grad = False
 
+    def freeze_specific_chars(self, chars_to_train: List[str]):
+        """Freeze MLP parameters for characters not being trained"""
+        if len(chars_to_train) == 3:
+            return  # Training all characters, no freezing needed
+
+        final_layer = self.mlp[-1]  # nn.Linear(256, 3)
+
+        # Map characters to channel indices
+        char_to_idx = {HATAMA_CHAR: 0, VOCAL_SHVA_CHAR: 1, PREFIX_CHAR: 2}
+
+        # Freeze parameters for channels not being trained
+        for char, idx in char_to_idx.items():
+            if char not in chars_to_train:
+                # Freeze weight column and bias element for this character
+                final_layer.weight[idx].requires_grad = False
+                final_layer.bias[idx].requires_grad = False
+                print(f"🧊 Frozen parameters for {char} (channel {idx})")
+
     def forward(self, x):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
         bert_outputs = self.bert(**x)
