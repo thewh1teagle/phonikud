@@ -21,16 +21,6 @@ NIKUD_HASER = "\u05af"  # not in use but dicta has it
 ENHANCED_NIKUD = HATAMA_CHAR + VOCAL_SHVA_CHAR + PREFIX_CHAR + NIKUD_HASER
 
 
-def get_char_name(char: str) -> str:
-    """Get clean character name without Unicode symbols"""
-    names = {
-        HATAMA_CHAR: "HATAMA",
-        VOCAL_SHVA_CHAR: "VOCAL_SHVA",
-        PREFIX_CHAR: "PREFIX",
-    }
-    return names.get(char, char)
-
-
 def remove_enhanced_nikud(text: str):
     return remove_nikud(text, additional=ENHANCED_NIKUD)
 
@@ -104,10 +94,10 @@ class PhonikudModel(BertForDiacritization):
                 idx = char_to_idx[char]
                 final_layer.weight[idx].requires_grad = True
                 final_layer.bias[idx].requires_grad = True
-                from src.train.utils import get_char_name
+                from src.train.utils import get_train_char_name
 
                 print(
-                    f"🔓 Unfrozen parameters for {get_char_name(char)} (channel {idx})"
+                    f"🔓 Unfrozen parameters for {get_train_char_name(char)} (channel {idx})"
                 )
 
     def forward(self, x):
