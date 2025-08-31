@@ -400,3 +400,15 @@ def save_model(model: PhonikudModel, tokenizer: BertTokenizerFast, dst_path: str
 
     with open(model_config_file, "w") as f:
         json.dump(config, f, indent=4)
+
+
+def get_train_char_name(char: str) -> str:
+    """Get readable name for a single character"""
+    from src.model.phonikud_model import HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR
+
+    names = {
+        HATAMA_CHAR: "hatama(֫)",
+        VOCAL_SHVA_CHAR: "vocal_shva(ֽ)",
+        PREFIX_CHAR: "prefix(|)",
+    }
+    return names.get(char, char)

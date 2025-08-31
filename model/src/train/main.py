@@ -29,6 +29,7 @@ def main():
 
     model.to(args.device)  # type: ignore
     model.freeze_base_model()
+    model.prepare_to_train_on_specific_chars(args.train_chars)
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_checkpoint, trust_remote_code=True
