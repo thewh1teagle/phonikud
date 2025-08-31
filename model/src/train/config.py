@@ -1,7 +1,6 @@
 from tap import Tap
-from typing import Literal, List
+from typing import Literal
 from pathlib import Path
-from src.model.phonikud_model import HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR
 
 BASE_PATH = Path(__file__).parent / "../.."
 
@@ -62,9 +61,6 @@ class TrainArgs(Tap):
 
     wandb_mode: str = "offline"
     "Wandb mode: 'online', 'offline', or 'disabled' (default: offline for local use)"
-
-    train_chars: List[str] = [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
-    "Characters to train on. Example: ['֫'] for hatama only. Tip: modify directly in config.py since diacritics are hard to pass via CLI"
 
 
 def get_opts():
