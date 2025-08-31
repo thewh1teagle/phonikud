@@ -63,7 +63,9 @@ class TrainArgs(Tap):
     wandb_mode: str = "offline"
     "Wandb mode: 'online', 'offline', or 'disabled' (default: offline for local use)"
 
-    train_chars: List[str] = [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
+    train_chars: List[str] = [
+        HATAMA_CHAR
+    ]  # [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
     "Characters to train on. Example: ['֫'] for hatama only. Tip: modify directly in config.py since diacritics are hard to pass via CLI"
 
 
