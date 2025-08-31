@@ -10,6 +10,11 @@ from src.model.phonikud_model import (
     remove_nikud,
     ENHANCED_NIKUD,
 )
+from model.src.model.phonikud_model import (
+    HATAMA_CHAR,
+    VOCAL_SHVA_CHAR,
+    PREFIX_CHAR,
+)
 from tqdm import tqdm
 import wandb
 import jiwer
@@ -20,6 +25,24 @@ from transformers import BertTokenizerFast
 from model.src.model.phonikud_model import ModelPredictions, MenakedLogitsOutput
 from src.train.data import Batch
 import shutil
+from phonikud.utils import normalize
+
+
+def filter_to_trained_chars(text: str, train_chars: List[str]) -> str:
+    """Remove enhanced nikud characters that weren't trained on"""
+    chars_to_remove = []
+
+    # Build list of characters to remove (ones NOT in train_chars)
+    all_chars = [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
+    for char in all_chars:
+        if char not in train_chars:
+            chars_to_remove.append(char)
+
+    # Remove unwanted characters
+    for char in chars_to_remove:
+        text = text.replace(char, "")
+
+    return text
 
 
 @dataclass
@@ -322,6 +345,7 @@ def calculate_train_batch_metrics(
     tokenizer: BertTokenizerFast,
     output: MenakedLogitsOutput,
     loss: float,
+    train_chars: List[str],
 ) -> MetricsResult:
     """
     Calculate WER/CER metrics for a training batch.
@@ -332,6 +356,7 @@ def calculate_train_batch_metrics(
         tokenizer: BERT tokenizer for offset mapping
         output: Model output from forward pass
         loss: Training loss for this batch
+        train_chars: Characters being trained on (for filtering evaluation)
 
     Returns:
         MetricsResult containing WER, CER, and accuracy metrics
@@ -367,11 +392,16 @@ def calculate_train_batch_metrics(
         )
 
         # Remove nikud from both predicted and ground truth
-        predicted_texts[0] = remove_nikud(predicted_texts[0])
-        src_text_clean = remove_nikud(src_text)
+        pred_processed = remove_nikud(normalize(predicted_texts[0]))
+        gt_processed = remove_nikud(src_text)
 
-        batch_predictions.append(predicted_texts[0])
-        batch_ground_truth.append(src_text_clean)
+        # Filter to only evaluate on trained characters
+        if len(train_chars) < 3:  # Not training on all chars
+            gt_processed = filter_to_trained_chars(gt_processed, train_chars)
+            pred_processed = filter_to_trained_chars(pred_processed, train_chars)
+
+        batch_predictions.append(pred_processed)
+        batch_ground_truth.append(gt_processed)
 
     # Calculate metrics using the main utility function
     return calculate_wer_cer_metrics(batch_predictions, batch_ground_truth, loss)

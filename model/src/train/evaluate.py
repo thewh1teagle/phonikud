@@ -10,9 +10,6 @@ from model.src.model.phonikud_model import (
     MenakedLogitsOutput,
     PhonikudModel,
     ModelPredictions,
-    HATAMA_CHAR,
-    VOCAL_SHVA_CHAR,
-    PREFIX_CHAR,
 )
 from typing import List
 from transformers import BertTokenizerFast
@@ -20,25 +17,9 @@ from src.train.utils import (
     calculate_wer_cer_metrics,
     log_metrics_to_tensorboard_and_wandb,
     print_metrics_with_examples,
+    filter_to_trained_chars,
 )
 from phonikud.utils import normalize
-
-
-def filter_to_trained_chars(text: str, train_chars: List[str]) -> str:
-    """Remove enhanced nikud characters that weren't trained on"""
-    chars_to_remove = []
-
-    # Build list of characters to remove (ones NOT in train_chars)
-    all_chars = [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
-    for char in all_chars:
-        if char not in train_chars:
-            chars_to_remove.append(char)
-
-    # Remove unwanted characters
-    for char in chars_to_remove:
-        text = text.replace(char, "")
-
-    return text
 
 
 def evaluate_model(

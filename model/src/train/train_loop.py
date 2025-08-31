@@ -134,7 +134,7 @@ def train_model(
                 # Calculate training metrics before evaluation
                 try:
                     train_metrics = calculate_train_batch_metrics(
-                        model, batch, tokenizer, output, loss.item()
+                        model, batch, tokenizer, output, loss.item(), args.train_chars
                     )
 
                     # Log training metrics to TensorBoard
