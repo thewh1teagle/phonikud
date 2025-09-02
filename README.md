@@ -26,7 +26,6 @@
   </a>
 </p>
 
-
 <hr />
 
 ## Features
@@ -38,14 +37,10 @@
 - Real time onnx model support 💫
 - Lightweight TTS library: [phonikud-tts](https://github.com/thewh1teagle/phonikud-tts) 🎤
 
-You can find the package as well in `pypi.org/project/phonikud`
-
 ## Install
 
-Due to ongoing development, it is recommend to install from git directly.
-
 ```console
-pip install git+https://github.com/thewh1teagle/phonikud
+pip install phonikud
 ```
 
 ## Usage
@@ -69,7 +64,6 @@ See [examples](examples)
 See [TTS with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonikud-tts)
 
 See [Phonemize with Hebrew Space](https://huggingface.co/spaces/thewh1teagle/phonemize-in-hebrew)
-
 
 ## Community
 
@@ -163,7 +157,7 @@ This ensures accurate and clear speech synthesis. Since the output phonemes are 
 
 - Some of the _nikud_ may sound a bit formal - similar to other models
 - Some words get the same _nikud_ but different _hat'ama_ - not always accurate
-- Does not currently support user choice between multiple possibilities, or _nikud_ hints in input 
+- Does not currently support user choice between multiple possibilities, or _nikud_ hints in input
 - Basic support for non-words (gibberish, typos) - not always handled
 - Names and non-Hebrew words are sometimes predicted incorrectly
 
