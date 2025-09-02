@@ -55,8 +55,8 @@ from phonikud import phonemize
 
 model = Phonikud("./phonikud-1.0.int8.onnx")
 text = "שלום עולם"
-with_diacritics = model.add_diacritics(text)
-phonemes = phonemize(with_diacritics)
+vocalized = model.add_diacritics(text)
+phonemes = phonemize(vocalized)
 print(phonemes) # ʃalˈom olˈam
 ```
 
