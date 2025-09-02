@@ -39,7 +39,7 @@
 
 ## Setup
 
-1. Run
+1. Install with pip
 
 ```console
 pip install phonikud phonikud-onnx
