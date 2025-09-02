@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Phonikud App Icon</title>
-  <desc id="desc">Rounded square app icon with a large black P and a small gray Hebrew letter Pe with a diacritic below it.</desc>
+  <desc id="desc">Rounded square app icon with a balanced gray P and Hebrew letter Pe with U+05AB diacritic.</desc>
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#5A5E65"/>
@@ -20,20 +20,20 @@
     <rect x="96" y="96" width="832" height="832" rx="180" fill="#ffffff"/>
   </g>
 
-  <!-- Big P -->
-  <text x="308" y="620"
+  <!-- Big P (gray now) -->
+  <text x="270" y="610"
         font-family="Inter, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif"
         font-weight="900"
-        font-size="560"
-        fill="#111111">
+        font-size="500"
+        fill="#6B6B6B">
     P
   </text>
 
-  <!-- Hebrew Pe (פ) with diacritic (U+05AB) -->
-  <text x="610" y="685"
+  <!-- Hebrew Pe (פ with U+05AB) -->
+  <text x="570" y="690"
         font-family="'Heebo', 'Rubik', Arial, sans-serif"
         font-weight="700"
-        font-size="240"
+        font-size="300"
         fill="#6B6B6B">
     פ֫
   </text>
