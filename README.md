@@ -18,13 +18,14 @@
   <a target="_blank" href="https://phonikud.github.io">
     🌐 Project Page
   </a>
-    &nbsp; | &nbsp; 
-    <a target="_blank" href="https://arxiv.org/abs/2506.12311">
+  &nbsp; | &nbsp; 
+  ⭐ Star on GitHub
+  &nbsp; | &nbsp; 
+  <a target="_blank" href="https://arxiv.org/abs/2506.12311">
     📄 Research Paper
-    </a>
-    &nbsp; | &nbsp; 
-    ⭐ Star on GitHub
+  </a>
 </p>
+
 
 <hr />
 
