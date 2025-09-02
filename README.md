@@ -37,23 +37,28 @@
 - Real time onnx model support 💫
 - Lightweight TTS library: [phonikud-tts](https://github.com/thewh1teagle/phonikud-tts) 🎤
 
-## Install
+## Setup
+
+1. Run
 
 ```console
-pip install phonikud
+pip install phonikud phonikud-onnx
 ```
 
-## Usage
+2. Download [phonikud-1.0.int8.onnx](https://huggingface.co/thewh1teagle/phonikud-onnx/resolve/main/phonikud-1.0.int8.onnx)
+
+3. Use with
 
 ```python
+from phonikud_onnx import Phonikud
 from phonikud import phonemize
-phonemes = phonemize('שָׁלוֹם עוֹלָם')
+
+model = Phonikud("./phonikud-1.0.int8.onnx")
+text = "שלום עולם"
+vocalized = model.add_diacritics(text)
+phonemes = phonemize(text)
 print(phonemes) # ʃalˈom olˈam
 ```
-
-Note: Phonikud expects enhanced diacritics.
-
-Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 
 ## Examples
 
