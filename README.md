@@ -31,7 +31,7 @@ phonemes = phonemize('שָׁלוֹם עוֹלָם')
 print(phonemes) # ʃalˈom olˈam
 ```
 
-Note: Phonikud expects diacritics and phonetics marks.
+Note: Phonikud expects enhanced diacritics.
 
 Please use [phonikud-onnx](phonikud_onnx) for adding diacritics.
 
