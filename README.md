@@ -1,8 +1,32 @@
-# Phonikud
+<p align="center">
+  <a target="_blank" href="https://phonikud.github.io">
+    <img
+        width="110px"
+        alt="Phonikud logo"
+        src="./design/logo.svg"
+    />
+  </a>
+</p>
 
-Phonikud is a Hebrew grapheme-to-phoneme (G2P) engine that converts text into IPA for TTS and learning.
+<h1 align="center">Phonikud – Hebrew Grapheme-to-Phoneme</h1>
 
-[Project Page](https://phonikud.github.io) | [Paper](https://arxiv.org/abs/2506.12311)
+<p align="center">
+  <em>Convert Hebrew text into IPA for TTS, speech technology, and language learning</em>
+</p>
+
+<p align="center">
+  <a target="_blank" href="https://phonikud.github.io">
+    🌐 Project Page
+  </a>
+    &nbsp; | &nbsp; 
+    <a target="_blank" href="https://arxiv.org/abs/2506.12311">
+    📄 Research Paper
+    </a>
+    &nbsp; | &nbsp; 
+    ⭐ Star on GitHub
+</p>
+
+<hr />
 
 ## Features
 
