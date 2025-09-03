@@ -17,7 +17,9 @@ from src.train.utils import (
     calculate_wer_cer_metrics,
     log_metrics_to_tensorboard_and_wandb,
     print_metrics_with_examples,
+    filter_to_trained_chars,
 )
+from phonikud.utils import normalize
 
 
 def evaluate_model(
@@ -31,6 +33,14 @@ def evaluate_model(
     model.eval()  # Set the model to evaluation mode
     val_loss: float = 0
     criterion = nn.BCEWithLogitsLoss()
+
+    # Print evaluation mode info
+    if len(args.train_chars) == 3:
+        print("🔬 Training evaluation on all characters...")
+    else:
+        from src.train.utils import get_train_char_name
+        char_names = [get_train_char_name(char) for char in args.train_chars]
+        print(f"🎯 Training evaluation only on: {', '.join(char_names)}")
 
     # Collect all predictions and ground truth for WER/CER calculation
     all_predictions: List[str] = []
@@ -89,12 +99,17 @@ def evaluate_model(
                 )
 
                 # Remove nikud from both predicted and ground truth (Keep enhanced nikud)
-                predicted_texts[0] = remove_nikud(predicted_texts[0])
-                src_text = remove_nikud(src_text)
+                pred_processed = remove_nikud(normalize(predicted_texts[0]))
+                gt_processed = remove_nikud(src_text)
+
+                # Filter to only evaluate on trained characters
+                if len(args.train_chars) < 3:  # Not training on all chars
+                    gt_processed = filter_to_trained_chars(gt_processed, args.train_chars)
+                    pred_processed = filter_to_trained_chars(pred_processed, args.train_chars)
 
                 # Collect for WER/CER calculation
-                all_predictions.append(predicted_texts[0])
-                all_ground_truth.append(src_text)
+                all_predictions.append(pred_processed)
+                all_ground_truth.append(gt_processed)
 
             progress_bar.set_postfix(
                 {

@@ -25,10 +25,13 @@ def main():
     print(f"🧠 Loading model from {args.model_checkpoint}...")
 
     model = PhonikudModel.from_pretrained(args.model_checkpoint, trust_remote_code=True)
-    print_model_size(model)
+    
 
     model.to(args.device)  # type: ignore
     model.freeze_base_model()
+    model.prepare_to_train_on_specific_chars(args.train_chars)
+
+    print_model_size(model)
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_checkpoint, trust_remote_code=True
