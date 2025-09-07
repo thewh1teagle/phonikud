@@ -754,7 +754,7 @@ wheels = [
 
 [[package]]
 name = "phonikud"
-version = "0.4.0"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "colorlog" },
@@ -787,7 +787,7 @@ dev = [
 
 [[package]]
 name = "phonikud-onnx"
-version = "1.0.5"
+version = "1.0.6"
 source = { editable = "phonikud_onnx" }
 dependencies = [
     { name = "onnxruntime" },
@@ -805,7 +805,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "onnxruntime", specifier = ">=1.21.1" },
-    { name = "tokenizers", specifier = ">=0.21.1" },
+    { name = "tokenizers", specifier = ">=0.20" },
 ]
 
 [package.metadata.requires-dev]

@@ -1,13 +1,14 @@
 [project]
 name = "phonikud-onnx"
-version = "1.0.5"
+version = "1.0.6"
 description = "Add diacritics to Hebrew text along with phonetic marks"
 readme = "README.md"
 authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" },
 ]
 requires-python = ">=3.10"
-dependencies = ["onnxruntime>=1.21.1", "tokenizers>=0.21.1"]
+dependencies = ["onnxruntime>=1.21.1", "tokenizers>=0.20"]
+
 
 [build-system]
 requires = ["hatchling"]
