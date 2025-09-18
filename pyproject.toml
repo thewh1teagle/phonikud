@@ -7,7 +7,12 @@ authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" },
 ]
 requires-python = ">=3.8, <3.13"
-dependencies = ["colorlog>=6.9.0", "num2words>=0.5.14", "regex>=2024.11.6"]
+dependencies = [
+    "colorlog>=6.9.0",
+ "num2words>=0.5.14",
+ "pynini>=2.1.7",
+ "regex>=2024.11.6",
+]
 
 [project.urls]
 Homepage = "https://github.com/thewh1teagle/phonikud"

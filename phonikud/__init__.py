@@ -3,10 +3,12 @@ High level phonemize functions
 """
 
 from .phonemize import Phonemizer
+from .phonemize_fst import PhonemizerFST
 from .utils import normalize  # noqa: F401
 from typing import Callable, Literal
 
 phonemizer = Phonemizer()
+phonemizer_fst = PhonemizerFST()
 
 
 def phonemize(
@@ -37,3 +39,7 @@ def phonemize(
         stress_placement=stress_placement,
     )
     return phonemes
+
+
+def phonemize_fst(text: str) -> str:
+    return phonemizer_fst.phonemize(text)
