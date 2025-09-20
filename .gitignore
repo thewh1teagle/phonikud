@@ -27,3 +27,4 @@ wandb/
 logs/
 wandb/
 events.out.tfevents*
+*.csv
