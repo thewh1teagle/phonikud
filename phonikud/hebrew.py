@@ -46,7 +46,7 @@ def handle_shin(cur, prev, next):
             next
             and next.char == "ש"
             and not next.diac
-            and re.search("[\u05b7\u05b8]", cur.diac)
+            and re.search(NIKUD_PATAH_LIKE_PATTERN, cur.diac)
         ):
             return make_result("sa", offset=1)  # special case יששכר
         return make_result("s", skip_diacritics=False)
@@ -97,7 +97,7 @@ def should_skip_yud(cur: Letter, prev: Letter | None, next: Letter | None) -> bo
         # Prev Hirik
         and prev.char + prev.diac != "אֵ"
         # Next Vav has meaning
-        and not (next.char == "ו" and next.diac and "\u05b0" not in next.diac)
+        and not (next.char == "ו" and next.diac and NIKUD["SHVA"] not in next.diac)
     )
 
 
