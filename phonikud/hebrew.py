@@ -25,8 +25,6 @@ Reference:
 - https://hebrew-academy.org.il/2022/03/03/מלעיל-ומלרע-על-ההטעמה-בעברית
 """
 
-from typing import Literal
-
 from phonikud import lexicon
 import re
 from phonikud.utils import sort_stress
