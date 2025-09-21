@@ -5,12 +5,16 @@ Fast rule-based FST that converts Hebrew text to phonemes.
 See https://en.wikipedia.org/wiki/Finite-state_transducer
 
 Rules implemented:
-1. Consonant handling (including special cases)
-2. Nikud (vowel) processing
-3. Dagesh handling
-4. Geresh handling
-5. Vocal Shva prediction
-6. Special letter combinations
+1. Nikud Haser
+2. Em Kriah
+3. Yud Kriah
+4. Shin Sin
+5. Patah Gnuva
+6. Geresh
+7. Dagesh (Beged Kefet & Vav)
+8. Kamatz & Kamatz Katan
+9. Consonants & Vowels
+10. Hatama (Stress)
 
 Reference:
 - https://en.wikipedia.org/wiki/Unicode_and_HTML_for_the_Hebrew_alphabet#Compact_table
@@ -22,45 +26,67 @@ Reference:
 """
 
 from typing import Literal
-from phonikud.variants import Letter
+
 from phonikud import lexicon
 import re
 from phonikud.utils import sort_stress
+from phonikud.variants import Letter
+from phonikud.lexicon import NIKUD, NIKUD_PATAH_LIKE_PATTERN
 
-SHVA = "\u05b0"
-SIN = "\u05c2"
-PATAH = "\u05b7"
-KAMATZ = "\u05b8"
-HATAF_KAMATZ = "\u05b3"
-DAGESH = "\u05bc"
-HOLAM = "\u05b9"
-HIRIK = "\u05b4"
-PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"
-KUBUTS = "\u05bb"
-TSERE = "\u05b5"
-HATAMA = "\u05ab"
-VAV_HOLAM = "\u05ba"
-DAGESH = "\u05bc"
-SEGOL = "\u05b6"
+FINAL_PATACH_MAP = {
+    "ח": "ax",  # Het gnuva
+    "ה": "ah",  # He gnuva
+    "ע": "a",  # Ayin gnuva
+}
 
 
-def phonemize_hebrew(
-    letters: list[Letter], stress_placement: Literal["syllable", "vowel"]
-) -> list[str]:
-    phonemes, i = [], 0
+def handle_shin(cur, prev, next):
+    if NIKUD["SIN"] in cur.diac:
+        if (
+            next
+            and next.char == "ש"
+            and not next.diac
+            and re.search("[\u05b7\u05b8]", cur.diac)
+        ):
+            return make_result("sa", offset=1)  # special case יששכר
+        return make_result("s", skip_diacritics=False)
+    if not cur.diac and prev and NIKUD["SIN"] in prev.diac:
+        return make_result("s", skip_diacritics=False)
+    return make_result("", skip_diacritics=False, skip_consonants=False)
+
+
+def clean_phonemes(phonemes):
+    return [p for p in phonemes if p and all(ch in lexicon.SET_PHONEMES for ch in p)]
+
+
+def handle_geresh(cur):
+    phoneme = lexicon.GERESH_PHONEMES.get(cur.char, "")
+    if cur.char == "ת":
+        return make_result(phoneme)
+    return make_result(phoneme, skip_diacritics=False)
+
+
+def get_nikud_phonemes(cur, skip_diacritics):
+    if not skip_diacritics:
+        return [lexicon.NIKUD_PHONEMES.get(n, "") for n in cur.all_diac]
+    if lexicon.HATAMA_DIACRITIC in cur.all_diac:
+        return [lexicon.STRESS_PHONEME]
+    return []
+
+
+def phonemize_word(letters: list[Letter]) -> list[str]:
+    phonemes = []
+    i = 0
     while i < len(letters):
-        cur = letters[i]
         prev = letters[i - 1] if i > 0 else None
         next = letters[i + 1] if i + 1 < len(letters) else None
-        next_phonemes, skip_offset = letter_to_phonemes(
-            cur, prev, next, stress_placement
-        )
+        next_phonemes, skip_offset = letter_to_phonemes(letters[i], prev, next)
         phonemes.extend(next_phonemes)
         i += skip_offset + 1
     return phonemes
 
 
-def handle_yud(cur: Letter, prev: Letter | None, next: Letter | None) -> bool:
+def should_skip_yud(cur: Letter, prev: Letter | None, next: Letter | None) -> bool:
     """Returns True if Yud should skip consonants"""
     return (
         next
@@ -75,118 +101,110 @@ def handle_yud(cur: Letter, prev: Letter | None, next: Letter | None) -> bool:
     )
 
 
+def make_result(
+    phoneme: str,
+    offset: int = 0,
+    skip_consonants: bool = True,
+    skip_diacritics: bool = True,
+):
+    return [phoneme], skip_consonants, skip_diacritics, offset
+
+
 def handle_vav(cur: Letter, prev: Letter | None, next: Letter | None):
-    if prev and SHVA in prev.diac and HOLAM in cur.diac:
-        return ["vo"], True, True, 0
+    """
+    Return phonemes, skip_consonants, skip_diacritics, skip_offset
+    """
+    if prev and NIKUD["SHVA"] in prev.diac and NIKUD["HOLAM"] in cur.diac:
+        return make_result("vo")
 
     if next and next.char == "ו":
         diac = cur.diac + next.diac
-        if HOLAM in diac:
-            return ["vo"], True, True, 1
+        if NIKUD["HOLAM"] in diac:
+            return make_result("vo", offset=1)
         if cur.diac == next.diac:
-            return ["vu"], True, True, 1
-        if HIRIK in cur.diac:
-            return ["vi"], True, True, 0
-        if SHVA in cur.diac and not next.diac:
-            return ["v"], True, True, 0
-        if KAMATZ in cur.diac or PATAH in cur.diac:
-            return ["va"], True, True, 0
-        if TSERE in cur.diac or SEGOL in cur.diac:
-            return ["ve"], True, True, 0
-        return [], False, False, 0
+            return make_result("vu", offset=1)
+        if NIKUD["HIRIK"] in cur.diac:
+            return make_result("vi")
+        if NIKUD["SHVA"] in cur.diac and not next.diac:
+            return make_result("v")
+        if NIKUD["KAMATZ"] in cur.diac or NIKUD["PATAH"] in cur.diac:
+            return make_result("va")
+        if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac:
+            return make_result("ve")
+        return make_result("", skip_consonants=True, skip_diacritics=True)
 
     # Single ו
-    if re.search(PATAH_LIKE_PATTERN, cur.diac):
-        return ["va"], True, True, 0
-    if TSERE in cur.diac or SEGOL in cur.diac:
-        return ["ve"], True, True, 0
-    if HOLAM in cur.diac:
-        return ["o"], True, True, 0
-    if KUBUTS in cur.diac or DAGESH in cur.diac:
-        return ["u"], True, True, 0
-    if SHVA in cur.diac and not prev:
-        return ["ve"], True, True, 0
-    if HIRIK in cur.diac:
-        return ["vi"], True, True, 0
+    if re.search(NIKUD_PATAH_LIKE_PATTERN, cur.diac):
+        return make_result("va")
+    if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac:
+        return make_result("ve")
+    if NIKUD["HOLAM"] in cur.diac:
+        return make_result("o")
+    if NIKUD["KUBUTS"] in cur.diac or NIKUD["DAGESH"] in cur.diac:
+        return make_result("u")
+    if NIKUD["SHVA"] in cur.diac and not prev:
+        return make_result("ve")
+    if NIKUD["HIRIK"] in cur.diac:
+        return make_result("vi")
     if next and not cur.diac:
         return [], True, True, 0
 
-    return ["v"], True, True, 0
+    return make_result("v")
 
 
 def letter_to_phonemes(
     cur: Letter,
     prev: Letter | None,
     next: Letter | None,
-    stress_placement: Literal["syllable", "vowel"],
 ) -> tuple[str, int]:
     cur_phonemes = []
     skip_diacritics = False
     skip_consonants = False
     skip_offset = 0
 
+    # Nikud haser
     if lexicon.NIKUD_HASER_DIACRITIC in cur.all_diac:
-        skip_consonants = True
-        skip_diacritics = True
+        return [], 0
 
+    # Em Kriah
     elif cur.char == "א" and not cur.diac and prev:
         if next and next.char != "ו":
             skip_consonants = True
 
-    elif cur.char == "י" and handle_yud(cur, prev, next):
+    # Yud Kriah
+    elif cur.char == "י" and should_skip_yud(cur, prev, next):
         skip_consonants = True
 
-    elif cur.char == "ש" and SIN in cur.diac:
-        if (
-            next
-            and next.char == "ש"
-            and not next.diac
-            and re.search("[\u05b7\u05b8]", cur.diac)
-        ):
-            # ^ יששכר
-            cur_phonemes.append("sa")
-            skip_consonants = True
-            skip_diacritics = True
-            skip_offset += 1
-        else:
-            cur_phonemes.append("s")
-            skip_consonants = True
+    # Shin Sin
+    elif cur.char == "ש":
+        sh_phonemes, skip_consonants, skip_diacritics, extra_skip = handle_shin(
+            cur, prev, next
+        )
+        cur_phonemes.extend(sh_phonemes)
+        skip_offset += extra_skip
 
-    # shin without nikud after sin = sin
-    elif cur.char == "ש" and not cur.diac and prev and SIN in prev.diac:
-        cur_phonemes.append("s")
-        skip_consonants = True
+    # Patah Gnuva
+    elif not next and NIKUD["PATAH"] in cur.diac and cur.char in FINAL_PATACH_MAP:
+        f_phonemes, skip_consonants, skip_diacritics, extra_skip = make_result(
+            FINAL_PATACH_MAP[cur.char]
+        )
+        cur_phonemes.extend(f_phonemes)
+        skip_offset += extra_skip
 
-    elif not next and cur.char == "ח" and PATAH in cur.diac:
-        # Final Het gnuva
-        cur_phonemes.append("ax")
-        skip_diacritics = True
-        skip_consonants = True
-
-    elif not next and cur.char == "ה" and PATAH in cur.diac:
-        # Final He gnuva
-        cur_phonemes.append("ah")
-        skip_diacritics = True
-        skip_consonants = True
-
-    elif not next and cur.char == "ע" and PATAH in cur.diac:
-        # Final Ayin gnuva
-        cur_phonemes.append("a")
-        skip_diacritics = True
-        skip_consonants = True
-
+    # Geresh
     if cur and "'" in cur.diac and cur.char in lexicon.GERESH_PHONEMES:
-        if cur.char == "ת":
-            cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
-            skip_diacritics = True
-            skip_consonants = True
-        else:
-            # Geresh
-            cur_phonemes.append(lexicon.GERESH_PHONEMES.get(cur.char, ""))
-            skip_consonants = True
+        g_phonemes, skip_consonants, skip_diacritics, extra_skip = handle_geresh(cur)
+        cur_phonemes.extend(g_phonemes)
+        skip_offset += extra_skip
 
-    elif DAGESH in cur.diac and cur.char + DAGESH in lexicon.LETTERS_PHONEMES:  # dagesh
-        cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char + DAGESH, ""))
+    # Dagesh (Beged Kefet & Vav)
+    elif (
+        NIKUD["DAGESH"] in cur.diac
+        and cur.char + NIKUD["DAGESH"] in lexicon.LETTERS_PHONEMES
+    ):
+        cur_phonemes.append(
+            lexicon.LETTERS_PHONEMES.get(cur.char + NIKUD["DAGESH"], "")
+        )
         skip_consonants = True
     elif cur.char == "ו" and lexicon.NIKUD_HASER_DIACRITIC not in cur.all_diac:
         vav_phonemes, vav_skip_consonants, vav_skip_diacritics, vav_skip_offset = (
@@ -197,26 +215,17 @@ def letter_to_phonemes(
         skip_diacritics = vav_skip_diacritics
         skip_offset += vav_skip_offset
 
+    # Consonant
     if not skip_consonants:
         cur_phonemes.append(lexicon.LETTERS_PHONEMES.get(cur.char, ""))
 
-    if KAMATZ in cur.diac and next and HATAF_KAMATZ in next.diac:
+    if NIKUD["KAMATZ"] in cur.diac and next and NIKUD["HATAF_KAMATZ"] in next.diac:
         cur_phonemes.append("o")
         skip_diacritics = True
 
-    nikud_phonemes = []
-    if not skip_diacritics:
-        nikud_phonemes = [
-            lexicon.NIKUD_PHONEMES.get(nikud, "") for nikud in cur.all_diac
-        ]
-    elif skip_diacritics and lexicon.HATAMA_DIACRITIC in cur.all_diac:
-        nikud_phonemes = [lexicon.STRESS_PHONEME]
-    cur_phonemes.extend(nikud_phonemes)
-    # Ensure the stress is at the beginning of the syllable
-    cur_phonemes = sort_stress(cur_phonemes, stress_placement)
-    cur_phonemes = [
-        p for p in cur_phonemes if all(i in lexicon.SET_PHONEMES for i in p)
-    ]
-    # Remove empty phonemes
-    cur_phonemes = [p for p in cur_phonemes if p]
+    cur_phonemes.extend(get_nikud_phonemes(cur, skip_diacritics))
+    # Ensure stress placed before the syllable's vowel
+    cur_phonemes = sort_stress(cur_phonemes)
+    # Clean unknown characters
+    cur_phonemes = clean_phonemes(cur_phonemes)
     return cur_phonemes, skip_offset

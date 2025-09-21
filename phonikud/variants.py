@@ -10,11 +10,5 @@ class Letter:
             i for i in self.all_diac if i not in lexicon.SET_ENHANCED_DIACRITICS
         )
 
-    def __repr__(self):
-        return f"[Letter] {self.char}{''.join(self.all_diac)}"
-
-    def __eq__(self, value: "Letter"):
-        return value.all_diac == self.all_diac and value.char == self.char
-
     def __str__(self):
         return self.char + self.all_diac

@@ -1,11 +1,10 @@
 from functools import lru_cache
-from typing import Literal
 from phonikud import lexicon
 import unicodedata
 import regex as re
 import phonikud.syllables
-from phonikud.variants import Letter
 import phonikud
+from phonikud.variants import Letter
 
 
 def sort_diacritics(match):
@@ -97,7 +96,7 @@ def has_vowel(s: iter):
     return any(i in s for i in "aeiou")
 
 
-def has_constant(s: iter):
+def has_consonant(s: iter):
     return any(i not in "aeiou" for i in s)
 
 
@@ -147,41 +146,22 @@ def get_phoneme_syllables(phonemes: list[str]) -> list[str]:
     return syllables
 
 
-def sort_stress(
-    phonemes: list[str], placement: Literal["syllable", "vowel"] = "vowel"
-) -> list[str]:
-    """
-    TTS systems expect that the stress will be BEFORE vowel
-    Linguistics expect in the START of the syllable
-    at_start=True for place it in the beginning
-    """
-    if "ˈ" not in "".join(phonemes):
-        # ^ Does not contains stress
-        return phonemes
-    if not any(i in "".join(phonemes) for i in "aeiou"):
-        # ^ Does not contains vowel
-        return phonemes
-
-    # Remove stress marker
-    phonemes = [p for p in phonemes if p != "ˈ"]
-
-    if placement == "syllable":
-        return ["ˈ"] + phonemes
-
-    # Define vowels
+def sort_stress(syllable: list[str]) -> list[str]:
     vowels = "aeiou"
+    text = "".join(syllable)
+    # No stress or no vowels
+    if "ˈ" not in text or not re.search(f"[{vowels}]", text):
+        return syllable
 
-    # Find the first phoneme that contains a vowel, and inject the stress before the vowel
+    # remove all stress
+    syllable = [p.replace("ˈ", "") for p in syllable]
 
-    for i, phoneme in enumerate(phonemes):
-        for j, char in enumerate(phoneme):
-            if char in vowels:
-                # Insert stress before the vowel
-                phonemes[i] = phoneme[:j] + "ˈ" + phoneme[j:]
-                return phonemes
-
-    # If no vowels found, return unchanged
-    return phonemes
+    # insert before first vowel in the first chunk that has one
+    for i, p in enumerate(syllable):
+        syllable[i], n = re.subn(f"([{vowels}])", r"ˈ\1", p, 1)
+        if n:
+            break
+    return syllable
 
 
 def mark_vocal_shva(word: str):
@@ -226,6 +206,9 @@ def sort_hatama(letters: list[Letter]) -> list[Letter]:
 
 
 def add_milra_hatama(word: str):
+    """
+    Add stress to the first letter of the latest syllable
+    """
     syllables = phonikud.syllables.get_syllables(word)
     stress_index = -1
 
