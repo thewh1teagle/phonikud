@@ -1,5 +1,5 @@
 from phonikud import lexicon
-from phonikud.variants import Letter
+from phonikud.hebrew import Letter
 from .expander import Expander
 from phonikud.utils import (
     get_letters,
@@ -12,7 +12,7 @@ from phonikud.utils import (
 )
 from typing import Callable, Literal
 import regex as re
-from phonikud.hebrew import phonemize_hebrew
+from phonikud.hebrew import phonemize_word
 
 
 class Phonemizer:
@@ -31,7 +31,6 @@ class Phonemizer:
         use_post_normalize: bool,  # For TTS
         predict_stress: bool,
         predict_vocal_shva: bool,
-        stress_placement: Literal["syllable", "vowel"],
         schema: Literal["plain", "modern"],
         fallback: Callable[[str], str] = None,
     ) -> str | list[str]:
@@ -71,9 +70,8 @@ class Phonemizer:
             letters: list[Letter] = get_letters(word)
             letters = sort_hatama(letters)
 
-            phonemes: list[str] = phonemize_hebrew(
+            phonemes: list[str] = phonemize_word(
                 letters,
-                stress_placement=stress_placement,
             )
             phonemes = "".join(phonemes)
             # syllables = get_syllables(phonemes)

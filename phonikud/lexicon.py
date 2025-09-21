@@ -115,3 +115,20 @@ SET_PHONEMES = set(
         }
     )
 )
+
+NIKUD = {
+    "PATAH": "\u05b7",
+    "KAMATZ": "\u05b8",
+    "HIRIK": "\u05b4",
+    "SEGOL": "\u05b6",
+    "TSERE": "\u05b5",
+    "HOLAM": "\u05b9",
+    "KUBUTS": "\u05bb",
+    "SHVA": "\u05b0",
+    "HATAF_KAMATZ": "\u05b3",
+    "DAGESH": "\u05bc",
+    "SIN": "\u05c2",
+    "HATAMA": "\u05ab",
+    "VAV_HOLAM": "\u05ba",
+}
+NIKUD_PATAH_LIKE_PATTERN = "[\u05b7-\u05b8]"

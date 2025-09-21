@@ -17,7 +17,6 @@ def phonemize(
     use_post_normalize=True,  # For TTS
     predict_stress=True,
     predict_vocal_shva=True,
-    stress_placement: Literal["syllable", "vowel"] = "vowel",
     schema: Literal["plain", "modern"] = "modern",
     fallback: Callable[[str], str] = None,
 ) -> str:
@@ -34,6 +33,5 @@ def phonemize(
         predict_stress=predict_stress,
         schema=schema,
         predict_vocal_shva=predict_vocal_shva,
-        stress_placement=stress_placement,
     )
     return phonemes
