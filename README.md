@@ -229,4 +229,7 @@ If you find this code or our data helpful in your research or work, please cite 
 
 ## Credits
 
-Special thanks ❤️ to [dicta-il](https://huggingface.co/dicta-il/dictabert-large-char-menaked) for their amazing Hebrew diacritics model ✨ and the dataset that made this possible!
+Special thanks ❤️ to [dicta-il](https://huggingface.co/dicta-il/dictabert-large-char-menaked) for their amazing Hebrew diacritics model ✨ and the dataset that made this possible!  
+
+Huge thanks to [Oron Kam](https://www.linkedin.com/in/oronkam/) for helping with training the best Hebrew Whisper IPA so far! 🙌
+
