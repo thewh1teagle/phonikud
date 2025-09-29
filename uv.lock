@@ -425,6 +425,11 @@ dependencies = [
     { name = "wandb" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pandas" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "humanize", specifier = ">=4.12.3" },
@@ -436,6 +441,9 @@ requires-dist = [
     { name = "typed-argument-parser", specifier = ">=1.10.1" },
     { name = "wandb", specifier = ">=0.19.11" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pandas", specifier = ">=2.2.3" }]
 
 [[package]]
 name = "mpmath"

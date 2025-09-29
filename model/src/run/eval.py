@@ -13,6 +13,9 @@ from src.model.phonikud_model import (
     remove_nikud,
     ENHANCED_NIKUD,
     NIKUD_HASER,
+    HATAMA_CHAR,
+    VOCAL_SHVA_CHAR,
+    PREFIX_CHAR,
 )
 from src.train.config import BASE_PATH
 from src.train.utils import read_lines, prepare_indices
@@ -46,6 +49,23 @@ def verify_data_consistency(lines: List, eval_data: dict) -> bool:
         return False
 
 
+def filter_to_trained_chars(text: str, train_chars: List[str]) -> str:
+    """Remove enhanced nikud characters that weren't trained on"""
+    chars_to_remove = []
+
+    # Build list of characters to remove (ones NOT in train_chars)
+    all_chars = [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
+    for char in all_chars:
+        if char not in train_chars:
+            chars_to_remove.append(char)
+
+    # Remove unwanted characters
+    for char in chars_to_remove:
+        text = text.replace(char, "")
+
+    return text
+
+
 class EvalArgs(Tap):
     model: str = str(BASE_PATH / "ckpt/best_wer")
     "Model path or name"
@@ -59,14 +79,29 @@ class EvalArgs(Tap):
     input: str = ""
     "Optional input txt file to evaluate on (if not provided, uses training validation data)"
 
+    train_chars: List[str] = [
+        HATAMA_CHAR
+    ]  # [HATAMA_CHAR, VOCAL_SHVA_CHAR, PREFIX_CHAR]
+    "Characters that were trained on. Will only evaluate on these chars (others removed from comparison)"
 
-def evaluate_model(model, tokenizer, eval_texts: List[str], device: str):
+
+def evaluate_model(
+    model, tokenizer, eval_texts: List[str], device: str, train_chars: List[str]
+):
     """Evaluate model on given texts and return metrics"""
     model.to(device)  # type: ignore
     model.eval()
 
     gts, preds = [], []
-    print("🔬 Evaluating...")
+
+    # Print evaluation mode info
+    if len(train_chars) == 3:
+        print("🔬 Evaluating on all characters...")
+    else:
+        from src.train.utils import get_train_char_name
+
+        char_names = [get_train_char_name(char) for char in train_chars]
+        print(f"🎯 Evaluating only on: {', '.join(char_names)}")
 
     for line in tqdm(eval_texts):
         src = remove_nikud(line, additional=ENHANCED_NIKUD)
@@ -74,8 +109,16 @@ def evaluate_model(model, tokenizer, eval_texts: List[str], device: str):
             continue
         pred = model.predict([src], tokenizer, mark_matres_lectionis=NIKUD_HASER)[0]
 
-        gts.append(remove_nikud(line))
-        preds.append(remove_nikud(normalize(pred)))
+        gt_processed = remove_nikud(line)
+        pred_processed = remove_nikud(normalize(pred))
+
+        # Filter to only evaluate on trained characters
+        if len(train_chars) < 3:  # Not training on all chars
+            gt_processed = filter_to_trained_chars(gt_processed, train_chars)
+            pred_processed = filter_to_trained_chars(pred_processed, train_chars)
+
+        gts.append(gt_processed)
+        preds.append(pred_processed)
 
     # Calculate metrics
     w = float(wer(gts, preds))  # type: ignore
@@ -116,7 +159,7 @@ def eval_with_input_file(args: EvalArgs):
     tokenizer = AutoTokenizer.from_pretrained(args.model)
 
     # Evaluate
-    evaluate_model(model, tokenizer, eval_texts, args.device)
+    evaluate_model(model, tokenizer, eval_texts, args.device, args.train_chars)
 
 
 def eval_against_train_data(args: EvalArgs):
@@ -135,7 +178,6 @@ def eval_against_train_data(args: EvalArgs):
         eval_data = json.load(f)
 
     params = eval_data["params"]
-    verification = eval_data.get("verification", {})
 
     print(
         f"   Data params: val_split={params['val_split']}, seed={params['split_seed']}, max_lines={params['max_lines']}"
@@ -169,10 +211,10 @@ def eval_against_train_data(args: EvalArgs):
     print(f"📝 Using {len(eval_texts)} eval lines (same as training)")
 
     # Always print first few lines to verify they match training validation
-    print(f"🔤 First 3 validation lines:")
+    print("🔤 First 3 validation lines:")
     for i, line in enumerate(val_lines[:3]):
         print(f"   {i + 1}: {line.vocalized}")
-    print(f"🔤 Last 3 validation lines:")
+    print("🔤 Last 3 validation lines:")
     for i, line in enumerate(val_lines[-3:], len(val_lines) - 2):
         print(f"   {i}: {line.vocalized}")
 
@@ -182,7 +224,7 @@ def eval_against_train_data(args: EvalArgs):
     tokenizer = AutoTokenizer.from_pretrained(args.model)
 
     # Evaluate
-    evaluate_model(model, tokenizer, eval_texts, args.device)
+    evaluate_model(model, tokenizer, eval_texts, args.device, args.train_chars)
 
 
 def main():

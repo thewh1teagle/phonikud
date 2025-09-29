@@ -75,6 +75,49 @@ class PhonikudModel(BertForDiacritization):
         for param in self.menaked.parameters():
             param.requires_grad = False
 
+    def prepare_to_train_on_specific_chars(self, chars_to_train: List[str]):
+        """Prepare model for training on specific chars by freezing all MLP layers except the last one"""
+        if len(chars_to_train) == 3:
+            print("🎯 Training on all characters - no layer freezing needed")
+            return  # Training all characters, no freezing needed
+
+        # Freeze all layers except the last one (layers 0 and 1, keep layer 2 unfrozen)
+        for i, layer in enumerate(self.mlp):
+            if i < len(self.mlp) - 1:  # All layers except the last one
+                for param in layer.parameters():
+                    param.requires_grad = False
+                print(f"🧊 Frozen MLP layer {i}: {layer}")
+            else:
+                print(f"🔓 Keeping MLP layer {i} unfrozen: {layer}")
+
+        # Print character training info
+        from ..train.utils import get_train_char_name
+
+        char_names = [get_train_char_name(char) for char in chars_to_train]
+        print(f"🎯 Training only on: {', '.join(char_names)}")
+
+    def create_loss_mask(
+        self, chars_to_train: List[str], targets: torch.Tensor
+    ) -> torch.Tensor:
+        """Create a mask for loss computation when training on specific characters only"""
+        if len(chars_to_train) == 3:
+            # Training all characters, no masking needed
+            return torch.ones_like(targets, device=targets.device)
+
+        # Create mapping from character to channel index
+        char_to_idx = {HATAMA_CHAR: 0, VOCAL_SHVA_CHAR: 1, PREFIX_CHAR: 2}
+
+        # Create mask with zeros (masked out) by default
+        mask = torch.zeros_like(targets, device=targets.device)
+
+        # Enable (set to 1) only the channels we want to train
+        for char in chars_to_train:
+            if char in char_to_idx:
+                channel_idx = char_to_idx[char]
+                mask[..., channel_idx] = 1.0
+
+        return mask
+
     def forward(self, x):
         # based on: https://huggingface.co/dicta-il/dictabert-large-char-menaked/blob/main/BertForDiacritization.py
         bert_outputs = self.bert(**x)
