@@ -44,27 +44,45 @@ class Phonikud:
         return result
 
     def add_diacritics(
-        self, sentence: str, mark_matres_lectionis: str | None = None
-    ) -> str:
+        self, sentences: str | list[str], mark_matres_lectionis: str | None = None
+    ) -> str | list[str]:
         """
         Adds nikud (Hebrew diacritics) to the given text.
 
         Parameters:
-        - sentences (list | str): A string or a list of strings to be processed. Each string should not exceed 2048 characters.
+        - sentences (str | list[str]): A string or a list of strings to be processed. Each string should not exceed 2048 characters.
         - mark_matres_lectionis (str | None, optional): A string used to mark nikud male. For example, if set to '|',
             "לִימּוּדָיו" will be returned as "לִי|מּוּדָיו". Default is None (no marking).
 
         Returns:
-        - str: The text with added diacritics.
+        - str | list[str]: The text with added diacritics. Returns a string if input was a string, or a list if input was a list.
         """
-        chunks = self.prepare_chunks(sentence)
-        results = []
-        for chunk in chunks:
-            result = self.model.predict(
-                chunk, mark_matres_lectionis=mark_matres_lectionis
-            )
-            results.append(result[0])
-        return "".join(results)
+        # Handle single string vs list
+        is_single = isinstance(sentences, str)
+        sentence_list = [sentences] if is_single else sentences
+        
+        # Prepare all chunks and track which sentence each chunk belongs to
+        all_chunks = []
+        chunk_to_sentence = []  # Maps chunk index to sentence index
+        
+        for sent_idx, sentence in enumerate(sentence_list):
+            chunks = self.prepare_chunks(sentence)
+            all_chunks.extend(chunks)
+            chunk_to_sentence.extend([sent_idx] * len(chunks))
+        
+        # Batch process all chunks at once
+        if all_chunks:
+            batch_results = self.model.predict(all_chunks, mark_matres_lectionis=mark_matres_lectionis)
+            
+            # Reconstruct sentences from chunks
+            all_results = [""] * len(sentence_list)
+            for chunk_idx, result in enumerate(batch_results):
+                sent_idx = chunk_to_sentence[chunk_idx]
+                all_results[sent_idx] += result
+        else:
+            all_results = [""] * len(sentence_list)
+        
+        return all_results[0] if is_single else all_results
 
     def get_nikud_male(self, text: str, mark_matres_lectionis: str):
         """

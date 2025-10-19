@@ -129,12 +129,12 @@ class OnnxModel:
             "token_type_ids": np.zeros_like(np.array(input_ids, dtype=np.int64)),
         }, offset_mapping
 
-    def predict(self, sentence: str, mark_matres_lectionis=None, padding="longest"):
+    def predict(self, sentences: list[str], mark_matres_lectionis=None, padding="longest"):
         """
-        Make sure the sentence is not longer than 2046 characters. (2048 - 2 for the special tokens)
+        Make sure each sentence is not longer than 2046 characters. (2048 - 2 for the special tokens)
         """
 
-        sentences = [remove_nikkud(sentence)]
+        sentences = [remove_nikkud(sentence) for sentence in sentences]
         inputs, offset_mapping = self._create_inputs(sentences, padding)
 
         # Run inference

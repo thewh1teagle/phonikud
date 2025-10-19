@@ -7,8 +7,15 @@ authors = [
     { name = "thewh1teagle", email = "61390950+thewh1teagle@users.noreply.github.com" },
 ]
 requires-python = ">=3.10"
-dependencies = ["onnxruntime>=1.21.1", "tokenizers>=0.20"]
+dependencies = [
+ "onnxruntime>=1.23.0",
+ "tokenizers>=0.20",
+]
 
+[project.optional-dependencies]
+gpu = [
+    "onnxruntime-gpu>=1.23.0",
+]
 
 [build-system]
 requires = ["hatchling"]
