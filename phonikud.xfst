@@ -1,3 +1,8 @@
+def V a|e|i|o|u|ə;
+def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t;
+
+def BKP b|k|p;
+
 def ConsonantMapping א -> ʔ,
     ב -> b,
     ג -> g,
@@ -20,6 +25,7 @@ def ConsonantMapping א -> ʔ,
     פ -> p,
     ף -> p,
     צ -> c,
+    ץ -> c,
     ק -> q,
     ר -> r,
     ש -> ʃ,
@@ -39,19 +45,89 @@ def VowelMapping ְ  -> ə, # shva
     ֺ -> o, # holam haser,
     ֻ -> u, # kubutz,
     ּ -> X, # dagesh
-    ֽ -> M, # meteg
+    ֽ -> e, # meteg (we use it for vocal shva)
     ׁ -> Y, # shin dot
     ׂ -> Z, # sin dot,
     ׇ -> o, # kamatz katan
     ֫ -> ', # ole
     ֯ -> O; # circle
 
-def ShinSin ʃ Z -> s, ʃ Y -> ʃ;
+# Need to dedup when both shva + meteg signs appear together
+def DedupShvaMeteg ə e -> e;
+
+# Drop em kriah when using circle symbol
+def DropJVCircle v O -> 0,
+    j O -> 0;
+
+def Sin ʃ Z -> s;
+def Shin ʃ Y -> ʃ;
+
+def ReorderDageshVowel a X -> X a,
+    e X -> X e,
+    i X -> X i,
+    o X -> X o,
+    u X -> X u,
+    ə X -> X ə;
+
+def ReorderDageshSinShin X Y -> Y X,
+    X Z -> Z X;
+
+# Shuruk is encoded with vav+dagesh, transform it to vowel /u/:
+def Shuruk v X -> u;
+
+# Make a new marker L for b/p/k not followed by dagesh
+def AddLenitionMarker [..] -> L || BKP _ \X, BKP _ .#.;
+
+def DropDagesh X -> 0;
+
+def Lenite b L -> v,
+    k L -> x,
+    p L -> f;
+
+def RemoveEmKriahJ j -> 0 || i _ [\V | .#.];
+def RemoveEmKriahV v -> 0 || _ o;
+
+def PatahGnuva ħ a -> a ħ,
+    ʕ a -> a ʕ,
+    h a -> a h || _ .#.;
+
+def DropGlottalStopBeforeC ʔ -> 0 || _ C;
+
+def DropFinalGutteral h|ʔ -> 0 || _ .#.;
+
+def DropFinalShva ə -> 0 || _ .#.;
+
+def ModernPronunciation q -> k,
+    ħ -> x,
+    ʕ -> ʔ,
+    T -> t,
+    c -> ts;
+def ModernDropFinalAyin ʔ -> 0 || _ .#.;
 
 # Special IPA symbols that look like ASCII
 def ToIPAEquivalents g -> ɡ,
     ' -> ˈ;
 
-regex ConsonantMapping .o. VowelMapping .o. ShinSin .o. ToIPAEquivalents;
+regex ConsonantMapping
+    .o. VowelMapping
+    .o. DedupShvaMeteg
+    .o. DropJVCircle
+    .o. ReorderDageshVowel
+    .o. ReorderDageshSinShin
+    .o. Sin
+    .o. Shin
+    .o. Shuruk
+    .o. AddLenitionMarker
+    .o. Lenite
+    .o. RemoveEmKriahJ
+    .o. RemoveEmKriahV
+    .o. DropDagesh
+    .o. PatahGnuva
+    .o. DropGlottalStopBeforeC
+    .o. DropFinalGutteral
+    .o. DropFinalShva
+    .o. ModernPronunciation
+    .o. ModernDropFinalAyin
+    .o. ToIPAEquivalents;
 
 save stack phonikud.fst
