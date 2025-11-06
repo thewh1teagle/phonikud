@@ -1,0 +1,57 @@
+def ConsonantMapping א -> ʔ,
+    ב -> b,
+    ג -> g,
+    ד -> d,
+    ה -> h,
+    ו -> v,
+    ז -> z,
+    ח -> ħ,
+    ט -> T,
+    י -> j,
+    כ -> k,
+    ך -> k,
+    ל -> l,
+    מ -> m,
+    ם -> m,
+    נ -> n,
+    ן -> n,
+    ס -> s,
+    ע -> ʕ,
+    פ -> p,
+    ף -> p,
+    צ -> c,
+    ק -> q,
+    ר -> r,
+    ש -> ʃ,
+    ת -> t;
+
+
+def VowelMapping ְ  -> ə, # shva
+    ֱ -> e, # hataf segol
+    ֲ -> a, # hataf patah
+     ֳ -> o, # hataf kamatz
+     ִ -> i, # hirik
+     ֵ -> e, # tsere
+     ֶ -> e, # segol
+     ַ -> a, # patah
+    ָ -> a, # kamatz
+    ֹ -> o, # holam
+    ֺ -> o, # holam haser,
+    ֻ -> u, # kubutz,
+    ּ -> X, # dagesh
+    ֽ -> M, # meteg
+    ׁ -> Y, # shin dot
+    ׂ -> Z, # sin dot,
+    ׇ -> o, # kamatz katan
+    ֫ -> ', # ole
+    ֯ -> O; # circle
+
+def ShinSin ʃ Z -> s, ʃ Y -> ʃ;
+
+# Special IPA symbols that look like ASCII
+def ToIPAEquivalents g -> ɡ,
+    ' -> ˈ;
+
+regex ConsonantMapping .o. VowelMapping .o. ShinSin .o. ToIPAEquivalents;
+
+save stack phonikud.fst
