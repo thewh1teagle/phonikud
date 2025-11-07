@@ -69,11 +69,25 @@ def ReorderDageshVowel a X -> X a,
     u X -> X u,
     ə X -> X ə;
 
+def ReorderSinShinVowel a Y -> Y a,
+    e Y -> Y e,
+    i Y -> Y i,
+    o Y -> Y o,
+    u Y -> Y u,
+    ə Y -> Y ə,
+    a Z -> Z a,
+    e Z -> Z e,
+    i Z -> Z i,
+    o Z -> Z o,
+    u Z -> Z u,
+    ə Z -> Z ə;
+
 def ReorderDageshSinShin X Y -> Y X,
     X Z -> Z X;
 
-# Shuruk is encoded with vav+dagesh, transform it to vowel /u/:
-def Shuruk v X -> u;
+# Shuruk is encoded with vav+dagesh, transform it to vowel /u/
+# Unless it's dagesh hazak, in words like צוואר
+def Shuruk v X -> u || [.#. | \V]_;
 
 # Make a new marker L for b/p/k not followed by dagesh
 def AddLenitionMarker [..] -> L || BKP _ \X, BKP _ .#.;
@@ -124,6 +138,7 @@ regex ConsonantMapping
     .o. DedupShvaMeteg
     .o. DropJVCircle
     .o. ReorderDageshVowel
+    .o. ReorderSinShinVowel
     .o. ReorderDageshSinShin
     .o. Sin
     .o. Shin
