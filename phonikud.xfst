@@ -97,6 +97,17 @@ def DropFinalGutteral h|ʔ -> 0 || _ .#.;
 
 def DropFinalShva ə -> 0 || _ .#.;
 
+# Next rule could be replaced with smarter shva na/nah logic
+def DropShva ə -> 0;
+
+def ReorderStress a ' -> ' a,
+    e ' -> ' e,
+    i ' -> ' i,
+    o ' -> ' o,
+    u ' -> ' u;
+
+def DefaultStress [..] -> ' || .#. [\']* _ V [\['|V]]* .#.;
+
 def ModernPronunciation q -> k,
     ħ -> x,
     ʕ -> ʔ,
@@ -126,6 +137,9 @@ regex ConsonantMapping
     .o. DropGlottalStopBeforeC
     .o. DropFinalGutteral
     .o. DropFinalShva
+    .o. DropShva
+    .o. ReorderStress
+    .o. DefaultStress
     .o. ModernPronunciation
     .o. ModernDropFinalAyin
     .o. ToIPAEquivalents;
