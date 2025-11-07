@@ -3,6 +3,8 @@ def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t;
 
 def BKP b|k|p;
 
+def DropGershayim [%" | ״] -> 0;
+
 def ConsonantMapping א -> ʔ,
     ב -> b,
     ג -> g,
@@ -132,7 +134,8 @@ def ModernDropFinalAyin ʔ -> 0 || _ .#.;
 def ToIPAEquivalents g -> ɡ,
     ' -> ˈ;
 
-regex ConsonantMapping
+regex DropGershayim
+    .o. ConsonantMapping
     .o. VowelMapping
     .o. DedupShvaMeteg
     .o. DropCWithCircle
