@@ -56,8 +56,7 @@ def VowelMapping ְ  -> ə, # shva
 def DedupShvaMeteg ə e -> e;
 
 # Drop em kriah when using circle symbol
-def DropJVCircle v O -> 0,
-    j O -> 0;
+def DropCWithCircle C O -> 0;
 
 def Sin ʃ Z -> s;
 def Shin ʃ Y -> ʃ;
@@ -98,8 +97,8 @@ def Lenite b L -> v,
     k L -> x,
     p L -> f;
 
-def RemoveEmKriahJ j -> 0 || i _ [\V | .#.];
-def RemoveEmKriahV v -> 0 || _ o;
+def RemoveEmKriahJ j -> 0 || i (') _ [\V | .#.];
+def RemoveEmKriahV v -> 0 || _ (') o;
 
 def PatahGnuva ħ a -> a ħ,
     ʕ a -> a ʕ,
@@ -136,7 +135,7 @@ def ToIPAEquivalents g -> ɡ,
 regex ConsonantMapping
     .o. VowelMapping
     .o. DedupShvaMeteg
-    .o. DropJVCircle
+    .o. DropCWithCircle
     .o. ReorderDageshVowel
     .o. ReorderSinShinVowel
     .o. ReorderDageshSinShin
