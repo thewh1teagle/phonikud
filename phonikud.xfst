@@ -1,8 +1,7 @@
 def V a|e|i|o|u|ə;
 def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t|ʒ;
 def Nikkud [V|X|Y|Z|O|'];
-
-def BKP b|k|p;
+def NonVowelNikkud [X|Y|Z|O|'];
 
 def DropGershayim [%" | ״] -> 0;
 
@@ -67,6 +66,10 @@ def CoalesceGeresh z -> ʒ,
 
 def DropGeresh "^" -> 0;
 
+# Special rule for words like עכשיו
+# Note: Can't apply too late or else it would mess up לייב lajv
+def AjvToAv j -> 0 || a NonVowelNikkud* _ v .#.;
+
 # Need to dedup when both shva + meteg signs appear together
 def DedupShvaMeteg e ə -> e;
 
@@ -106,11 +109,11 @@ def Shuruk v X -> u || [.#. | \V]_;
 # Make a new marker L for b/p/k not followed by dagesh
 def AddLenitionMarker [..] -> L || BKP _ \X, BKP _ .#.;
 
-def DropDagesh X -> 0;
+def Lenite b -> v,
+    k -> x,
+    p -> f || _ [\X | .#.];
 
-def Lenite b L -> v,
-    k L -> x,
-    p L -> f;
+def DropDagesh X -> 0;
 
 def RemoveEmKriahJ j -> 0 || i (') _ [\V | .#.];
 def RemoveEmKriahV v -> 0 || _ (') o;
@@ -153,6 +156,7 @@ regex DropGershayim
     .o. VowelMapping
     .o. CoalesceGeresh
     .o. DropGeresh
+    .o. AjvToAv
     .o. DedupShvaMeteg
     .o. DropCWithCircle
     .o. ReorderDageshVowel
@@ -161,7 +165,6 @@ regex DropGershayim
     .o. Sin
     .o. Shin
     .o. Shuruk
-    .o. AddLenitionMarker
     .o. Lenite
     .o. RemoveEmKriahJ
     .o. RemoveEmKriahV
