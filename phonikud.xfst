@@ -1,9 +1,12 @@
 def V a|e|i|o|u|ə;
-def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t;
+def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t|ʒ;
+def Nikkud [V|X|Y|Z|O|'];
 
 def BKP b|k|p;
 
 def DropGershayim [%" | ״] -> 0;
+
+def NormalizeGeresh ׳ -> ';
 
 def ConsonantMapping א -> ʔ,
     ב -> b,
@@ -31,7 +34,11 @@ def ConsonantMapping א -> ʔ,
     ק -> q,
     ר -> r,
     ש -> ʃ,
-    ת -> t;
+    ת -> t,
+    ' -> "^";
+# Note: We use the special symbol ^ for geresh here,
+# because we have to handle it later after reordering
+# and stress becomes '
 
 
 def VowelMapping ְ  -> ə, # shva
@@ -54,8 +61,14 @@ def VowelMapping ְ  -> ə, # shva
     ֫ -> ', # ole
     ֯ -> O; # circle
 
+def CoalesceGeresh z -> ʒ,
+    g -> dʒ,
+    c -> tʃ || _ Nikkud* "^";
+
+def DropGeresh "^" -> 0;
+
 # Need to dedup when both shva + meteg signs appear together
-def DedupShvaMeteg ə e -> e;
+def DedupShvaMeteg e ə -> e;
 
 # Drop em kriah when using circle symbol
 def DropCWithCircle C O -> 0;
@@ -135,8 +148,11 @@ def ToIPAEquivalents g -> ɡ,
     ' -> ˈ;
 
 regex DropGershayim
+    .o. NormalizeGeresh
     .o. ConsonantMapping
     .o. VowelMapping
+    .o. CoalesceGeresh
+    .o. DropGeresh
     .o. DedupShvaMeteg
     .o. DropCWithCircle
     .o. ReorderDageshVowel
