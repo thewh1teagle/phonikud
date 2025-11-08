@@ -1,0 +1,23 @@
+version = 1
+revision = 3
+requires-python = ">=3.14"
+
+[[package]]
+name = "fst-runtime"
+version = "0.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/58/366fff1598eca0ca00d25577dfa416e6f5951f090b28d16a893c0ecb1d47/fst_runtime-0.2.1.tar.gz", hash = "sha256:adeed4e11d06d6b925d9135268b424cfef284d8ab99722de8648217f96e620e4", size = 17407, upload-time = "2024-10-09T01:13:05.316Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/89/6e/dcebc42f063cb4505a79877e610108cb2eb7fbf7cc1dbb09aff874e8aa6d/fst_runtime-0.2.1-py3-none-any.whl", hash = "sha256:369faabbb40ed013e2d0ec64030873c64b368170afe04d10ff7809ccb353267f", size = 18161, upload-time = "2024-10-09T01:13:02.908Z" },
+]
+
+[[package]]
+name = "phonikud"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "fst-runtime" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "fst-runtime", specifier = ">=0.2.1" }]

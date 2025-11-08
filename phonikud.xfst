@@ -180,4 +180,4 @@ regex DropGershayim
     .o. ModernDropFinalAyin
     .o. ToIPAEquivalents;
 
-save stack phonikud.fst
+write att phonikud.att

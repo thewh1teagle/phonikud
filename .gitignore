@@ -29,4 +29,5 @@ wandb/
 events.out.tfevents*
 
 *.fst
+*.att
 predictions.txt
