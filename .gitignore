@@ -27,3 +27,6 @@ wandb/
 logs/
 wandb/
 events.out.tfevents*
+
+*.fst
+predictions.txt

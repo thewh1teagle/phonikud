@@ -1,0 +1,183 @@
+def V a|e|i|o|u|ə;
+def C ʔ|b|g|d|h|v|z|ħ|T|j|k|l|m|n|n|s|ʕ|p|c|q|r|ʃ|t|ʒ;
+def Nikkud [V|X|Y|Z|O|'];
+def NonVowelNikkud [X|Y|Z|O|'];
+
+def DropGershayim [%" | ״] -> 0;
+
+def NormalizeGeresh ׳ -> ';
+
+def ConsonantMapping א -> ʔ,
+    ב -> b,
+    ג -> g,
+    ד -> d,
+    ה -> h,
+    ו -> v,
+    ז -> z,
+    ח -> ħ,
+    ט -> T,
+    י -> j,
+    כ -> k,
+    ך -> k,
+    ל -> l,
+    מ -> m,
+    ם -> m,
+    נ -> n,
+    ן -> n,
+    ס -> s,
+    ע -> ʕ,
+    פ -> p,
+    ף -> p,
+    צ -> c,
+    ץ -> c,
+    ק -> q,
+    ר -> r,
+    ש -> ʃ,
+    ת -> t,
+    ' -> "^";
+# Note: We use the special symbol ^ for geresh here,
+# because we have to handle it later after reordering
+# and stress becomes '
+
+
+def VowelMapping ְ  -> ə, # shva
+    ֱ -> e, # hataf segol
+    ֲ -> a, # hataf patah
+     ֳ -> o, # hataf kamatz
+     ִ -> i, # hirik
+     ֵ -> e, # tsere
+     ֶ -> e, # segol
+     ַ -> a, # patah
+    ָ -> a, # kamatz
+    ֹ -> o, # holam
+    ֺ -> o, # holam haser,
+    ֻ -> u, # kubutz,
+    ּ -> X, # dagesh
+    ֽ -> e, # meteg (we use it for vocal shva)
+    ׁ -> Y, # shin dot
+    ׂ -> Z, # sin dot,
+    ׇ -> o, # kamatz katan
+    ֫ -> ', # ole
+    ֯ -> O; # circle
+
+def CoalesceGeresh z -> ʒ,
+    g -> dʒ,
+    c -> tʃ || _ Nikkud* "^";
+
+def DropGeresh "^" -> 0;
+
+# Special rule for words like עכשיו
+# Note: Can't apply too late or else it would mess up לייב lajv
+def AjvToAv j -> 0 || a NonVowelNikkud* _ v .#.;
+
+# Need to dedup when both shva + meteg signs appear together
+def DedupShvaMeteg e ə -> e;
+
+# Drop em kriah when using circle symbol
+def DropCWithCircle C O -> 0;
+
+def Sin ʃ Z -> s;
+def Shin ʃ Y -> ʃ;
+
+def ReorderDageshVowel a X -> X a,
+    e X -> X e,
+    i X -> X i,
+    o X -> X o,
+    u X -> X u,
+    ə X -> X ə;
+
+def ReorderSinShinVowel a Y -> Y a,
+    e Y -> Y e,
+    i Y -> Y i,
+    o Y -> Y o,
+    u Y -> Y u,
+    ə Y -> Y ə,
+    a Z -> Z a,
+    e Z -> Z e,
+    i Z -> Z i,
+    o Z -> Z o,
+    u Z -> Z u,
+    ə Z -> Z ə;
+
+def ReorderDageshSinShin X Y -> Y X,
+    X Z -> Z X;
+
+# Shuruk is encoded with vav+dagesh, transform it to vowel /u/
+# Unless it's dagesh hazak, in words like צוואר
+def Shuruk v X -> u || [.#. | \V]_;
+
+# Make a new marker L for b/p/k not followed by dagesh
+def AddLenitionMarker [..] -> L || BKP _ \X, BKP _ .#.;
+
+def Lenite b -> v,
+    k -> x,
+    p -> f || _ [\X | .#.];
+
+def DropDagesh X -> 0;
+
+def RemoveEmKriahJ j -> 0 || i (') _ [\V | .#.];
+def RemoveEmKriahV v -> 0 || _ (') o;
+
+def PatahGnuva ħ a -> a ħ,
+    ʕ a -> a ʕ,
+    h a -> a h || _ .#.;
+
+def DropGlottalStopBeforeC ʔ -> 0 || _ C;
+
+def DropFinalGutteral h|ʔ -> 0 || _ .#.;
+
+def DropFinalShva ə -> 0 || _ .#.;
+
+# Next rule could be replaced with smarter shva na/nah logic
+def DropShva ə -> 0;
+
+def ReorderStress a ' -> ' a,
+    e ' -> ' e,
+    i ' -> ' i,
+    o ' -> ' o,
+    u ' -> ' u;
+
+def DefaultStress [..] -> ' || .#. [\']* _ V [\['|V]]* .#.;
+
+def ModernPronunciation q -> k,
+    ħ -> x,
+    ʕ -> ʔ,
+    T -> t,
+    c -> ts;
+def ModernDropFinalAyin ʔ -> 0 || _ .#.;
+
+# Special IPA symbols that look like ASCII
+def ToIPAEquivalents g -> ɡ,
+    ' -> ˈ;
+
+regex DropGershayim
+    .o. NormalizeGeresh
+    .o. ConsonantMapping
+    .o. VowelMapping
+    .o. CoalesceGeresh
+    .o. DropGeresh
+    .o. AjvToAv
+    .o. DedupShvaMeteg
+    .o. DropCWithCircle
+    .o. ReorderDageshVowel
+    .o. ReorderSinShinVowel
+    .o. ReorderDageshSinShin
+    .o. Sin
+    .o. Shin
+    .o. Shuruk
+    .o. Lenite
+    .o. RemoveEmKriahJ
+    .o. RemoveEmKriahV
+    .o. DropDagesh
+    .o. PatahGnuva
+    .o. DropGlottalStopBeforeC
+    .o. DropFinalGutteral
+    .o. DropFinalShva
+    .o. DropShva
+    .o. ReorderStress
+    .o. DefaultStress
+    .o. ModernPronunciation
+    .o. ModernDropFinalAyin
+    .o. ToIPAEquivalents;
+
+save stack phonikud.fst
