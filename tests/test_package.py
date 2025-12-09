@@ -6,7 +6,7 @@ def test_has_no_breakpoint():
     for file in files:
         print(file)
 
-        with open(file, "r") as f:
+        with open(file, "r", encoding="utf-8") as f:
             content = f.readlines()
         for line_number, line in enumerate(content, 1):
             if "breakpoint()" in line:
