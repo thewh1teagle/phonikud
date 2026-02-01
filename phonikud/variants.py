@@ -7,7 +7,7 @@ class Letter:
         self.char = phonikud.normalize(char)
         self.all_diac = phonikud.normalize(diac)
         self.diac = "".join(
-            i for i in self.all_diac if i not in lexicon.SET_ENHANCED_DIACRITICS
+            i for i in self.all_diac if i not in [lexicon.HATAMA_DIACRITIC, lexicon.PREFIX_DIACRITIC]
         )
 
     def __str__(self):

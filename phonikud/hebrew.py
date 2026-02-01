@@ -127,14 +127,14 @@ def handle_vav(cur: Letter, prev: Letter | None, next: Letter | None):
             return make_result("v")
         if NIKUD["KAMATZ"] in cur.diac or NIKUD["PATAH"] in cur.diac:
             return make_result("va")
-        if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac:
+        if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac or NIKUD["VOCAL_SHVA"] in cur.diac:
             return make_result("ve")
         return make_result("", skip_consonants=True, skip_diacritics=True)
 
     # Single ו
     if re.search(NIKUD_PATAH_LIKE_PATTERN, cur.diac):
         return make_result("va")
-    if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac:
+    if NIKUD["TSERE"] in cur.diac or NIKUD["SEGOL"] in cur.diac or NIKUD["VOCAL_SHVA"] in cur.diac:
         return make_result("ve")
     if NIKUD["HOLAM"] in cur.diac:
         return make_result("o")

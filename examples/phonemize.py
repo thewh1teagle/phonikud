@@ -125,7 +125,10 @@ sentences = [
     # "אֲוְורִירִי",
     # "לִוְויְיתָן",
     # "טַוָוס",
-    "לְֽכַוֵּון"
+    # "לְֽכַוֵּון"
+    # "וֽ|רַאַה"
+    # "שָׁלוֹם",
+    "בּֽ|יֽרוּשָׁלַ֫יִם"
 ]
 # print(get_syllables("אֵלָיו"))
 for sentence in sentences:
@@ -136,7 +139,6 @@ for sentence in sentences:
         use_expander=True,
         predict_stress=True,
         predict_vocal_shva=True,
-        stress_placement="vowel",
         schema="modern",
     )
     print(phonemes)

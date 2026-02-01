@@ -125,6 +125,7 @@ NIKUD = {
     "HOLAM": "\u05b9",
     "KUBUTS": "\u05bb",
     "SHVA": "\u05b0",
+    "VOCAL_SHVA": "\u05bd",
     "HATAF_KAMATZ": "\u05b3",
     "DAGESH": "\u05bc",
     "SIN": "\u05c2",
