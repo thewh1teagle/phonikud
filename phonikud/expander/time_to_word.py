@@ -97,7 +97,10 @@ def convert_to_word(h, m):
     else:
         tens_part = f"{vocab['and']}{tens[m // 10]}"
         units_part = f"{vocab['and']}{hours[m % 10]}" if m % 10 != 0 else ""
-        return f"{hours[h]} {tens_part} {units_part} {vocab['minutes']}".strip()
+        if units_part:
+            return f"{hours[h]} {tens_part} {units_part} {vocab['minutes']}".strip()
+        else:
+            return f"{hours[h]} {tens_part} {vocab['minutes']}".strip()
 
 
 def time_to_word(text: str):
