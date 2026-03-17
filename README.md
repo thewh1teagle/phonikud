@@ -136,7 +136,7 @@ Consonants (24)
 
 Character set:
 
-`abdefhijklmnopstuvwzɡʁʃʒʔχ`
+`abdefhijklmnopstuvwzɡʁʃʒʔˈχ`
 
 ### Mixed English 🌎
 
