@@ -134,6 +134,10 @@ Consonants (24)
 - `ʒ` - Zain with Geresh (`בֵּז׳`) `\u0292`
 - `dʒ` - Gimel with Geresh (`גִּ׳ירָפָה`)
 
+Character set:
+
+`abdefhijklmnopstuvwzɡʁʃʒʔχ`
+
 ### Mixed English 🌎
 
 You can mix the phonemization of English by providing a fallback function that accepts an English string and returns phonemes.
