@@ -210,6 +210,7 @@ Please make sure to read both the Phonikud license (see LICENSE) and the individ
 - See [Modern Hebrew phonology](https://en.m.wikipedia.org/wiki/Modern_Hebrew_phonology)
 - Initially we called Vocal Shva as Shva Na, but we learned that in modern Hebrew spoken Shva is different from written Shva Na, catchy name for it: `שווא נשמע`. See [Shva#Pronunciation_in_Modern_Hebrew](https://en.wikipedia.org/wiki/Shva#Pronunciation_in_Modern_Hebrew)
 - To type Hebrew diacritics, use `Right ALT` (`Windows`), `Left Option` (`macOS`), or `Long Press` on the corresponding letter (`Google Keyboard`) based on the diacritic's name. eg. for `Katmaz` use `Alt` + `ק`. for `Hatama` use `Alt` + `^`. for Vocal Shva use `Alt` + `&`
+- Alternative: higher accuracy G2P is available in [Renikud](https://github.com/thewh1teagle/renikud)
 
 ### Testing 🧪
 
